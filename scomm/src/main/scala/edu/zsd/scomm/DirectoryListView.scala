@@ -2,15 +2,23 @@ package edu.zsd.scomm
 
 import scala.swing._
 import java.io.File
-import scala.react.{Var, Observing}
+import scala.react.{EventSource, Var, Observing}
 
 class DirectoryListView(val initDir: File) extends ListView[String] with Observing {
 
-  var currentDir: Var[File] = new Var[File](initDir)
+  val currentDir: Var[File] = new Var[File](initDir)
   listData = fileContents(initDir)
+
+  // TODO we should change the abstraction layers: the layer using scala-react should not be coupled with scala-swing
+
+  val mouseClicks = new EventSource[scala.swing.event.MouseEvent]
 
   listenTo(mouse.clicks)
   reactions += {
+    case mouseEvent: scala.swing.event.MouseEvent => mouseClicks.emit(mouseEvent)
+  }
+
+  mouseClicks.collect {
     case scala.swing.event.MouseClicked(_, _, _, 2, _) =>
       if (!DirectoryListView.this.selection.items.isEmpty) {
         val selectedItem: String = DirectoryListView.this.selection.items(0)
