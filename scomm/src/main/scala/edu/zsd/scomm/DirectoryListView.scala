@@ -2,13 +2,11 @@ package edu.zsd.scomm
 
 import scala.swing._
 import java.io.File
-import scala.collection.mutable
-import scala.swing.event.Event
 import scala.react.{Var, Observing}
 
 class DirectoryListView(val initDir: File) extends ListView[String] with Observing {
 
-  var currentDir : Var[File] = new Var[File](initDir)
+  var currentDir: Var[File] = new Var[File](initDir)
   listData = fileContents(initDir)
 
   listenTo(mouse.clicks)
