@@ -3,8 +3,9 @@ package edu.zsd.scomm
 import scala.swing.{Alignment, BorderPanel, ScrollPane, Label}
 import scala.swing.BorderPanel.Position
 import java.io.File
+import scala.react.Observing
 
-class DirectoryPanel(val initialDirectory : File) extends BorderPanel {
+class DirectoryPanel(val initialDirectory : File) extends BorderPanel with Observing {
 
   val actualDirectory = new Label(initialDirectory.toString)
   actualDirectory.horizontalAlignment = Alignment.Left
@@ -14,7 +15,5 @@ class DirectoryPanel(val initialDirectory : File) extends BorderPanel {
   add(new ScrollPane(listView), Position.Center)
   listenTo(listView)
 
-  reactions += {
-    case listView.currentDirChangedEvent => actualDirectory.text = listView.currentDir.toString
-  }
+  observe(listView.currentDir) { x => actualDirectory.text = x.toString; true }
 }
