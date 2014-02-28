@@ -1,37 +1,37 @@
 package edu.zsd.scomm
 
 import scala.swing._
+import scala.react.{Observing, Var, EventSource}
 import java.io.File
-import scala.react.{EventSource, Var, Observing}
+import scala.swing.BorderPanel.Position
 
-class DirectoryListView(val initDir: File) extends ListView[String] with Observing {
+class DirectoryListView extends BorderPanel with Observing {
 
-  val currentDir: Var[File] = new Var[File](initDir)
-  listData = fileContents(initDir)
+  val selectionEvent = new EventSource[Int]
+  val files = new Var[Seq[FileEntry]](Seq.empty)
+  val currentDirectory = new Var[File](new File(""))
 
-  // TODO we should change the abstraction layers: the layer using scala-react should not be coupled with scala-swing
+  private[this] val currentDirectoryLabel = new Label("<empty>")
+  currentDirectoryLabel.horizontalAlignment = Alignment.Left
+  add(currentDirectoryLabel, Position.North)
 
-  val mouseClicks = new EventSource[scala.swing.event.MouseEvent]
+  private[this] val listView = new ListView[String]() {
+    listenTo(mouse.clicks)
+    reactions += {
+      case scala.swing.event.MouseClicked(_, _, _, 2, _) =>
+        val selectedIndices: Array[Int] = selection.indices.toArray
+        if (selectedIndices.nonEmpty) {
+          selectionEvent.emit(selectedIndices(0))
+        }
+    }
 
-  listenTo(mouse.clicks)
-  reactions += {
-    case mouseEvent: scala.swing.event.MouseEvent => mouseClicks.emit(mouseEvent)
+    observe(files) {
+      fileSeq => listData = fileSeq.map(file => file.name); true
+    }
   }
+  add(new ScrollPane(listView), Position.Center)
 
-  mouseClicks.collect {
-    case scala.swing.event.MouseClicked(_, _, _, 2, _) =>
-      if (!DirectoryListView.this.selection.items.isEmpty) {
-        val selectedItem: String = DirectoryListView.this.selection.items(0)
-        val newFile: File = new File(currentDir.now, selectedItem).getCanonicalFile
-        listData = fileContents(newFile)
-        currentDir.update(newFile)
-      }
+  observe(currentDirectory) {
+    currentDirectory => currentDirectoryLabel.text = currentDirectory.toString; true
   }
-
-  def fileContents(file: File): Seq[String] = {
-    val contents = file.list()
-    val arr: Seq[String] = if (contents != null) contents else List()
-    List("..") ++ arr
-  }
-
 }
