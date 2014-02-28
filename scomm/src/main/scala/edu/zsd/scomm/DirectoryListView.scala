@@ -1,15 +1,13 @@
 package edu.zsd.scomm
 
 import scala.swing._
-import scala.react.{Observing, Var, EventSource}
+import scala.react.{Observing, EventSource}
 import java.io.File
 import scala.swing.BorderPanel.Position
 
 class DirectoryListView extends BorderPanel with Observing {
 
   val selectionEvent = new EventSource[Int]
-  val files = new Var[Seq[FileEntry]](Seq.empty)
-  val currentDirectory = new Var[File](new File(""))
 
   private[this] val currentDirectoryLabel = new Label("<empty>")
   currentDirectoryLabel.horizontalAlignment = Alignment.Left
@@ -25,13 +23,14 @@ class DirectoryListView extends BorderPanel with Observing {
         }
     }
 
-    observe(files) {
-      fileSeq => listData = fileSeq.map(file => file.name); true
-    }
   }
   add(new ScrollPane(listView), Position.Center)
 
-  observe(currentDirectory) {
-    currentDirectory => currentDirectoryLabel.text = currentDirectory.toString; true
+  def updateFiles(files: Seq[FileEntry]): Unit = {
+    listView.listData = files.map(file => file.name)
+  }
+
+  def updateCurrentDirectory(currentDirectory: File): Unit = {
+    currentDirectoryLabel.text = currentDirectory.toString
   }
 }

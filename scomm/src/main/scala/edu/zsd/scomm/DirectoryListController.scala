@@ -17,16 +17,15 @@ class DirectoryListController(val initDir: File) extends Observing {
       true
   }
 
-  // TODO this might be buggy sometimes
   observe(directoryListModel.currentDir) {
     currentDir =>
-      directoryListView.currentDirectory() = currentDir
+      directoryListView.updateCurrentDirectory(currentDir)
       true
   }
 
   observe(directoryListModel.currentDirContents) {
     currentDirContents =>
-      directoryListView.files() = currentDirContents
+      directoryListView.updateFiles(currentDirContents)
       true
   }
 
