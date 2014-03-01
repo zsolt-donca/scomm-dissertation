@@ -19,17 +19,11 @@ class DirectoryListController(val initDir: File) extends Observing {
   }
 
   observe(directoryListModel.currentDir) {
-    currentDir =>
-      println("DirectoryListController: model.currentDir changed to " + currentDir)
-      directoryListView.updateCurrentDirectory(currentDir)
-      true
+    currentDir => directoryListView.updateCurrentDirectory(currentDir); true
   }
 
   observe(directoryListModel.currentDirContents) {
-    currentDirContents =>
-      println("DirectoryListController: model.currentDirContents changed to " + currentDirContents)
-      directoryListView.updateFiles(currentDirContents)
-      true
+    contents => directoryListView.updateFiles(contents); true
   }
 
   directoryListModel.currentDir() = initDir
