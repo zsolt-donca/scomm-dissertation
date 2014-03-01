@@ -5,6 +5,7 @@ import java.io.File
 
 import scala.swing._
 import edu.zsd.scomm.domain._
+import scala.swing.BorderPanel.Position
 
 object mainWindow extends ReactiveSimpleSwingApplication {
 
@@ -29,16 +30,41 @@ object mainWindow extends ReactiveSimpleSwingApplication {
       }
     }
 
-    contents = new SplitPane() {
-      val left = new DirectoryListController(new File("C:\\"))
-      leftComponent = left.directoryListView
+    val left = new DirectoryListController(new File("C:\\"))
+    val right = new DirectoryListController(new File("D:\\"))
 
-      val right = new DirectoryListController(new File("D:\\"))
-      rightComponent = right.directoryListView
+    contents = new BorderPanel() {
+      val centerSplitPane = new SplitPane() {
+        leftComponent = left.directoryListView
+        rightComponent = right.directoryListView
+        orientation = Orientation.Vertical
+        dividerLocation = 0.5
+        resizeWeight = 0.5
+      }
+      add(centerSplitPane, Position.Center)
 
-      orientation = Orientation.Vertical
-      dividerLocation = 0.5
-      resizeWeight = 0.5
+      val commandButtons = new FlowPanel(FlowPanel.Alignment.Left)() {
+        val viewButton = new Button("View")
+        contents += viewButton
+
+        val editButton = new Button("Edit")
+        contents += editButton
+
+        val copyButton = new Button("Copy")
+        contents += copyButton
+
+        val moveButton = new Button("Move")
+        contents += moveButton
+
+        val newFolderButton = new Button("New folder")
+        contents += newFolderButton
+
+        val deleteButton = new Button("Delete")
+        contents += deleteButton
+
+        val infoButton = new Button("Info")
+        contents += infoButton
+      }
     }
 
     title = "Scala Commander"

@@ -17,6 +17,11 @@ class DirectoryListController(val initDir: File) extends Observing {
       true
   }
 
+  observe(directoryListView.selectedIndices) {
+    selectedIndices =>
+
+  }
+
   observe(directoryListModel.currentDir) {
     currentDir => directoryListView.updateCurrentDirectory(currentDir); true
   }
