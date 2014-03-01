@@ -3,10 +3,11 @@ package edu.zsd.scomm
 import scala.swing._
 import java.io.File
 import scala.swing.BorderPanel.Position
+import edu.zsd.scomm.domain._
 
 class DirectoryListView() extends BorderPanel {
 
-  val selectionEvent = domain.EventSource[Int]
+  val selectionEvent = EventSource[Int]
 
   private[this] val currentDirectoryLabel = new Label("<empty>")
   currentDirectoryLabel.horizontalAlignment = Alignment.Left
