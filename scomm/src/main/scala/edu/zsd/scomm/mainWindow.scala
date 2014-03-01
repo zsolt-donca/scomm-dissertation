@@ -4,8 +4,9 @@ package edu.zsd.scomm
 import java.io.File
 
 import scala.swing._
+import edu.zsd.scomm.domain._
 
-object mainWindow extends SimpleSwingApplication {
+object mainWindow extends ReactiveSwingApp {
 
   override def top: Frame = new MainFrame {
 

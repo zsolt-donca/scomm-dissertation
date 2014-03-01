@@ -1,9 +1,8 @@
 package edu.zsd.scomm
 
 import java.io.File
-import scala.react.Observing
 
-class DirectoryListController(val initDir: File) extends Observing {
+class DirectoryListController(val initDir: File) extends domain.type#Observing {
 
   val directoryListView = new DirectoryListView()
 

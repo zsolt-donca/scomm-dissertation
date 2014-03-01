@@ -1,13 +1,12 @@
 package edu.zsd.scomm
 
 import scala.swing._
-import scala.react.{Observing, EventSource}
 import java.io.File
 import scala.swing.BorderPanel.Position
 
-class DirectoryListView extends BorderPanel with Observing {
+class DirectoryListView() extends BorderPanel {
 
-  val selectionEvent = new EventSource[Int]
+  val selectionEvent = domain.EventSource[Int]
 
   private[this] val currentDirectoryLabel = new Label("<empty>")
   currentDirectoryLabel.horizontalAlignment = Alignment.Left
@@ -19,7 +18,7 @@ class DirectoryListView extends BorderPanel with Observing {
       case scala.swing.event.MouseClicked(_, _, _, 2, _) =>
         val selectedIndices: Array[Int] = selection.indices.toArray
         if (selectedIndices.nonEmpty) {
-          selectionEvent.emit(selectedIndices(0))
+          selectionEvent << selectedIndices(0)
         }
     }
 
@@ -34,3 +33,4 @@ class DirectoryListView extends BorderPanel with Observing {
     currentDirectoryLabel.text = currentDirectory.toString
   }
 }
+
