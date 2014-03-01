@@ -21,17 +21,18 @@ object mainWindow extends SimpleSwingApplication {
       contents += new Menu("Help") {
         contents += new MenuItem("About")
       }
+      contents += new Menu("System") {
+        contents += new MenuItem(new Action("gc()") {
+          override def apply(): Unit = System.gc()
+        })
+      }
     }
 
     contents = new SplitPane() {
-      val left = new DirectoryListController(new File("C:\\")) {
-        override def toString: String = "left DirectoryListController"
-      }
+      val left = new DirectoryListController(new File("C:\\"))
       leftComponent = left.directoryListView
 
-      val right = new DirectoryListController(new File("D:\\")) {
-        override def toString: String = "right DirectoryListController"
-      }
+      val right = new DirectoryListController(new File("D:\\"))
       rightComponent = right.directoryListView
 
       orientation = Orientation.Vertical
