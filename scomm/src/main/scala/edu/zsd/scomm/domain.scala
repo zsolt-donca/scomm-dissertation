@@ -3,17 +3,12 @@ package edu.zsd.scomm
 import scala.react.Domain
 import scala.swing.SimpleSwingApplication
 
-object domain extends SwingDomain {
-
-  self: Domain =>
+object domain extends Domain {
 
   val scheduler = new SwingScheduler()
   val engine = new Engine
-}
 
-abstract class SwingDomain extends Domain {
-
-  trait ReactiveSwingApp extends SimpleSwingApplication {
+  trait ReactiveSimpleSwingApplication extends SimpleSwingApplication {
     override def main(args: Array[String]) {
       schedule {
         startup(args)

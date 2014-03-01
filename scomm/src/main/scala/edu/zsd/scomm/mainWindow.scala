@@ -6,7 +6,7 @@ import java.io.File
 import scala.swing._
 import edu.zsd.scomm.domain._
 
-object mainWindow extends ReactiveSwingApp {
+object mainWindow extends ReactiveSimpleSwingApplication {
 
   override def top: Frame = new MainFrame {
 
