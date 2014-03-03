@@ -33,7 +33,6 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
 
     private val leftDirectoryList: DirectoryList = new DirectoryList(new File("C:\\"))
     private val rightDirectoryList: DirectoryList = new DirectoryList(new File("D:\\"))
-    private val infoAction = EventSource[Unit]
     contents = new BorderPanel() {
       val centerSplitPane = new SplitPane() {
         leftComponent = leftDirectoryList
@@ -45,45 +44,38 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
       add(centerSplitPane, Position.Center)
 
       val commandButtons = new FlowPanel(FlowPanel.Alignment.Left)() {
-        val viewButton = new Button("View")
+        val viewButton = new EventButton("View")
         contents += viewButton
 
-        val editButton = new Button("Edit")
+        val editButton = new EventButton("Edit")
         contents += editButton
 
-        val copyButton = new Button("Copy")
+        val copyButton = new EventButton("Copy")
         contents += copyButton
 
-        val moveButton = new Button("Move")
+        val moveButton = new EventButton("Move")
         contents += moveButton
 
-        val newFolderButton = new Button("New folder")
+        val newFolderButton = new EventButton("New folder")
         contents += newFolderButton
 
-        val deleteButton = new Button("Delete")
+        val deleteButton = new EventButton("Delete")
         contents += deleteButton
 
-        val infoButton = new Button(Action("Info") {
-          infoAction << Unit
-        })
+        val infoButton = new EventButton("Info")
         contents += infoButton
       }
       add(commandButtons, Position.South)
-    }
 
-    val calcInfo = Strict {
-      val selectedFiles: Seq[FileEntry] = leftDirectoryList.selectedFiles()
-
-      val directories = selectedFiles.count(fileEntry => fileEntry.file.isDirectory)
-      val files = selectedFiles.count(fileEntry => fileEntry.file.isFile)
-      s"There are $directories directories and $files files selected in ${leftDirectoryList.currentDir()}"
-    }
-
-    val infoActionReactor = Reactor.loop {
-      self =>
-        self awaitNext infoAction
-        val message = calcInfo()
-        JOptionPane.showMessageDialog(null, message)
+      val infoActionReactor = Reactor.loop {
+        self =>
+          self awaitNext commandButtons.infoButton.actionEvents
+          val selectedFiles: Seq[FileEntry] = leftDirectoryList.selectedFiles()
+          val directories = selectedFiles.count(fileEntry => fileEntry.file.isDirectory)
+          val files = selectedFiles.count(fileEntry => fileEntry.file.isFile)
+          val message = s"There are $directories directories and $files files selected in ${leftDirectoryList.currentDir()}"
+          JOptionPane.showMessageDialog(null, message)
+      }
     }
 
     title = "Scala Commander"
