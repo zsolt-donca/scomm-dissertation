@@ -44,7 +44,7 @@ class DirectoryList(initDir: File) extends BorderPanel with Observing {
 
   observe(enterDirectory) {
     index =>
-      val files = currentDirContents()
+      val files = currentDirContents.now
       val selectedFile: File = files(index).file
       currentDir() = selectedFile
       listView.selection.indices.clear()
