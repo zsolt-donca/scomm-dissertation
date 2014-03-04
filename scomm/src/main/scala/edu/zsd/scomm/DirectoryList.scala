@@ -8,8 +8,43 @@ import java.io.File
 
 class DirectoryList(initDir: File) extends BorderPanel with Observing {
 
+  // basic events and signals
   val enterDirectory = EventSource[Int]
+
   val selectedIndices = Var[Set[Int]](Set.empty)
+  val currentDir = Var(new File(""))
+  // derived events and signals
+
+  val currentDirContents: Signal[Seq[FileEntry]] = Strict {
+    val currentDir: File = DirectoryList.this.currentDir()
+    val listFiles = currentDir.listFiles()
+    val contents: Seq[FileEntry] = if (listFiles != null) listFiles.map(file => FileEntry(file, file.getName)) else Seq.empty
+    val parentFile: Seq[FileEntry] = if (currentDir.getParentFile != null) Seq(FileEntry(currentDir.getParentFile, "..")) else Seq.empty
+    parentFile ++ contents
+  }
+
+  // TODO investigate why it fails if this is Strict
+  val selectedFiles: Signal[Seq[FileEntry]] = Lazy {
+    val indices = selectedIndices()
+    val contents = currentDirContents()
+
+    for ((fileEntry, index) <- contents.zipWithIndex if indices.contains(index)) yield fileEntry
+  }
+
+  case class SelectionInfo(size : Long, selectedFiles : Int, selectedFolders : Int)
+  val selectionInfo : Signal[SelectionInfo] = Strict {
+    val selected: Seq[FileEntry] = selectedFiles()
+    val directories = selected.count(fileEntry => fileEntry.file.isDirectory)
+    val files = selected.count(fileEntry => fileEntry.file.isFile)
+    val size = selected.map(fileEntry => fileEntry.file.length).sum
+
+    SelectionInfo(size, files, directories)
+  }
+
+  currentDir() = initDir
+
+
+  // components
 
   private[this] val currentDirLabel = new Label("<empty>")
   currentDirLabel.horizontalAlignment = Alignment.Left
@@ -25,22 +60,11 @@ class DirectoryList(initDir: File) extends BorderPanel with Observing {
   }
   add(new ScrollPane(listView), Position.Center)
 
-  val currentDir = Var(new File(""))
+  private[this] val summaryLabel = new Label("<empty>")
+  summaryLabel.horizontalAlignment = Alignment.Left
+  add(summaryLabel, Position.South)
 
-  val currentDirContents: Signal[Seq[FileEntry]] = Strict {
-    val currentDir: File = DirectoryList.this.currentDir()
-    val listFiles = currentDir.listFiles()
-    val contents: Seq[FileEntry] = if (listFiles != null) listFiles.map(file => FileEntry(file, file.getName)) else Seq.empty
-    val parentFile: Seq[FileEntry] = if (currentDir.getParentFile != null) Seq(FileEntry(currentDir.getParentFile, "..")) else Seq.empty
-    parentFile ++ contents
-  }
-
-  val selectedFiles: Signal[Seq[FileEntry]] = Lazy {
-    val indices = selectedIndices()
-    val contents = currentDirContents()
-
-    for ((fileEntry, index) <- contents.zipWithIndex if indices.contains(index)) yield fileEntry
-  }
+  // scala-react code related to the components
 
   observe(enterDirectory) {
     index =>
@@ -48,17 +72,19 @@ class DirectoryList(initDir: File) extends BorderPanel with Observing {
       val selectedFile: File = files(index).file
       currentDir() = selectedFile
       listView.selection.indices.clear()
-      true
   }
 
+
   observe(currentDir) {
-    currentDir => currentDirLabel.text = currentDir.toString; true
+    currentDir => currentDirLabel.text = currentDir.toString
   }
 
   observe(currentDirContents) {
-    contents => listView.listData = contents.map(file => file.name); true
+    contents => listView.listData = contents.map(file => file.name)
   }
 
-  currentDir() = initDir
+  observe(selectionInfo) {
+    info => summaryLabel.text = s"${info.size} bytes, ${info.selectedFiles} file(s), ${info.selectedFolders} folder(s)"
+  }
 
 }
