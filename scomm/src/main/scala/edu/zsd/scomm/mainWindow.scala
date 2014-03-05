@@ -7,6 +7,8 @@ import scala.swing._
 import edu.zsd.scomm.domain._
 import scala.swing.BorderPanel.Position
 import javax.swing.JOptionPane
+import scala.swing.event.{FocusLost, FocusGained}
+import java.awt.event.FocusEvent
 
 object mainWindow extends ReactiveSimpleSwingApplication with Observing {
 
@@ -31,8 +33,17 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
       }
     }
 
-    private val leftDirectoryList: DirectoryList = new DirectoryList(new File("C:\\"))
-    private val rightDirectoryList: DirectoryList = new DirectoryList(new File("D:\\"))
+    private val leftDirectoryList  = new DirectoryList(new File("C:\\"))
+    private val rightDirectoryList = new DirectoryList(new File("D:\\"))
+
+    leftDirectoryList.focusable = true
+    rightDirectoryList.focusable = true
+    listenTo(leftDirectoryList, rightDirectoryList)
+    reactions += {
+      case FocusGained(_, _, _) => println("focus gained")
+      case FocusLost(_, _, _) => println("focus lost")
+    }
+
     contents = new BorderPanel() {
       val centerSplitPane = new SplitPane() {
         leftComponent = leftDirectoryList
@@ -70,10 +81,10 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
       val infoActionReactor = Reactor.loop {
         self =>
           self awaitNext commandButtons.infoButton.actionEvents
-          val selectedFiles: Seq[FileEntry] = leftDirectoryList.selectedFiles()
+          val selectedFiles: Seq[FileEntry] = leftDirectoryList.selectedFiles.now
           val directories = selectedFiles.count(fileEntry => fileEntry.file.isDirectory)
           val files = selectedFiles.count(fileEntry => fileEntry.file.isFile)
-          val message = s"There are $directories directories and $files files selected in ${leftDirectoryList.currentDir()}"
+          val message = s"There are $directories directories and $files files selected in ${leftDirectoryList.currentDir.now}"
           JOptionPane.showMessageDialog(null, message)
       }
     }

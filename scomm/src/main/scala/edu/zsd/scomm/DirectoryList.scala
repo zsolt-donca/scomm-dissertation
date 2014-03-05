@@ -10,6 +10,7 @@ class DirectoryList(initDir: File) extends BorderPanel with Observing {
 
   // basic events and signals
   val enterDirectory = EventSource[Int]
+  val goToParent = EventSource[Unit]
 
   val selectedIndices = Var[Set[Int]](Set.empty)
   val currentDir = Var(new File(""))
@@ -31,14 +32,23 @@ class DirectoryList(initDir: File) extends BorderPanel with Observing {
     for ((fileEntry, index) <- contents.zipWithIndex if indices.contains(index)) yield fileEntry
   }
 
-  case class SelectionInfo(size : Long, selectedFiles : Int, selectedFolders : Int)
-  val selectionInfo : Signal[SelectionInfo] = Strict {
+  case class SelectionInfo(size: Long, selectedFiles: Int, selectedFolders: Int)
+
+  val selectionInfo: Signal[SelectionInfo] = Strict {
     val selected: Seq[FileEntry] = selectedFiles()
-    val directories = selected.count(fileEntry => fileEntry.file.isDirectory)
-    val files = selected.count(fileEntry => fileEntry.file.isFile)
     val size = selected.map(fileEntry => fileEntry.file.length).sum
+    val files = selected.count(fileEntry => fileEntry.file.isFile)
+    val directories = selected.count(fileEntry => fileEntry.file.isDirectory)
 
     SelectionInfo(size, files, directories)
+  }
+
+  val goToParentLoop = Reactor.loop { self =>
+    self awaitNext goToParent
+    val current = currentDir.now
+    if (current.getParentFile != null) {
+      enterDirectory << 0
+    }
   }
 
   currentDir() = initDir
@@ -56,6 +66,7 @@ class DirectoryList(initDir: File) extends BorderPanel with Observing {
       case MouseClicked(_, _, _, 2, _) => enterDirectory << selection.leadIndex
       case ListSelectionChanged(_, _, _) => selectedIndices() = selection.indices.toSet
       case KeyPressed(_, Key.Enter, _, _) => enterDirectory << selection.leadIndex
+      case KeyPressed(_, Key.BackSpace, _, _) => goToParent << Unit
     }
   }
   add(new ScrollPane(listView), Position.Center)
@@ -73,7 +84,6 @@ class DirectoryList(initDir: File) extends BorderPanel with Observing {
       currentDir() = selectedFile
       listView.selection.indices.clear()
   }
-
 
   observe(currentDir) {
     currentDir => currentDirLabel.text = currentDir.toString
