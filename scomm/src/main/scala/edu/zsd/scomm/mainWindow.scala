@@ -30,7 +30,7 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
       }
     }
 
-    val directoriesPane = new DirectoriesPane()
+    val directoriesPane = new DirectoriesPane("directoriesPane")
 
     contents = new BorderPanel() {
       add(directoriesPane, Position.Center)

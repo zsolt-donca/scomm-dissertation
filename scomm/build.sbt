@@ -14,6 +14,8 @@ libraryDependencies += "scala" % "scala-react_2.10" % "1.1-SNAPSHOT"
 
 libraryDependencies += "junit" % "junit" % "4.11"
 
+libraryDependencies += "org.testng" % "testng" % "6.8.8"
+
 libraryDependencies += "org.easytesting" % "fest-swing" % "1.2.1"
 
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"
