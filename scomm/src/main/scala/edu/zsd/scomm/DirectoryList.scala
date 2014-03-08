@@ -6,7 +6,9 @@ import scala.swing.BorderPanel.Position
 import scala.swing.event.{Key, KeyPressed, ListSelectionChanged, MouseClicked}
 import java.io.File
 
-class DirectoryList(initDir: File) extends BorderPanel with Observing {
+class DirectoryList(componentName : String, initDir: File) extends BorderPanel with Observing {
+
+  name = componentName
 
   // basic events and signals
   val enterDirectory = EventSource[Int]
@@ -57,10 +59,11 @@ class DirectoryList(initDir: File) extends BorderPanel with Observing {
   // components
 
   private[this] val currentDirLabel = new Label("<empty>")
+  currentDirLabel.name = componentName + ".currentDirLabel"
   currentDirLabel.horizontalAlignment = Alignment.Left
   add(currentDirLabel, Position.North)
 
-  private[this] val listView = new ListView[String]() {
+  val listView = new ListView[String]() {
     listenTo(mouse.clicks, selection, keys)
     reactions += {
       case MouseClicked(_, _, _, 2, _) => enterDirectory << selection.leadIndex
