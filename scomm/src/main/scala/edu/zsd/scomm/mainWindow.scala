@@ -6,8 +6,20 @@ import scala.swing._
 import edu.zsd.scomm.domain._
 import scala.swing.BorderPanel.Position
 import javax.swing.JOptionPane
+import java.io.File
 
 object mainWindow extends ReactiveSimpleSwingApplication with Observing {
+
+  var initLeftDir : File = new File("C:\\")
+  var initRightDir : File = new File("D:\\")
+  override def startup(args: Array[String]): Unit = {
+    if (args.length >= 1) {
+      val initDir = new File(args(0))
+      initLeftDir = initDir
+      initRightDir = initDir
+    }
+    super.startup(args)
+  }
 
   override def top: Frame = new MainFrame {
 
@@ -30,7 +42,7 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
       }
     }
 
-    val directoriesPane = new DirectoriesPane("directoriesPane")
+    val directoriesPane = new DirectoriesPane("directoriesPane", initLeftDir, initRightDir)
 
     contents = new BorderPanel() {
       add(directoriesPane, Position.Center)

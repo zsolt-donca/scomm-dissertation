@@ -21,7 +21,7 @@ class DirectoryList(componentName : String, initDir: File) extends BorderPanel w
   val currentDirContents: Signal[Seq[FileEntry]] = Strict {
     val currentDir: File = DirectoryList.this.currentDir()
     val listFiles = currentDir.listFiles()
-    val contents: Seq[FileEntry] = if (listFiles != null) listFiles.map(file => FileEntry(file, file.getName)) else Seq.empty
+    val contents: Seq[FileEntry] = if (listFiles != null) listFiles.map(file => FileEntry(file, file.getName)).sortBy(fileEntry => (fileEntry.file.isFile, fileEntry.name.toLowerCase)) else Seq.empty
     val parentFile: Seq[FileEntry] = if (currentDir.getParentFile != null) Seq(FileEntry(currentDir.getParentFile, "..")) else Seq.empty
     parentFile ++ contents
   }
@@ -72,9 +72,11 @@ class DirectoryList(componentName : String, initDir: File) extends BorderPanel w
       case KeyPressed(_, Key.BackSpace, _, _) => goToParent << Unit
     }
   }
+  listView.name = componentName + ".listView"
   add(new ScrollPane(listView), Position.Center)
 
   private[this] val summaryLabel = new Label("<empty>")
+  summaryLabel.name = componentName + ".summaryLabel"
   summaryLabel.horizontalAlignment = Alignment.Left
   add(summaryLabel, Position.South)
 

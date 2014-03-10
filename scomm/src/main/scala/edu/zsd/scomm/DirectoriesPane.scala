@@ -4,10 +4,11 @@ import scala.swing.{Publisher, Orientation, SplitPane}
 import java.io.File
 import scala.swing.event.{MouseClicked, FocusLost, FocusGained}
 
-class DirectoriesPane(componentName : String) extends SplitPane {
+class DirectoriesPane(componentName : String, initLeftDir : File, initRightDir : File) extends SplitPane {
 
-  val left  = new DirectoryList(componentName + ".leftDirectoryList", new File("C:\\"))
-  val right = new DirectoryList(componentName + ".rightDirectoryList", new File("D:\\"))
+  name = componentName
+  val left  = new DirectoryList(componentName + ".left", initLeftDir)
+  val right = new DirectoryList(componentName + ".right", initRightDir)
   
   leftComponent = left
   rightComponent = right
