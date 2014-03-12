@@ -1,8 +1,7 @@
 package edu.zsd.scomm
 
-import org.fest.swing.fixture.{JListFixture, JLabelFixture}
+import org.fest.swing.fixture.JLabelFixture
 import org.junit.Test
-import org.junit.Assert._
 import edu.zsd.scomm.FESTTest._
 import java.io.File
 import java.awt.event.KeyEvent
@@ -18,35 +17,33 @@ class DirectoriesPaneTest {
   }
 
   def testNavigation(componentName: String) {
-    val list = new JListFixture(robot, componentName + ".listView")
-    val currentDir = new JLabelFixture(robot, componentName + ".currentDirLabel")
-    val summary = new JLabelFixture(robot, componentName + ".summaryLabel")
+    val directoryList: DirectoryListAdapter = new DirectoryListAdapter(componentName)
 
-    currentDir.requireText(testDir)
-    assertEquals(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"), list.contents.toSeq)
+    directoryList.requireCurrentDir(testDir)
+    directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
 
-    list.item("zombie").doubleClick()
+    directoryList.doubleClickListItem("zombie")
 
-    currentDir.requireText(testDir + File.separator + "zombie")
-    assertEquals(Seq("..", "more", "zombies", "here"), list.contents.toSeq)
+    directoryList.requireCurrentDir(testDir + File.separator + "zombie")
+    directoryList.requireContents(Seq("..", "more", "zombies", "here"))
 
-    list.item("..").doubleClick()
-    currentDir.requireText(testDir)
-    assertEquals(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"), list.contents.toSeq)
+    directoryList.doubleClickListItem("..")
+    directoryList.requireCurrentDir(testDir)
+    directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
 
-    list.item("zombie").click()
-    assertEquals(Seq("zombie"), list.selection.toSeq)
+    directoryList.clickListItem("zombie")
+    directoryList.requireSelection(Seq("zombie"))
 
-    list.item("..").click()
+    directoryList.clickListItem("..")
     robot.pressKey(KeyEvent.VK_SHIFT)
-    list.item("xyz").click()
+    directoryList.clickListItem("xyz")
     robot.releaseKey(KeyEvent.VK_SHIFT)
-    assertEquals(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"), list.selection.toSeq)
-    summary.requireText("16 bytes, 3 file(s), 4 folder(s)")
+    directoryList.requireSelection(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+    directoryList.requireSummary("16 bytes, 3 file(s), 4 folder(s)")
 
-    list.item("folder1").click()
-    assertEquals(Seq("folder1"), list.selection.toSeq)
-    summary.requireText("0 bytes, 0 file(s), 1 folder(s)")
+    directoryList.clickListItem("folder1")
+    directoryList.requireSelection(Seq("folder1"))
+    directoryList.requireSummary("0 bytes, 0 file(s), 1 folder(s)")
   }
 }
 
