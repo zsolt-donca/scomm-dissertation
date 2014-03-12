@@ -1,10 +1,8 @@
 package edu.zsd.scomm
 
-import org.fest.swing.fixture.JLabelFixture
 import org.junit.Test
 import edu.zsd.scomm.FESTTest._
 import java.io.File
-import java.awt.event.KeyEvent
 
 class DirectoriesPaneTest {
 
