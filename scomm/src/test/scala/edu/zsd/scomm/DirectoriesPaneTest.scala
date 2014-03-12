@@ -21,7 +21,6 @@ class DirectoriesPaneTest {
     directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
 
     directoryList.enterDirectory("zombie")
-
     directoryList.requireCurrentDir(testDir + File.separator + "zombie")
     directoryList.requireContents(Seq("..", "more", "zombies", "here"))
 
@@ -29,16 +28,17 @@ class DirectoriesPaneTest {
     directoryList.requireCurrentDir(testDir)
     directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
 
-    directoryList.select("zombie")
-    directoryList.requireSelection(Seq("zombie"))
+    directoryList.select("folder1")
+    directoryList.requireSelection(Seq("folder1"))
+    directoryList.requireSummary(folders = 1)
+
+    directoryList.select("a.txt")
+    directoryList.requireSelection(Seq("a.txt"))
+    directoryList.requireSummary(bytes = 3, files = 1)
 
     directoryList.selectRange("..", "xyz")
     directoryList.requireSelection(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
     directoryList.requireSummary(bytes = 16, files = 3, folders = 4)
-
-    directoryList.select("folder1")
-    directoryList.requireSelection(Seq("folder1"))
-    directoryList.requireSummary(bytes = 0, files = 0, folders = 1)
   }
 }
 

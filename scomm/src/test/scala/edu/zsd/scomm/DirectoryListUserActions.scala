@@ -14,7 +14,7 @@ class DirectoryListUserActions(componentName: String) {
 
   def requireSelection(list : Seq[String]) : Unit = directoryListAdapter.requireSelection(list)
 
-  def requireSummary(bytes : Int, files : Int, folders : Int) : Unit = {
+  def requireSummary(bytes  : Int = 0, files : Int = 0, folders : Int = 0) : Unit = {
     directoryListAdapter.requireSummary(s"$bytes bytes, $files file(s), $folders folder(s)")
   }
 
