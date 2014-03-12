@@ -17,33 +17,30 @@ class DirectoriesPaneTest {
   }
 
   def testNavigation(componentName: String) {
-    val directoryList: DirectoryListAdapter = new DirectoryListAdapter(componentName)
+    val directoryList = new DirectoryListUserActions(componentName)
 
     directoryList.requireCurrentDir(testDir)
     directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
 
-    directoryList.doubleClickListItem("zombie")
+    directoryList.enterDirectory("zombie")
 
     directoryList.requireCurrentDir(testDir + File.separator + "zombie")
     directoryList.requireContents(Seq("..", "more", "zombies", "here"))
 
-    directoryList.doubleClickListItem("..")
+    directoryList.enterParentDirectory()
     directoryList.requireCurrentDir(testDir)
     directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
 
-    directoryList.clickListItem("zombie")
+    directoryList.select("zombie")
     directoryList.requireSelection(Seq("zombie"))
 
-    directoryList.clickListItem("..")
-    robot.pressKey(KeyEvent.VK_SHIFT)
-    directoryList.clickListItem("xyz")
-    robot.releaseKey(KeyEvent.VK_SHIFT)
+    directoryList.selectRange("..", "xyz")
     directoryList.requireSelection(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
-    directoryList.requireSummary("16 bytes, 3 file(s), 4 folder(s)")
+    directoryList.requireSummary(bytes = 16, files = 3, folders = 4)
 
-    directoryList.clickListItem("folder1")
+    directoryList.select("folder1")
     directoryList.requireSelection(Seq("folder1"))
-    directoryList.requireSummary("0 bytes, 0 file(s), 1 folder(s)")
+    directoryList.requireSummary(bytes = 0, files = 0, folders = 1)
   }
 }
 
