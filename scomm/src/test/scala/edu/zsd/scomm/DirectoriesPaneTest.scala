@@ -3,16 +3,36 @@ package edu.zsd.scomm
 import org.junit.Test
 import edu.zsd.scomm.FESTTest._
 import java.io.File
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.junit.runner.RunWith
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.context.annotation.Configuration
+import org.fest.swing.annotation.GUITest
 
+@GUITest
+//@RunWith(classOf[SpringJUnit4ClassRunner])
+//@ContextConfiguration(classes = Array(classOf[SpringConfig]))
 class DirectoriesPaneTest {
 
   val componentName: String = "directoriesPane"
 
   @Test
-  def testNavigation(): Unit = {
+  def testNavigationLeft(): Unit = {
     testNavigation(componentName + ".left")
+  }
+
+  @Test
+  def testNavigationRight(): Unit = {
     testNavigation(componentName + ".right")
   }
+
+  @Test
+  def testSomething() : Unit = {
+    println("tralla")
+    f()
+  }
+
+  def f() = println("hoho")
 
   def testNavigation(componentName: String) {
     val directoryList = new DirectoryListUserActions(componentName)

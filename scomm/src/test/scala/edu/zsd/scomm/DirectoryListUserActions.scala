@@ -1,9 +1,10 @@
 package edu.zsd.scomm
 
-import org.junit.Assert._
 import edu.zsd.scomm.FESTTest._
 import java.awt.event.KeyEvent
+import edu.zsd.testfw.GUITestBean
 
+@GUITestBean
 class DirectoryListUserActions(componentName: String) {
 
   private [this] val directoryListAdapter = new DirectoryListAdapter(componentName)

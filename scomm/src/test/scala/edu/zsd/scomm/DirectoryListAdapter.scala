@@ -3,7 +3,9 @@ package edu.zsd.scomm
 import org.fest.swing.fixture.{JLabelFixture, JListFixture}
 import edu.zsd.scomm.FESTTest._
 import org.junit.Assert._
+import edu.zsd.testfw.GUITestBean
 
+@GUITestBean
 class DirectoryListAdapter(componentName: String) {
 
   private[this] val list = new JListFixture(robot, componentName + ".listView")
