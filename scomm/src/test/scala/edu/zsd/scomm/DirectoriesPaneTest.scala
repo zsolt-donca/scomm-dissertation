@@ -18,40 +18,40 @@ class DirectoriesPaneTest {
 
   @Test
   def testSimpleList() {
-    val directoryList = new DirectoriesPaneUserActions
+    val directoriesPane = new DirectoriesPaneUserActions
 
-    directoryList.left.requireCurrentDir(testDir)
-    directoryList.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+    directoriesPane.left.requireCurrentDir(testDir)
+    directoriesPane.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
   }
 
   @Test
   def testEnterDirectory() {
-    val directoryList = new DirectoriesPaneUserActions
+    val directoriesPane = new DirectoriesPaneUserActions
 
-    directoryList.left.enterDirectory("zombie")
-    directoryList.left.requireCurrentDir(testDir + File.separator + "zombie")
-    directoryList.left.requireContents(Seq("..", "more", "zombies", "here"))
+    directoriesPane.left.enterDirectory("zombie")
+    directoriesPane.left.requireCurrentDir(testDir + File.separator + "zombie")
+    directoriesPane.left.requireContents(Seq("..", "more", "zombies", "here"))
 
-    directoryList.left.enterParentDirectory()
-    directoryList.left.requireCurrentDir(testDir)
-    directoryList.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+    directoriesPane.left.enterParentDirectory()
+    directoriesPane.left.requireCurrentDir(testDir)
+    directoriesPane.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
   }
 
   @Test
   def testSelection() {
-    val directoryList = new DirectoriesPaneUserActions
+    val directoriesPane = new DirectoriesPaneUserActions
 
-    directoryList.left.select("folder1")
-    directoryList.left.requireSelection(Seq("folder1"))
-    directoryList.left.requireSummary(folders = 1)
+    directoriesPane.left.select("folder1")
+    directoriesPane.left.requireSelection(Seq("folder1"))
+    directoriesPane.left.requireSummary(folders = 1)
 
-    directoryList.left.select("a.txt")
-    directoryList.left.requireSelection(Seq("a.txt"))
-    directoryList.left.requireSummary(bytes = 3, files = 1)
+    directoriesPane.left.select("a.txt")
+    directoriesPane.left.requireSelection(Seq("a.txt"))
+    directoriesPane.left.requireSummary(bytes = 3, files = 1)
 
-    directoryList.left.selectRange("..", "xyz")
-    directoryList.left.requireSelection(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
-    directoryList.left.requireSummary(bytes = 16, files = 3, folders = 4)
+    directoriesPane.left.selectRange("..", "xyz")
+    directoriesPane.left.requireSelection(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+    directoriesPane.left.requireSummary(bytes = 16, files = 3, folders = 4)
   }
 }
 
