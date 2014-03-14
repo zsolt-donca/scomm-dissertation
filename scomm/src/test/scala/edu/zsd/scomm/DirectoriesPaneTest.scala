@@ -8,6 +8,7 @@ import org.junit.runner.RunWith
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.context.annotation.Configuration
 import org.fest.swing.annotation.GUITest
+import org.junit.Assert._
 
 @GUITest
 //@RunWith(classOf[SpringJUnit4ClassRunner])
@@ -32,7 +33,7 @@ class DirectoriesPaneTest {
     f()
   }
 
-  def f() = println("hoho")
+  def f() = fail("hoho")
 
   def testNavigation(componentName: String) {
     val directoryList = new DirectoryListUserActions(componentName)

@@ -10,16 +10,26 @@ class LoggingAspect {
   @Pointcut("execution(@org.junit.Test * *.*(..))")
   def testMethod() : Unit = {}
 
-  @Pointcut("execution(* (@org.fest.swing.annotation.GUITest *).*(..))")
-  def guiTestMethods() : Unit = {}
+  @Pointcut("execution(* (@edu.zsd.testfw.GUITestBean *).*(..))")
+  def guiTestBeanMethods() : Unit = {}
 
-  @Around("testMethod() || guiTestMethods()")
+  @Around("testMethod()")
   def aroundTestMethods(joinPoint : ProceedingJoinPoint) : AnyRef = {
-    println("Invoking test method with signature: " + joinPoint.getSignature)
+    println("Test started!")
     try {
       joinPoint.proceed()
+    } catch {
+      case e : Throwable =>
+        println("test failed..... taking screenshot or something")
+        throw e
     } finally {
-      println("Test method invocation done.")
+      println("Test logged.")
     }
+  }
+
+  @Around("guiTestBeanMethods()")
+  def loggingGuiTestMethod(joinPoint : ProceedingJoinPoint) {
+    println("gui test bean method invoked with: " + joinPoint)
+    joinPoint.proceed()
   }
 }
