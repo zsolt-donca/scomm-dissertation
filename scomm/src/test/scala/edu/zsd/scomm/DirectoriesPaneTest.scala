@@ -3,63 +3,55 @@ package edu.zsd.scomm
 import org.junit.Test
 import edu.zsd.scomm.FESTTest._
 import java.io.File
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.junit.runner.RunWith
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.context.annotation.Configuration
 import org.fest.swing.annotation.GUITest
 import org.junit.Assert._
+import edu.zsd.scomm.useractions.DirectoriesPaneUserActions
 
 @GUITest
-//@RunWith(classOf[SpringJUnit4ClassRunner])
-//@ContextConfiguration(classes = Array(classOf[SpringConfig]))
 class DirectoriesPaneTest {
 
-  val componentName: String = "directoriesPane"
-
   @Test
-  def testNavigationLeft(): Unit = {
-    testNavigation(componentName + ".left")
-  }
-
-  @Test
-  def testNavigationRight(): Unit = {
-    testNavigation(componentName + ".right")
-  }
-
-  @Test
-  def testSomething() : Unit = {
+  def testThatFails(): Unit = {
     println("tralla")
-    f()
+    fail("hoho")
   }
 
-  def f() = fail("hoho")
+  @Test
+  def testSimpleList() {
+    val directoryList = new DirectoriesPaneUserActions
 
-  def testNavigation(componentName: String) {
-    val directoryList = new DirectoryListUserActions(componentName)
+    directoryList.left.requireCurrentDir(testDir)
+    directoryList.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+  }
 
-    directoryList.requireCurrentDir(testDir)
-    directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+  @Test
+  def testEnterDirectory() {
+    val directoryList = new DirectoriesPaneUserActions
 
-    directoryList.enterDirectory("zombie")
-    directoryList.requireCurrentDir(testDir + File.separator + "zombie")
-    directoryList.requireContents(Seq("..", "more", "zombies", "here"))
+    directoryList.left.enterDirectory("zombie")
+    directoryList.left.requireCurrentDir(testDir + File.separator + "zombie")
+    directoryList.left.requireContents(Seq("..", "more", "zombies", "here"))
 
-    directoryList.enterParentDirectory()
-    directoryList.requireCurrentDir(testDir)
-    directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+    directoryList.left.enterParentDirectory()
+    directoryList.left.requireCurrentDir(testDir)
+    directoryList.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+  }
 
-    directoryList.select("folder1")
-    directoryList.requireSelection(Seq("folder1"))
-    directoryList.requireSummary(folders = 1)
+  @Test
+  def testSelection() {
+    val directoryList = new DirectoriesPaneUserActions
 
-    directoryList.select("a.txt")
-    directoryList.requireSelection(Seq("a.txt"))
-    directoryList.requireSummary(bytes = 3, files = 1)
+    directoryList.left.select("folder1")
+    directoryList.left.requireSelection(Seq("folder1"))
+    directoryList.left.requireSummary(folders = 1)
 
-    directoryList.selectRange("..", "xyz")
-    directoryList.requireSelection(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
-    directoryList.requireSummary(bytes = 16, files = 3, folders = 4)
+    directoryList.left.select("a.txt")
+    directoryList.left.requireSelection(Seq("a.txt"))
+    directoryList.left.requireSummary(bytes = 3, files = 1)
+
+    directoryList.left.selectRange("..", "xyz")
+    directoryList.left.requireSelection(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+    directoryList.left.requireSummary(bytes = 16, files = 3, folders = 4)
   }
 }
 

@@ -1,4 +1,4 @@
-package edu.zsd.scomm
+package edu.zsd.scomm.adapters
 
 import org.fest.swing.fixture.{JLabelFixture, JListFixture}
 import edu.zsd.scomm.FESTTest._

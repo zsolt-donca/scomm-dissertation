@@ -28,7 +28,7 @@ class LoggingAspect {
   }
 
   @Around("guiTestBeanMethods()")
-  def loggingGuiTestMethod(joinPoint : ProceedingJoinPoint) {
+  def loggingGuiTestMethod(joinPoint : ProceedingJoinPoint) : AnyRef = {
     println("gui test bean method invoked with: " + joinPoint)
     joinPoint.proceed()
   }

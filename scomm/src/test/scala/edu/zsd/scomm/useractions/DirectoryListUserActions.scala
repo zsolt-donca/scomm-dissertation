@@ -1,8 +1,9 @@
-package edu.zsd.scomm
+package edu.zsd.scomm.useractions
 
 import edu.zsd.scomm.FESTTest._
 import java.awt.event.KeyEvent
 import edu.zsd.testfw.GUITestBean
+import edu.zsd.scomm.adapters.DirectoryListAdapter
 
 @GUITestBean
 class DirectoryListUserActions(componentName: String) {
