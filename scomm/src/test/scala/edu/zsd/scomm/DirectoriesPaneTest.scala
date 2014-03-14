@@ -5,7 +5,6 @@ import edu.zsd.scomm.FESTTest._
 import java.io.File
 import org.fest.swing.annotation.GUITest
 import org.junit.Assert._
-import edu.zsd.scomm.useractions.DirectoriesPaneUserActions
 
 @GUITest
 class DirectoriesPaneTest {
@@ -18,16 +17,13 @@ class DirectoriesPaneTest {
 
   @Test
   def testSimpleList() {
-    val directoriesPane = new DirectoriesPaneUserActions
-
     directoriesPane.left.requireCurrentDir(testDir)
     directoriesPane.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
   }
 
   @Test
   def testEnterDirectory() {
-    val directoriesPane = new DirectoriesPaneUserActions
-
+    directoriesPane.left.requireCurrentDir(testDir)
     directoriesPane.left.enterDirectory("zombie")
     directoriesPane.left.requireCurrentDir(testDir + File.separator + "zombie")
     directoriesPane.left.requireContents(Seq("..", "more", "zombies", "here"))
@@ -38,9 +34,16 @@ class DirectoriesPaneTest {
   }
 
   @Test
-  def testSelection() {
-    val directoriesPane = new DirectoriesPaneUserActions
+  def testEnterEmptyList() {
+    directoriesPane.left.requireCurrentDir(testDir)
+    directoriesPane.left.enterDirectory("troll")
+    directoriesPane.left.requireCurrentDir(testDir + File.separator + "troll")
+    directoriesPane.left.requireContents(Seq(".."))
+    directoriesPane.left.enterParentDirectory()
+  }
 
+  @Test
+  def testSelection() {
     directoriesPane.left.select("folder1")
     directoriesPane.left.requireSelection(Seq("folder1"))
     directoriesPane.left.requireSummary(folders = 1)
