@@ -21,7 +21,7 @@ object ExecutionPrinter {
       </args>
     }}<result>
       {execution.result match {
-        case ReturnResult(result) => if (result != null) <return-result>{result}</return-result>
+        case ReturnResult(result) => <return-result>{result}</return-result>
         case ExceptionResult(exception) => <exception-result>{exception}</exception-result>
       }}
     </result>
