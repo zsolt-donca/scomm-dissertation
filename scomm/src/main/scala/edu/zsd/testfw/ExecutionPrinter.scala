@@ -16,9 +16,7 @@ object ExecutionPrinter {
     <execution>
       <join-point>{execution.joinPoint}</join-point>
       {if (args.nonEmpty) {
-      <args>
-        {args.map(arg => <arg>{arg}</arg>)}
-      </args>
+      <args>{args}</args>
     }}<result>
       {execution.result match {
         case ReturnResult(result) => <return-result>{result}</return-result>
