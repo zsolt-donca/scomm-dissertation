@@ -1,35 +1,52 @@
 package edu.zsd.testfw
 
-import org.aspectj.lang.annotation.{Before, Around, Pointcut, Aspect}
 import org.aspectj.lang.ProceedingJoinPoint
-
+import org.aspectj.lang.annotation.{Around, Aspect, Pointcut}
+import scala.xml.PrettyPrinter
 
 @Aspect
 class LoggingAspect {
 
   @Pointcut("execution(@org.junit.Test * *.*(..))")
-  def testMethod() : Unit = {}
+  def testMethod() {}
 
   @Pointcut("execution(* (@edu.zsd.testfw.GUITestBean *).*(..))")
-  def guiTestBeanMethods() : Unit = {}
+  def guiTestBeanMethods() {}
+
+  @Pointcut("execution(public * org.fest.swing.core.BasicRobot.*(..))")
+  def robotMethods() {}
 
   @Around("testMethod()")
-  def aroundTestMethods(joinPoint : ProceedingJoinPoint) : AnyRef = {
+  def aroundTestMethods(joinPoint: ProceedingJoinPoint): AnyRef = {
     println("Test started!")
     try {
       joinPoint.proceed()
     } catch {
-      case e : Throwable =>
+      case e: Throwable =>
         println("test failed..... taking screenshot or something")
         throw e
     } finally {
-      println("Test logged.")
+      val result: Option[Execution] = MethodStack.result
+      println("Test logged. Result execution: " + result)
+
+      result match {
+        case Some(execution) =>
+          ExecutionPrinter.print(execution)
+      }
     }
   }
 
-  @Around("guiTestBeanMethods()")
-  def loggingGuiTestMethod(joinPoint : ProceedingJoinPoint) : AnyRef = {
-    println("gui test bean method invoked with: " + joinPoint)
-    joinPoint.proceed()
+  @Around("testMethod() || guiTestBeanMethods()")
+  def loggingTestAction(joinPoint: ProceedingJoinPoint): AnyRef = {
+    MethodStack.enter(joinPoint)
+    try {
+      val result: AnyRef = joinPoint.proceed()
+      MethodStack.exit(joinPoint, result)
+      result
+    } catch {
+      case e: Throwable =>
+        MethodStack.exit(joinPoint, e)
+        throw e
+    }
   }
 }

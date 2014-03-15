@@ -6,7 +6,7 @@ import org.junit.Assert._
 import edu.zsd.testfw.GUITestBean
 
 @GUITestBean
-class DirectoryListAdapter(componentName: String) {
+case class DirectoryListAdapter(componentName: String) {
 
   private[this] val list = new JListFixture(robot, componentName + ".listView")
   private[this] val currentDir = new JLabelFixture(robot, componentName + ".currentDirLabel")

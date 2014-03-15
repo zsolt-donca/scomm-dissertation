@@ -6,7 +6,7 @@ import edu.zsd.testfw.GUITestBean
 import edu.zsd.scomm.adapters.DirectoryListAdapter
 
 @GUITestBean
-class DirectoryListUserActions(componentName: String) {
+case class DirectoryListUserActions(componentName: String) {
 
   private [this] val directoryListAdapter = new DirectoryListAdapter(componentName)
 

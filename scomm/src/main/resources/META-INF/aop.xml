@@ -9,6 +9,7 @@
 
     <weaver options="-XnoInline -verbose">
         <include within="edu.zsd..*"/>
+        <include within="org.fest.swing..*"/>
     </weaver>
 
 </aspectj>
