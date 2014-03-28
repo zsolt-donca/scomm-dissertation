@@ -1,14 +1,6 @@
 /**
  * Created by Zsolt on 3/17/14.
  */
-function loadXMLDoc(filename)
-{
-    var xhttp=new XMLHttpRequest();
-    xhttp.open("GET",filename,false);
-    xhttp.send();
-    return xhttp.responseXML;
-}
-
 var executionNodes = [];
 
 function pushNode(parentId, call, args, result) {
@@ -38,37 +30,30 @@ function buildExecutions(parentId, execution) {
     }
 }
 
-function pad(num, size) {
-    var s = "000000000" + num;
-    return s.substr(s.length - size);
-}
-
-for (var reportIndex = 0; ; reportIndex++) {
-    var xml = loadXMLDoc("report_" + pad(reportIndex, 4) + ".xml");
-    if (xml == null) {
-        break;
-    }
+function addReport(xml) {
+    var from = executionNodes.length;
     buildExecutions(-1, xml.documentElement);
-}
+    var to = executionNodes.length;
+    var table = document.getElementById("example-basic-expandable");
 
-var table = document.getElementById("example-basic-expandable");
-for (var i = 0; i < executionNodes.length; i++) {
-    var executionNode = executionNodes[i];
+    for (var i = from ; i < to; i++) {
+        var executionNode = executionNodes[i];
 
-    var row = table.insertRow(-1);
-    row.setAttribute("data-tt-id", executionNode.nodeId);
-    if (executionNode.parentNodeId >= 0) {
-        row.setAttribute("data-tt-parent-id", executionNode.parentNodeId);
+        var row = table.insertRow(-1);
+        row.setAttribute("data-tt-id", executionNode.nodeId);
+        if (executionNode.parentNodeId >= 0) {
+            row.setAttribute("data-tt-parent-id", executionNode.parentNodeId);
+        }
+
+        var callCell = row.insertCell(0);
+        callCell.innerHTML = executionNode.call;
+
+        var argCell = row.insertCell(1);
+        argCell.innerHTML = executionNode.args;
+
+        var resultCell = row.insertCell(2);
+        resultCell.innerHTML = executionNode.result;
     }
-
-    var callCell = row.insertCell(0);
-    callCell.innerHTML = executionNode.call;
-
-    var argCell = row.insertCell(1);
-    argCell.innerHTML = executionNode.args;
-
-    var resultCell = row.insertCell(2);
-    resultCell.innerHTML = executionNode.result;
 }
 
 $("#example-basic-expandable").treetable({ expandable: true });

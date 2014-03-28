@@ -7,6 +7,7 @@
     <link href="thirdparty/jquery.treetable.css" rel="stylesheet" type="text/css"/>
     <link href="thirdparty/jquery.treetable.theme.default.css" rel="stylesheet" type="text/css"/>
     <script src="thirdparty/jquery.treetable.js"></script>
+    <link href="report.css" rel="stylesheet" type="text/css"/>
 
     <style>
         table, th, td {
@@ -32,11 +33,19 @@
 
         // files is a FileList of File objects. List some properties.
         var output = [];
-        for (var i = 0, f; f = files[i]; i++) {
+        for (var i = 0, file; file = files[i]; i++) {
 
-            output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
-                    f.size, ' bytes, last modified: ',
-                    f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var parser=new DOMParser();
+                var xmlDoc = parser.parseFromString(e.target.result, "text/xml");
+                addReport(xmlDoc);
+            };
+            reader.readAsText(file);
+
+            output.push('<li><strong>', escape(file.name), '</strong> (', file.type || 'n/a', ') - ',
+                    file.size, ' bytes, last modified: ',
+                    file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : 'n/a',
                     '</li>');
         }
         document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
@@ -60,20 +69,6 @@
         <th>Arguments</th>
         <th>Results</th>
     </tr>
-
-<!--
-    <tr data-tt-id="0">
-        <td>app</td>
-        <td>arg</td>
-        <td>res1</td>
-    </tr>
-    <tr data-tt-id="1" data-tt-parent-id="0">
-        <td>controllers</td>
-        <td>arg</td>
-        <td>res1</td>
-    </tr>
--->
-
 </table>
 
 <script src="report.js"></script>

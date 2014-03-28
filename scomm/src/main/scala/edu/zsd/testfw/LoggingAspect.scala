@@ -28,7 +28,7 @@ class LoggingAspect {
         println("test failed..... taking screenshot or something")
         throw e
     } finally {
-      val result: Option[Execution] = MethodStack.result
+      val result: Option[Execution] = MethodCallStack.result
       println("Test logged. Result execution: " + result)
       
       result match {
@@ -42,14 +42,14 @@ class LoggingAspect {
 
   @Around("testMethod() || guiTestBeanMethods()")
   def loggingTestAction(joinPoint: ProceedingJoinPoint): AnyRef = {
-    MethodStack.enter(joinPoint)
+    MethodCallStack.enter(joinPoint)
     try {
       val result: AnyRef = joinPoint.proceed()
-      MethodStack.exit(joinPoint, result)
+      MethodCallStack.exit(joinPoint, result)
       result
     } catch {
       case e: Throwable =>
-        MethodStack.exit(joinPoint, e)
+        MethodCallStack.exit(joinPoint, e)
         throw e
     }
   }

@@ -5,7 +5,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 
-object MethodStack {
+object MethodCallStack {
 
   private[this] val executions: mutable.Stack[mutable.Buffer[Execution]] = mutable.Stack()
 
