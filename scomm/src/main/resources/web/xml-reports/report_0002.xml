@@ -1,0 +1,135 @@
+<execution>
+  <join-point>execution(void edu.zsd.scomm.DirectoriesPaneTest.testSelection())</join-point>
+  <args></args>
+  <return-result></return-result>
+  <invocations>
+    <execution>
+      <join-point>execution(void edu.zsd.scomm.useractions.DirectoryListUserActions.select(String))</join-point>
+      <args>folder1</args>
+      <return-result></return-result>
+      <invocations>
+        <execution>
+          <join-point>execution(void edu.zsd.scomm.adapters.DirectoryListAdapter.clickListItem(String))</join-point>
+          <args>folder1</args>
+          <return-result></return-result>
+        </execution>
+      </invocations>
+    </execution>
+    <execution>
+      <join-point>execution(void edu.zsd.scomm.useractions.DirectoryListUserActions.requireSelection(Seq))</join-point>
+      <args>folder1</args>
+      <return-result></return-result>
+      <invocations>
+        <execution>
+          <join-point>execution(void edu.zsd.scomm.adapters.DirectoryListAdapter.requireSelection(Seq))</join-point>
+          <args>folder1</args>
+          <return-result></return-result>
+        </execution>
+      </invocations>
+    </execution>
+    <execution>
+      <join-point>execution(int edu.zsd.scomm.useractions.DirectoryListUserActions.requireSummary$default$1())</join-point>
+      <args></args>
+      <return-result>0</return-result>
+    </execution>
+    <execution>
+      <join-point>execution(int edu.zsd.scomm.useractions.DirectoryListUserActions.requireSummary$default$2())</join-point>
+      <args></args>
+      <return-result>0</return-result>
+    </execution>
+    <execution>
+      <join-point>execution(void edu.zsd.scomm.useractions.DirectoryListUserActions.requireSummary(int, int, int))</join-point>
+      <args>0 0 1</args>
+      <return-result></return-result>
+      <invocations>
+        <execution>
+          <join-point>execution(void edu.zsd.scomm.adapters.DirectoryListAdapter.requireSummary(String))</join-point>
+          <args>0 bytes, 0 file(s), 1 folder(s)</args>
+          <return-result></return-result>
+        </execution>
+      </invocations>
+    </execution>
+    <execution>
+      <join-point>execution(void edu.zsd.scomm.useractions.DirectoryListUserActions.select(String))</join-point>
+      <args>a.txt</args>
+      <return-result></return-result>
+      <invocations>
+        <execution>
+          <join-point>execution(void edu.zsd.scomm.adapters.DirectoryListAdapter.clickListItem(String))</join-point>
+          <args>a.txt</args>
+          <return-result></return-result>
+        </execution>
+      </invocations>
+    </execution>
+    <execution>
+      <join-point>execution(void edu.zsd.scomm.useractions.DirectoryListUserActions.requireSelection(Seq))</join-point>
+      <args>a.txt</args>
+      <return-result></return-result>
+      <invocations>
+        <execution>
+          <join-point>execution(void edu.zsd.scomm.adapters.DirectoryListAdapter.requireSelection(Seq))</join-point>
+          <args>a.txt</args>
+          <return-result></return-result>
+        </execution>
+      </invocations>
+    </execution>
+    <execution>
+      <join-point>execution(int edu.zsd.scomm.useractions.DirectoryListUserActions.requireSummary$default$3())</join-point>
+      <args></args>
+      <return-result>0</return-result>
+    </execution>
+    <execution>
+      <join-point>execution(void edu.zsd.scomm.useractions.DirectoryListUserActions.requireSummary(int, int, int))</join-point>
+      <args>3 1 0</args>
+      <return-result></return-result>
+      <invocations>
+        <execution>
+          <join-point>execution(void edu.zsd.scomm.adapters.DirectoryListAdapter.requireSummary(String))</join-point>
+          <args>3 bytes, 1 file(s), 0 folder(s)</args>
+          <return-result></return-result>
+        </execution>
+      </invocations>
+    </execution>
+    <execution>
+      <join-point>execution(void edu.zsd.scomm.useractions.DirectoryListUserActions.selectRange(String, String))</join-point>
+      <args>.. xyz</args>
+      <return-result></return-result>
+      <invocations>
+        <execution>
+          <join-point>execution(void edu.zsd.scomm.adapters.DirectoryListAdapter.clickListItem(String))</join-point>
+          <args>..</args>
+          <return-result></return-result>
+        </execution>
+        <execution>
+          <join-point>execution(void edu.zsd.scomm.adapters.DirectoryListAdapter.clickListItem(String))</join-point>
+          <args>xyz</args>
+          <return-result></return-result>
+        </execution>
+      </invocations>
+    </execution>
+    <execution>
+      <join-point>execution(void edu.zsd.scomm.useractions.DirectoryListUserActions.requireSelection(Seq))</join-point>
+      <args>.. folder1 troll zombie a.txt b xyz</args>
+      <return-result></return-result>
+      <invocations>
+        <execution>
+          <join-point>execution(void edu.zsd.scomm.adapters.DirectoryListAdapter.requireSelection(Seq))</join-point>
+          <args>.. folder1 troll zombie a.txt b xyz</args>
+          <return-result></return-result>
+        </execution>
+      </invocations>
+    </execution>
+    <execution>
+      <join-point>execution(void edu.zsd.scomm.useractions.DirectoryListUserActions.requireSummary(int, int, int))</join-point>
+      <args>16 3 4</args>
+      <return-result></return-result>
+      <invocations>
+        <execution>
+          <join-point>execution(void edu.zsd.scomm.adapters.DirectoryListAdapter.requireSummary(String))</join-point>
+          <args>16 bytes, 3 file(s), 4 folder(s)</args>
+          <return-result></return-result>
+        </execution>
+      </invocations>
+    </execution>
+  </invocations>
+</execution>

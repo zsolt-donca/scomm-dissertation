@@ -1,0 +1,5 @@
+<execution>
+  <join-point>execution(void edu.zsd.scomm.DirectoriesPaneTest.testThatFails())</join-point>
+  <args></args>
+  <exception-result>java.lang.AssertionError: hoho</exception-result>
+</execution>

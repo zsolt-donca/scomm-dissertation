@@ -7,6 +7,8 @@ import scala.xml.PrettyPrinter
 @Aspect
 class LoggingAspect {
 
+  var tests = 0
+
   @Pointcut("execution(@org.junit.Test * *.*(..))")
   def testMethod() {}
 
@@ -28,10 +30,12 @@ class LoggingAspect {
     } finally {
       val result: Option[Execution] = MethodStack.result
       println("Test logged. Result execution: " + result)
-
+      
       result match {
         case Some(execution) =>
-          ExecutionPrinter.print(execution)
+          val filename = f"report_$tests%04d.xml"
+          tests += 1
+          XmlExecutionPrinter.printToFile(filename, execution)
       }
     }
   }

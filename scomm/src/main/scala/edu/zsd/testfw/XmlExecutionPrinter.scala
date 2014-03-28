@@ -1,12 +1,23 @@
 package edu.zsd.testfw
 
 import scala.xml.{Node, PrettyPrinter}
+import java.io.{File, PrintWriter}
 
 object XmlExecutionPrinter {
-  def print(execution: Execution): Unit = {
+  def printToFile(filename : String, execution: Execution): Unit = {
 
-    val printer = new PrettyPrinter(160, 2)
-    println(printer.format(toXml(execution)))
+    val xmlReportsDir: File = new File("./scala-2.10/classes/web/xml-reports")
+    xmlReportsDir.mkdirs()
+
+    val printWriter = new PrintWriter(new File(xmlReportsDir, filename))
+    try {
+      val prettyPrinter = new PrettyPrinter(160, 2)
+      val xml: Node = toXml(execution)
+      val xmlString: String = prettyPrinter.format(xml)
+      printWriter.write(xmlString)
+    } finally {
+      printWriter.close()
+    }
   }
 
   def toXml(execution: Execution): Node = {
@@ -15,19 +26,16 @@ object XmlExecutionPrinter {
 
     <execution>
       <join-point>{execution.joinPoint}</join-point>
-      {if (args.nonEmpty) {
       <args>{args}</args>
-    }}<result>
       {execution.result match {
         case ReturnResult(result) => <return-result>{result}</return-result>
         case ExceptionResult(exception) => <exception-result>{exception}</exception-result>
       }}
-    </result>
-    {if (execution.invocations.nonEmpty) {
-      <invocations>
-        {execution.invocations.map(invocation => toXml(invocation))}
-      </invocations>
-    }}
+      {if (execution.invocations.nonEmpty) {
+        <invocations>
+          {execution.invocations.map(invocation => toXml(invocation))}
+        </invocations>
+      }}
     </execution>
   }
 
