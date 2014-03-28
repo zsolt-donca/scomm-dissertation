@@ -2,7 +2,7 @@ package edu.zsd.testfw
 
 import scala.xml.{Node, PrettyPrinter}
 
-object ExecutionPrinter {
+object XmlExecutionPrinter {
   def print(execution: Execution): Unit = {
 
     val printer = new PrettyPrinter(160, 2)
