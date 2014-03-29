@@ -1,6 +1,14 @@
 /**
  * Created by Zsolt on 3/17/14.
  */
+function loadXMLDoc(filename)
+{
+    var xhttp=new XMLHttpRequest();
+    xhttp.open("GET",filename,false);
+    xhttp.send();
+    return xhttp.responseXML;
+}
+
 var executionNodes = [];
 
 function pushNode(parentId, call, args, result) {
@@ -30,12 +38,26 @@ function buildExecutions(parentId, execution) {
     }
 }
 
+//function pad(num, size) {
+//    var s = "000000000" + num;
+//    return s.substr(s.length - size);
+//}
+//
+//for (var reportIndex = 0; ; reportIndex++) {
+//    var xml = loadXMLDoc("xml-reports/report_" + pad(reportIndex, 4) + ".xml");
+//    if (xml == null) {
+//        break;
+//    }
+//    addReport(xml);
+//}
+
 function addReport(xml) {
     var from = executionNodes.length;
     buildExecutions(-1, xml.documentElement);
     var to = executionNodes.length;
     var table = document.getElementById("example-basic-expandable");
 
+    var rows = [];
     for (var i = from ; i < to; i++) {
         var executionNode = executionNodes[i];
 
@@ -53,7 +75,10 @@ function addReport(xml) {
 
         var resultCell = row.insertCell(2);
         resultCell.innerHTML = executionNode.result;
+
+        rows.push(row);
     }
+    $("#example-basic-expandable").treetable('loadBranch', null, rows);
 }
 
 $("#example-basic-expandable").treetable({ expandable: true });
