@@ -55,30 +55,35 @@ function addReport(xml) {
     var from = executionNodes.length;
     buildExecutions(-1, xml.documentElement);
     var to = executionNodes.length;
-    var table = document.getElementById("example-basic-expandable");
+    var tableComponent = document.getElementById("example-basic-expandable");
 
     var rows = [];
     for (var i = from ; i < to; i++) {
         var executionNode = executionNodes[i];
 
-        var row = table.insertRow(-1);
+        var row = document.createElement('tr');/* tableComponent.insertRow(-1);*/
         row.setAttribute("data-tt-id", executionNode.nodeId);
         if (executionNode.parentNodeId >= 0) {
             row.setAttribute("data-tt-parent-id", executionNode.parentNodeId);
         }
 
-        var callCell = row.insertCell(0);
+        var callCell = document.createElement('td');
+        row.appendChild(callCell);
         callCell.innerHTML = executionNode.call;
 
-        var argCell = row.insertCell(1);
+        var argCell = document.createElement('td');
+        row.appendChild(callCell);
         argCell.innerHTML = executionNode.args;
 
-        var resultCell = row.insertCell(2);
+        var resultCell = document.createElement('td');
+        row.appendChild(callCell);
         resultCell.innerHTML = executionNode.result;
 
         rows.push(row);
     }
-    $("#example-basic-expandable").treetable('loadBranch', null, rows);
+    var table = $("#example-basic-expandable");
+    table.treetable('loadBranch', null, rows);
+    table.treetable('collapseAll');
 }
 
 $("#example-basic-expandable").treetable({ expandable: true });
