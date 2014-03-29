@@ -12,15 +12,15 @@ object MethodCallStack {
 
   private[this] val executions: mutable.Stack[RunningExecution] = mutable.Stack()
 
-  def enterTest() {
+  def enterTest() : Unit = {
     require(executions.isEmpty)
     executions.push(new RunningExecution)
-  }
+  } ensuring executions.nonEmpty
 
-  def enter() {
+  def enter() : Unit = {
     require(executions.nonEmpty)
     executions.push(new RunningExecution)
-  }
+  } ensuring executions.nonEmpty
 
   def exit(joinPoint: JoinPoint, result: AnyRef) : Unit = {
     val option: Option[Execution] = exit(joinPoint, ReturnResult(result))
@@ -53,6 +53,7 @@ object MethodCallStack {
 
   private[this] def exit(method : Method, args : Array[AnyRef], result: Result) : Option[Execution] = {
 
+    require(executions.nonEmpty)
     val runningExecution: RunningExecution = executions.pop()
     val execution = Execution(method, args, runningExecution.startTime, Platform.currentTime, runningExecution.invocations, result)
 
