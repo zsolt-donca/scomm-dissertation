@@ -61,8 +61,9 @@ function addReport(xml) {
     }
     var table = $("#example-basic-expandable");
     table.treetable('loadBranch', null, rows);
-    table.treetable('expandNode', from);
-    table.treetable('collapseNode', from);
+    var nodeId = executionNodes[from].nodeId;
+    table.treetable('expandNode', nodeId);
+    table.treetable('collapseNode', nodeId);
 }
 
 $("#example-basic-expandable").treetable({ expandable: true });
