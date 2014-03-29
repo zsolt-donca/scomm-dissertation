@@ -2,19 +2,18 @@ package edu.zsd.testfw
 
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.{Around, Aspect, Pointcut}
-import scala.xml.PrettyPrinter
 
 @Aspect
 class LoggingAspect {
 
   @Pointcut("execution(@org.junit.Test * *.*(..))")
-  def testMethod() {}
+  def testMethods() {}
 
   @Pointcut("execution(@org.junit.Before * *.*(..))")
-  def beforeMethod() {}
+  def beforeMethods() {}
 
   @Pointcut("execution(@org.junit.After * *.*(..))")
-  def afterMethod() {}
+  def afterMethods() {}
 
   @Pointcut("execution(* (@edu.zsd.testfw.GUITestBean *).*(..))")
   def guiTestBeanMethods() {}
@@ -22,9 +21,9 @@ class LoggingAspect {
   @Pointcut("execution(public * org.fest.swing.core.BasicRobot.*(..))")
   def robotMethods() {}
 
-  @Around("testMethod() || beforeMethod() || afterMethod() || guiTestBeanMethods()")
+  @Around("testMethods() || beforeMethods() || afterMethods() || guiTestBeanMethods()")
   def loggingTestAction(joinPoint: ProceedingJoinPoint): AnyRef = {
-    MethodCallStack.enter(joinPoint)
+    MethodCallStack.enter()
     try {
       val result: AnyRef = joinPoint.proceed()
       MethodCallStack.exit(joinPoint, result)

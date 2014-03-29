@@ -2,25 +2,26 @@ package edu.zsd.testfw
 
 import scala.xml.{Node, PrettyPrinter}
 import java.io.{File, PrintWriter}
-import org.junit.runners.model.FrameworkMethod
-import org.aspectj.lang.{Signature, JoinPoint}
-import org.aspectj.lang.JoinPoint.StaticPart
-import org.aspectj.lang.reflect.SourceLocation
+import java.lang.reflect.Method
+import com.github.nscala_time.time.Imports._
 
 object XmlExecutionPrinter {
 
-  def printToFile(method: FrameworkMethod, executions: Seq[Execution]): Unit = {
+  def printToFile(testExecution : Execution): Unit = {
 
-    val xmlReportsDir: File = new File("./scala-2.10/classes/web/xml-reports")
+    val reportsDir : File = new File("./reports")
+    val xmlReportsDir: File = new File(reportsDir, "xml")
     xmlReportsDir.mkdirs()
 
-    val filename = s"report_${method.getName}.xml"
-    val execution = Execution(createJoinPoint(method), executions, ReturnResult(null))
+    val method = testExecution.method
 
-    val printWriter = new PrintWriter(new File(xmlReportsDir, filename))
+    val filename = s"report_${method.getName}.xml"
+    val xmlFile: File = new File(xmlReportsDir, filename)
+
+    val printWriter = new PrintWriter(xmlFile)
     try {
       val prettyPrinter = new PrettyPrinter(160, 2)
-      val xml: Node = toXml(execution)
+      val xml: Node = toXml(testExecution)
       val xmlString: String = prettyPrinter.format(xml)
       printWriter.write(xmlString)
     } finally {
@@ -28,49 +29,32 @@ object XmlExecutionPrinter {
     }
   }
 
-  def toXml(execution: Execution): Node = {
+  private def toXml(execution: Execution): Node = {
 
-    val args = if (execution.joinPoint.getArgs != null) execution.joinPoint.getArgs.deep else Seq.empty
+    val args = execution.args.deep
 
     <execution>
-      <join-point>{execution.joinPoint}</join-point>
+      <method>{
+        val method: Method = execution.method
+        method.getDeclaringClass.getSimpleName + "." + method.getName
+      }
+      </method>
       <args>{args}</args>
-      {execution.result match {
-        case ReturnResult(result) => <return-result>{result}</return-result>
-        case ExceptionResult(exception) => <exception-result>{exception}</exception-result>
-      }}
+      <result>
+        {execution.result match {
+          case EmptyResult() => <empty-result/>
+          case ReturnResult(result) => <return-result>{result}</return-result>
+          case ExceptionResult(exception) => <exception-result>{exception}</exception-result>
+        }}
+      </result>
+      <start-time>{new DateTime(execution.startTime)}</start-time>
+      <end-time>{new DateTime(execution.endTime)}</end-time>
       {if (execution.invocations.nonEmpty) {
         <invocations>
           {execution.invocations.map(invocation => toXml(invocation))}
         </invocations>
       }}
     </execution>
-  }
-
-  def createJoinPoint(method: FrameworkMethod): JoinPoint = {
-
-    new JoinPoint {
-      override def getKind: String = ???
-
-      override def getTarget: AnyRef = ???
-
-      override def toLongString: String = ???
-
-      override def getThis: AnyRef = ???
-
-      override def getArgs: Array[AnyRef] = Array.empty
-
-      override def getSourceLocation: SourceLocation = ???
-
-      override def toShortString: String = ???
-
-      override def getStaticPart: StaticPart = ???
-
-      override def getSignature: Signature = ???
-
-      override def toString: String = s"test ${method.getName}"
-    }
-
   }
 
 }

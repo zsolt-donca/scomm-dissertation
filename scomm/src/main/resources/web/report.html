@@ -7,7 +7,10 @@
     <link href="thirdparty/jquery.treetable.css" rel="stylesheet" type="text/css"/>
     <link href="thirdparty/jquery.treetable.theme.default.css" rel="stylesheet" type="text/css"/>
     <script src="thirdparty/jquery.treetable.js"></script>
+    <script src="thirdparty/moment-with-langs.js"></script>
+
     <link href="report.css" rel="stylesheet" type="text/css"/>
+    <script src="report.js"></script>
 
     <style>
         table, th, td {
@@ -68,10 +71,15 @@
         <th>Call</th>
         <th>Arguments</th>
         <th>Results</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Elapsed Time</th>
     </tr>
 </table>
 
-<script src="report.js"></script>
+<script>
+    $("#example-basic-expandable").treetable({ expandable: true });
+</script>
 
 </body>
 </html>

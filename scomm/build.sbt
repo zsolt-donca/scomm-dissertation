@@ -34,6 +34,8 @@ libraryDependencies += "net.java.openjdk.cacio" % "cacio" % "1.3"
 
 libraryDependencies += "net.java.openjdk.cacio" % "cacio-tta" % "1.3"
 
+libraryDependencies += "com.github.nscala-time" % "nscala-time_2.10" % "0.8.0"
+
 autoCompilerPlugins := true
 
 addCompilerPlugin("org.scala-lang.plugins" % "continuations" % "2.10.2")
