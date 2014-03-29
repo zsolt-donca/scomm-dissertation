@@ -9,7 +9,13 @@ object MethodCallStack {
 
   private[this] val executions: mutable.Stack[mutable.Buffer[Execution]] = mutable.Stack()
 
-  var result: Option[Execution] = None
+  private[this] var results: Seq[Execution] = Seq.empty
+
+  def queryResults() : Seq[Execution] = {
+    val results = this.results
+    this.results = Seq.empty
+    results
+  }
 
   def enter(joinPoint: JoinPoint) {
     executions.push(new ArrayBuffer)
@@ -30,7 +36,7 @@ object MethodCallStack {
     if (executions.nonEmpty) {
       executions.top.append(execution)
     } else {
-      this.result = Some(execution)
+      results = results :+ execution
     }
   }
 }

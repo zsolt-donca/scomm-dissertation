@@ -2,12 +2,20 @@ package edu.zsd.testfw
 
 import scala.xml.{Node, PrettyPrinter}
 import java.io.{File, PrintWriter}
+import org.junit.runners.model.FrameworkMethod
+import org.aspectj.lang.{Signature, JoinPoint}
+import org.aspectj.lang.JoinPoint.StaticPart
+import org.aspectj.lang.reflect.SourceLocation
 
 object XmlExecutionPrinter {
-  def printToFile(filename : String, execution: Execution): Unit = {
+
+  def printToFile(method: FrameworkMethod, executions: Seq[Execution]): Unit = {
 
     val xmlReportsDir: File = new File("./scala-2.10/classes/web/xml-reports")
     xmlReportsDir.mkdirs()
+
+    val filename = s"report_${method.getName}.xml"
+    val execution = Execution(createJoinPoint(method), executions, ReturnResult(null))
 
     val printWriter = new PrintWriter(new File(xmlReportsDir, filename))
     try {
@@ -37,6 +45,32 @@ object XmlExecutionPrinter {
         </invocations>
       }}
     </execution>
+  }
+
+  def createJoinPoint(method: FrameworkMethod): JoinPoint = {
+
+    new JoinPoint {
+      override def getKind: String = ???
+
+      override def getTarget: AnyRef = ???
+
+      override def toLongString: String = ???
+
+      override def getThis: AnyRef = ???
+
+      override def getArgs: Array[AnyRef] = Array.empty
+
+      override def getSourceLocation: SourceLocation = ???
+
+      override def toShortString: String = ???
+
+      override def getStaticPart: StaticPart = ???
+
+      override def getSignature: Signature = ???
+
+      override def toString: String = s"test ${method.getName}"
+    }
+
   }
 
 }

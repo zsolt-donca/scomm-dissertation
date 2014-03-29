@@ -7,10 +7,14 @@ import scala.xml.PrettyPrinter
 @Aspect
 class LoggingAspect {
 
-  var tests = 0
-
   @Pointcut("execution(@org.junit.Test * *.*(..))")
   def testMethod() {}
+
+  @Pointcut("execution(@org.junit.Before * *.*(..))")
+  def beforeMethod() {}
+
+  @Pointcut("execution(@org.junit.After * *.*(..))")
+  def afterMethod() {}
 
   @Pointcut("execution(* (@edu.zsd.testfw.GUITestBean *).*(..))")
   def guiTestBeanMethods() {}
@@ -18,29 +22,7 @@ class LoggingAspect {
   @Pointcut("execution(public * org.fest.swing.core.BasicRobot.*(..))")
   def robotMethods() {}
 
-  @Around("testMethod()")
-  def aroundTestMethods(joinPoint: ProceedingJoinPoint): AnyRef = {
-    println("Test started!")
-    try {
-      joinPoint.proceed()
-    } catch {
-      case e: Throwable =>
-        println("test failed..... taking screenshot or something")
-        throw e
-    } finally {
-      val result: Option[Execution] = MethodCallStack.result
-      println("Test logged. Result execution: " + result)
-      
-      result match {
-        case Some(execution) =>
-          val filename = f"report_$tests%04d.xml"
-          tests += 1
-          XmlExecutionPrinter.printToFile(filename, execution)
-      }
-    }
-  }
-
-  @Around("testMethod() || guiTestBeanMethods()")
+  @Around("testMethod() || beforeMethod() || afterMethod() || guiTestBeanMethods()")
   def loggingTestAction(joinPoint: ProceedingJoinPoint): AnyRef = {
     MethodCallStack.enter(joinPoint)
     try {

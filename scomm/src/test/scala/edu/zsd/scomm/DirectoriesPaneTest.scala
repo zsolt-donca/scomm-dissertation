@@ -1,6 +1,6 @@
 package edu.zsd.scomm
 
-import org.junit.Test
+import org.junit.{After, Before, Test}
 import edu.zsd.scomm.FESTTest._
 import java.io.File
 import org.fest.swing.annotation.GUITest
@@ -12,6 +12,16 @@ import org.junit.runner.RunWith
 @RunWith(classOf[CacioFESTLoggingRunner])
 class DirectoriesPaneTest {
 
+  @Before
+  def setup() : Unit = {
+    println("setup")
+  }
+  
+  @After
+  def teardown() : Unit = {
+    println("teardown")
+  }
+  
   @Test
   def testThatFails(): Unit = {
     println("tralla")
