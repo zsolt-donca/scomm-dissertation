@@ -1,12 +1,14 @@
 
 var nodeIdGenerator = 0;
 function buildExecutions(parentNodeId, execution, pushNode) {
-    var call = execution.children[0].innerHTML;
-    var args = execution.children[1].innerHTML;
-    var result = execution.children[2].innerHTML;
+    var data = {
+        call: execution.children[0].innerHTML,
+        args: execution.children[1].innerHTML,
+        result: execution.children[2].innerHTML
+    };
 
     var nodeId = nodeIdGenerator++;
-    pushNode(parentNodeId, nodeId, call, args, result);
+    pushNode(parentNodeId, nodeId, data);
     var invocations = execution.children[3];
     if (invocations != null) {
         for (var i = 0; i < invocations.children.length; i++) {
@@ -19,7 +21,7 @@ function buildExecutions(parentNodeId, execution, pushNode) {
 function addReport(xml) {
 
     var rows = [];
-    function pushNode(parentNodeId, nodeId, call, args, result) {
+    function pushNode(parentNodeId, nodeId, data) {
 
         var row = document.createElement('tr');
         row.setAttribute("data-tt-id", nodeId);
@@ -29,15 +31,15 @@ function addReport(xml) {
 
         var callCell = document.createElement('td');
         row.appendChild(callCell);
-        callCell.innerHTML = call;
+        callCell.innerHTML = data.call;
 
         var argCell = document.createElement('td');
         row.appendChild(argCell);
-        argCell.innerHTML = args;
+        argCell.innerHTML = data.args;
 
         var resultCell = document.createElement('td');
         row.appendChild(resultCell);
-        resultCell.innerHTML = result;
+        resultCell.innerHTML = data.result;
 
         rows.push(row);
     }
