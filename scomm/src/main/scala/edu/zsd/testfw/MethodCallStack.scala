@@ -12,31 +12,32 @@ object MethodCallStack {
 
   private[this] val executions: mutable.Stack[RunningExecution] = mutable.Stack()
 
-  private[this] var results : Seq[Execution] = Seq.empty
-
-  def queryExecutions() : Seq[Execution] = {
-    val results = this.results
-    this.results = Seq.empty
-    results
-  }
-
-  def enter() {
+  def enterTest() {
+    require(executions.isEmpty)
     executions.push(new RunningExecution)
   }
 
-  def exit(joinPoint: JoinPoint, result: AnyRef) {
-    exit(joinPoint, ReturnResult(result))
+  def enter() {
+    require(executions.nonEmpty)
+    executions.push(new RunningExecution)
   }
 
-  def exit(joinPoint: JoinPoint, exception: Throwable) {
-    exit(joinPoint, ExceptionResult(exception))
-  }
+  def exit(joinPoint: JoinPoint, result: AnyRef) : Unit = {
+    val option: Option[Execution] = exit(joinPoint, ReturnResult(result))
+    assert(option == None)
+  } ensuring executions.nonEmpty
 
-  def exit(frameworkMethod: FrameworkMethod, result : Result) {
-    exit(frameworkMethod.getMethod, Array.empty, result)
-  }
+  def exit(joinPoint: JoinPoint, exception: Throwable) : Unit = {
+    val option: Option[Execution] = exit(joinPoint, ExceptionResult(exception))
+    assert(option == None)
+  } ensuring executions.nonEmpty
 
-  private[this] def exit(joinPoint: JoinPoint, result: Result) {
+  def exitTest(frameworkMethod: FrameworkMethod, result : Result) : Execution = {
+    val option: Option[Execution] = exit(frameworkMethod.getMethod, Array.empty, result)
+    option.get
+  } ensuring executions.isEmpty
+
+  private[this] def exit(joinPoint: JoinPoint, result: Result) : Option[Execution] = {
     val signature: Signature = joinPoint.getSignature
     signature match {
       case methodSignature : MethodSignature =>
@@ -50,15 +51,16 @@ object MethodCallStack {
     }
   }
 
-  private[this] def exit(method : Method, args : Array[AnyRef], result: Result) {
+  private[this] def exit(method : Method, args : Array[AnyRef], result: Result) : Option[Execution] = {
 
     val runningExecution: RunningExecution = executions.pop()
     val execution = Execution(method, args, runningExecution.startTime, Platform.currentTime, runningExecution.invocations, result)
 
     if (executions.nonEmpty) {
       executions.top.invocations :+= execution
+      None
     } else {
-      results :+= execution
+      Some(execution)
     }
   }
 
