@@ -30,6 +30,10 @@ libraryDependencies += "org.aspectj" % "aspectjweaver" % "1.7.4"
 
 libraryDependencies += "org.aspectj" % "aspectjrt"     % "1.7.4"
 
+libraryDependencies += "net.java.openjdk.cacio" % "cacio" % "1.3"
+
+libraryDependencies += "net.java.openjdk.cacio" % "cacio-tta" % "1.3"
+
 autoCompilerPlugins := true
 
 addCompilerPlugin("org.scala-lang.plugins" % "continuations" % "2.10.2")

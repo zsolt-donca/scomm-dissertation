@@ -5,8 +5,11 @@ import org.fest.swing.finder.WindowFinder
 import java.awt.Frame
 import java.io.File
 import edu.zsd.scomm.useractions.DirectoryListUserActions
+import edu.zsd.testfw.CacioFESTLoggingRunner
 
 object FESTTest {
+
+  CacioFESTLoggingRunner
 
   val testDir : String = new File(this.getClass.getClassLoader.getResource("testDir").toURI).getPath
   mainWindow.main(Array(testDir))

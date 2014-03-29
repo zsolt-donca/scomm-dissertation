@@ -5,8 +5,11 @@ import edu.zsd.scomm.FESTTest._
 import java.io.File
 import org.fest.swing.annotation.GUITest
 import org.junit.Assert._
+import edu.zsd.testfw.CacioFESTLoggingRunner
+import org.junit.runner.RunWith
 
 @GUITest
+@RunWith(classOf[CacioFESTLoggingRunner])
 class DirectoriesPaneTest {
 
   @Test
@@ -16,13 +19,13 @@ class DirectoriesPaneTest {
   }
 
   @Test
-  def testSimpleList() {
+  def testSimpleList() : Unit = {
     directoriesPane.left.requireCurrentDir(testDir)
     directoriesPane.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
   }
 
   @Test
-  def testEnterDirectory() {
+  def testEnterDirectory() : Unit = {
     directoriesPane.left.requireCurrentDir(testDir)
     directoriesPane.left.enterDirectory("zombie")
     directoriesPane.left.requireCurrentDir(testDir + File.separator + "zombie")
@@ -34,7 +37,7 @@ class DirectoriesPaneTest {
   }
 
   @Test
-  def testEnterEmptyList() {
+  def testEnterEmptyList() : Unit = {
     directoriesPane.left.requireCurrentDir(testDir)
     directoriesPane.left.enterDirectory("troll")
     directoriesPane.left.requireCurrentDir(testDir + File.separator + "troll")
@@ -43,7 +46,7 @@ class DirectoriesPaneTest {
   }
 
   @Test
-  def testSelection() {
+  def testSelection() : Unit = {
     directoriesPane.left.select("folder1")
     directoriesPane.left.requireSelection(Seq("folder1"))
     directoriesPane.left.requireSummary(folders = 1)
