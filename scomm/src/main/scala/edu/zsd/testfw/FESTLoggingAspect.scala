@@ -9,7 +9,7 @@ import scala.compat.Platform
 import edu.zsd.testfw.MethodCallStack.RunningTestMethodExecution
 
 @Aspect
-class LoggingAspect {
+class FESTLoggingAspect {
 
   @Pointcut("execution(@org.junit.Test * *.*(..))")
   def testMethods() {}

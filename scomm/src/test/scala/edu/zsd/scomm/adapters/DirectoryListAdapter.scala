@@ -23,4 +23,6 @@ case class DirectoryListAdapter(componentName: String) {
   def clickListItem(listItem : String) : Unit = this.list.item(listItem).click()
 
   def doubleClickListItem(listItem : String) : Unit = this.list.item(listItem).doubleClick()
+
+  override def toString: String = componentName
 }

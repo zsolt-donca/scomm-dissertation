@@ -48,4 +48,6 @@ case class DirectoryListUserActions(componentName: String) {
     directoryListAdapter.clickListItem(to)
     robot.releaseKey(KeyEvent.VK_SHIFT)
   }
+
+  override def toString: String = componentName
 }
