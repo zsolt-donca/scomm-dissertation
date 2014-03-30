@@ -29,16 +29,13 @@ class LoggingAspect {
 
   @Around("testMethods() || beforeMethods() || afterMethods() || guiTestBeanMethods()")
   def loggingTestAction(joinPoint: ProceedingJoinPoint): AnyRef = {
-    println("entering method: " + joinPoint)
     MethodCallStack.enterTestMethod(joinPoint)
     try {
       val result: AnyRef = joinPoint.proceed()
-      println("exiting method: " + joinPoint)
       MethodCallStack.exitTestMethod(joinPoint, result)
       result
     } catch {
       case e: Throwable =>
-        println("throwing from method: " + joinPoint)
         MethodCallStack.exitTestMethod(joinPoint, e)
         throw e
     }
