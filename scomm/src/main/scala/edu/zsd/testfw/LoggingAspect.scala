@@ -5,9 +5,8 @@ import org.aspectj.lang.annotation.{Around, Aspect, Pointcut}
 import org.fest.swing.image.{ImageFileExtensions, ScreenshotTaker}
 import java.io.File
 import edu.zsd.testfw.FESTLogging._
-import java.lang.reflect.Method
 import scala.compat.Platform
-import edu.zsd.testfw.MethodCallStack.{RunningTestMethodExecution, RunningExecution}
+import edu.zsd.testfw.MethodCallStack.RunningTestMethodExecution
 
 @Aspect
 class LoggingAspect {
@@ -24,11 +23,14 @@ class LoggingAspect {
   @Pointcut("execution(* (@edu.zsd.testfw.GUITestBean *).*(..))")
   def guiTestBeanMethods() {}
 
+  @Pointcut("execution(@edu.zsd.testfw.GUITestAction * *.*(..))")
+  def guiTestActionMethods() {}
+
   @Pointcut("execution(public * org.fest.swing.core.BasicRobot.*(..))")
   def robotMethods() {}
 
   @Around("testMethods() || beforeMethods() || afterMethods() || guiTestBeanMethods()")
-  def loggingTestAction(joinPoint: ProceedingJoinPoint): AnyRef = {
+  def reportTestAndGUITestBeanMethods(joinPoint: ProceedingJoinPoint): AnyRef = {
     MethodCallStack.enterTestMethod(joinPoint)
     try {
       val result: AnyRef = joinPoint.proceed()
@@ -49,10 +51,19 @@ class LoggingAspect {
     } catch {
       case e : Throwable =>
         val testMethodExecution: RunningTestMethodExecution = MethodCallStack.getCurrentRunningTestMethodExecution(joinPoint)
-        if (testMethodExecution.afterScreenshot == None) {
-          testMethodExecution.afterScreenshot = Some(takeScreenshot("failed"))
-        }
+        testMethodExecution.afterScreenshot = Some(takeScreenshot("failed"))
         throw e
+    }
+  }
+
+  @Around("guiTestBeanMethods() && guiTestActionMethods()")
+  def takeScreenshotsOfTestActions(joinPoint: ProceedingJoinPoint) : AnyRef = {
+    val testMethodExecution: RunningTestMethodExecution = MethodCallStack.getCurrentRunningTestMethodExecution(joinPoint)
+    testMethodExecution.beforeScreenshot = Some(takeScreenshot("before"))
+    try {
+      joinPoint.proceed()
+    } finally {
+      testMethodExecution.afterScreenshot = Some(takeScreenshot("after"))
     }
   }
 

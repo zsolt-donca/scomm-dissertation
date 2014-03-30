@@ -2,7 +2,7 @@ package edu.zsd.scomm.useractions
 
 import edu.zsd.scomm.FESTTest._
 import java.awt.event.KeyEvent
-import edu.zsd.testfw.GUITestBean
+import edu.zsd.testfw.{GUITestAction, GUITestBean}
 import edu.zsd.scomm.adapters.DirectoryListAdapter
 
 @GUITestBean
@@ -26,18 +26,22 @@ case class DirectoryListUserActions(componentName: String) {
     directoryListAdapter.requireSummary(s"$bytes bytes, $files file(s), $folders folder(s)")
   }
 
+  @GUITestAction
   def enterDirectory(directory : String) : Unit = {
     directoryListAdapter.doubleClickListItem(directory)
   }
 
+  @GUITestAction
   def enterParentDirectory() : Unit = {
     enterDirectory("..")
   }
 
+  @GUITestAction
   def select(item : String) : Unit = {
     directoryListAdapter.clickListItem(item)
   }
 
+  @GUITestAction
   def selectRange(from : String, to : String) : Unit = {
     directoryListAdapter.clickListItem(from)
     robot.pressKey(KeyEvent.VK_SHIFT)
