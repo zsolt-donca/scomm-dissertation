@@ -6,7 +6,9 @@ function buildExecutions(parentNodeId, execution, pushNode) {
         args: execution.getElementsByTagName("args")[0].innerHTML,
         result: execution.getElementsByTagName("result")[0].children[0].innerHTML,
         startTime : new Date(execution.getElementsByTagName("start-time")[0].innerHTML),
-        endTime: new Date(execution.getElementsByTagName("end-time")[0].innerHTML)
+        endTime: new Date(execution.getElementsByTagName("end-time")[0].innerHTML),
+        beforeScreenshot: execution.getElementsByTagName("before-screenshot").length > 0 ? execution.getElementsByTagName("before-screenshot")[0].innerHTML : null,
+        afterScreenshot: execution.getElementsByTagName("after-screenshot").length > 0 ? execution.getElementsByTagName("after-screenshot")[0].innerHTML : null
     };
 
     var nodeId = nodeIdGenerator++;
@@ -44,6 +46,13 @@ function addReport(xml) {
         pushCell(moment(data.endTime).format("HH:mm:ss.SSS"));
         var elapsed = moment.duration(moment(data.endTime).diff(data.startTime)).as('seconds');
         pushCell(elapsed);
+
+        function screenshot(link) {
+            return link ? '<a href="' + link + '">shot</a>' : '';
+        }
+
+        pushCell(screenshot(data.beforeScreenshot));
+        pushCell(screenshot(data.afterScreenshot));
 
         rows.push(row);
     }

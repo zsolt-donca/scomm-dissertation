@@ -1,77 +1,150 @@
 package edu.zsd.testfw
 
 import org.aspectj.lang.{Signature, JoinPoint}
-import scala.collection.mutable
 import java.lang.reflect.Method
 import org.aspectj.lang.reflect.MethodSignature
 import scala.compat.Platform
 import org.junit.runners.model.FrameworkMethod
+import java.io.File
+import scala.annotation.tailrec
 
 
 object MethodCallStack {
 
-  private[this] val executions: mutable.Stack[RunningExecution] = mutable.Stack()
+  private[this] var currentRunningExecutionOption : Option[RunningExecution] = None
 
-  def enterTest() : Unit = {
-    require(executions.isEmpty)
-    executions.push(new RunningExecution)
-  } ensuring executions.nonEmpty
+  def enterTest(frameworkMethod : FrameworkMethod) : Unit = {
+    FESTLogging.beginTest()
 
-  def enter() : Unit = {
-    require(executions.nonEmpty)
-    executions.push(new RunningExecution)
-  } ensuring executions.nonEmpty
+    require(currentRunningExecutionOption == None)
+    currentRunningExecutionOption = Some(new RunningTestExecution(frameworkMethod))
+  } ensuring (currentRunningExecutionOption != None)
 
-  def exit(joinPoint: JoinPoint, result: AnyRef) : Unit = {
-    val option: Option[Execution] = exit(joinPoint, ReturnResult(result))
-    assert(option == None)
-  } ensuring executions.nonEmpty
+  def enterTestMethod(joinPoint: JoinPoint) : Unit = {
+    currentRunningExecutionOption match {
+      case Some(execution) => currentRunningExecutionOption = Some(new RunningTestMethodExecution(joinPoint, execution))
+    }
+  }
 
-  def exit(joinPoint: JoinPoint, exception: Throwable) : Unit = {
-    val option: Option[Execution] = exit(joinPoint, ExceptionResult(exception))
-    assert(option == None)
-  } ensuring executions.nonEmpty
+  def exitTestMethod(joinPoint: JoinPoint, result: AnyRef) : Unit = {
+    val res = if (obtainReturnType(joinPoint) != classOf[Unit]) ReturnResult(result) else EmptyResult()
+    exitTestMethod(joinPoint, res)
+  }
+
+  def exitTestMethod(joinPoint: JoinPoint, exception: Throwable) : Unit = {
+    exitTestMethod(joinPoint, ExceptionResult(exception))
+  }
+
+  private[this] def exitTestMethod(joinPoint: JoinPoint, result: Result) : Unit = {
+
+    currentRunningExecutionOption match {
+      case Some(currentRunningExecution) =>
+        currentRunningExecution match {
+          case runningTestMethodExecution : RunningTestMethodExecution =>
+            assert(runningTestMethodExecution.joinPoint == joinPoint)
+            val args : Array[AnyRef] = if (joinPoint.getArgs != null) joinPoint.getArgs else Array.empty
+            val currentExecution = createExecution(runningTestMethodExecution, args, result)
+            val parentRunningExecution: RunningExecution = runningTestMethodExecution.parentRunningExecution
+            parentRunningExecution.invocations :+= currentExecution
+            currentRunningExecutionOption = Some(parentRunningExecution)
+        }
+    }
+  }
 
   def exitTest(frameworkMethod: FrameworkMethod, result : Result) : Execution = {
-    val option: Option[Execution] = exit(frameworkMethod.getMethod, Array.empty, result)
-    option.get
-  } ensuring executions.isEmpty
+    currentRunningExecutionOption match {
+      case Some(currentRunningExecution) =>
+        val method = frameworkMethod.getMethod
+        assert(currentRunningExecution.method == method)
+        val currentExecution = createExecution(currentRunningExecution, Array.empty, result)
+        currentRunningExecution match {
+          case runningTestExecution : RunningTestExecution =>
+            currentRunningExecutionOption = None
+            currentExecution
+        }
+    }
+  }
 
-  private[this] def exit(joinPoint: JoinPoint, result: Result) : Option[Execution] = {
+  def getCurrentRunningExecution(joinPoint: JoinPoint) : RunningExecution = {
+    currentRunningExecutionOption match {
+      case Some(currentRunningExecution) =>
+        currentRunningExecution
+    }
+  }
+
+  def getCurrentRunningTestMethodExecution(joinPoint: JoinPoint) : RunningTestMethodExecution = {
+    getCurrentRunningExecution(joinPoint) match {
+      case runningTestMethodExecution : RunningTestMethodExecution =>
+        runningTestMethodExecution
+    }
+  }
+
+  def getCurrentRunningTestExecution(joinPoint: JoinPoint) : RunningTestExecution = {
+    currentRunningExecutionOption match {
+      case Some(currentRunningExecution) =>
+        getCurrentRunningTestExecution(currentRunningExecution)
+    }
+  }
+
+  @tailrec
+  private def getCurrentRunningTestExecution(runningExecution : RunningExecution) : RunningTestExecution = {
+    runningExecution match {
+      case runningTestExecution : RunningTestExecution =>
+        runningTestExecution
+      case runningTestMethodExecution : RunningTestMethodExecution =>
+        getCurrentRunningTestExecution(runningTestMethodExecution.parentRunningExecution)
+    }
+  }
+
+  private def obtainMethod(joinPoint: JoinPoint): Method = {
     val signature: Signature = joinPoint.getSignature
     signature match {
-      case methodSignature : MethodSignature =>
-        val method = methodSignature.getMethod
-        val args: Array[AnyRef] = if (joinPoint.getArgs != null) joinPoint.getArgs else Array.empty
-
-        // this is a mess...
-        val realResult = if (methodSignature.getReturnType == classOf[Unit] && result == ReturnResult(null)) EmptyResult() else result
-        exit(method, args, realResult)
-      // otherwise we don't know what to do
+      case methodSignature: MethodSignature =>
+        methodSignature.getMethod
     }
   }
 
-  private[this] def exit(method : Method, args : Array[AnyRef], result: Result) : Option[Execution] = {
-
-    require(executions.nonEmpty)
-    val runningExecution: RunningExecution = executions.pop()
-    val execution = Execution(method, args, runningExecution.startTime, Platform.currentTime, runningExecution.invocations, result)
-
-    if (executions.nonEmpty) {
-      executions.top.invocations :+= execution
-      None
-    } else {
-      Some(execution)
+  private def obtainReturnType(joinPoint: JoinPoint): Class[_] = {
+    val signature: Signature = joinPoint.getSignature
+    signature match {
+      case methodSignature: MethodSignature =>
+        methodSignature.getReturnType
     }
   }
 
-  private class RunningExecution {
+  private def createExecution(runningExecution : RunningExecution, args : Array[AnyRef], result : Result) : Execution = {
+    Execution(runningExecution.method, args, runningExecution.startTime, Platform.currentTime,
+      runningExecution.invocations, result,
+      runningExecution.beforeScreenshot, runningExecution.afterScreenshot)
+  }
+
+  abstract sealed class RunningExecution(val method : Method) {
+    val depth : Int
+
     val startTime : Long = Platform.currentTime
     var invocations : Seq[Execution] = Seq.empty
+
+    var beforeScreenshot : Option[File] = None
+    var afterScreenshot : Option[File] = None
+  }
+  
+  class RunningTestExecution(val frameworkMethod : FrameworkMethod) extends RunningExecution(frameworkMethod.getMethod) {
+    val depth = 0
+  }
+  
+  class RunningTestMethodExecution(val joinPoint: JoinPoint, val parentRunningExecution : RunningExecution) extends RunningExecution(obtainMethod(joinPoint)) {
+    val depth = parentRunningExecution.depth + 1
   }
 }
 
-case class Execution(method : Method, args : Array[AnyRef], startTime : Long, endTime : Long, invocations: Seq[Execution], result: Result)
+case class Execution(method : Method,
+                     args : Array[AnyRef],
+                     startTime : Long,
+                     endTime : Long,
+                     invocations: Seq[Execution],
+                     result: Result,
+                     beforeScreenshot : Option[File],
+                     afterScreenshot : Option[File])
 
 sealed abstract class Result()
 

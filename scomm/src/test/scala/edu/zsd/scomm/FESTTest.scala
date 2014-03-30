@@ -9,8 +9,6 @@ import edu.zsd.testfw.CacioFESTLoggingRunner
 
 object FESTTest {
 
-  CacioFESTLoggingRunner
-
   val testDir : String = new File(this.getClass.getClassLoader.getResource("testDir").toURI).getPath
   mainWindow.main(Array(testDir))
 

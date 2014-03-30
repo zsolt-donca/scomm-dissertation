@@ -4,19 +4,16 @@ import scala.xml.{Node, PrettyPrinter}
 import java.io.{File, PrintWriter}
 import java.lang.reflect.Method
 import com.github.nscala_time.time.Imports._
+import edu.zsd.testfw.FESTLogging._
 
 object XmlExecutionPrinter {
 
+
   def printToFile(testExecution : Execution): Unit = {
 
-    val reportsDir : File = new File("./reports")
-    val xmlReportsDir: File = new File(reportsDir, "xml")
-    xmlReportsDir.mkdirs()
-
     val method = testExecution.method
-
-    val filename = s"report_${method.getName}.xml"
-    val xmlFile: File = new File(xmlReportsDir, filename)
+    val filename = f"report_$currentTestIndex%04d_${method.getDeclaringClass.getSimpleName}.${method.getName}.xml"
+    val xmlFile: File = new File(xmlDir, filename)
 
     val printWriter = new PrintWriter(xmlFile)
     try {
@@ -53,6 +50,14 @@ object XmlExecutionPrinter {
         <invocations>
           {execution.invocations.map(invocation => toXml(invocation))}
         </invocations>
+      }}
+      {execution.beforeScreenshot match {
+      case Some(file) => <before-screenshot>{file.getCanonicalFile.toURI}</before-screenshot>
+      case None =>
+      }}
+      {execution.afterScreenshot match {
+      case Some(file) => <after-screenshot>{file.getCanonicalFile.toURI}</after-screenshot>
+      case None =>
       }}
     </execution>
   }

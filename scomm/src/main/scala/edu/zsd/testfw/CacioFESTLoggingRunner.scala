@@ -7,12 +7,17 @@ import org.junit.runners.model.{Statement, FrameworkMethod}
 
 class CacioFESTLoggingRunner(clazz : Class[_]) extends BlockJUnit4ClassRunner(clazz) {
 
+  System.setProperty("awt.toolkit", classOf[CTCToolkit].getName)
+  System.setProperty("java.awt.graphicsenv", classOf[CTCGraphicsEnvironment].getName)
+  System.setProperty("swing.defaultlaf", classOf[MetalLookAndFeel].getName)
+  System.setProperty("java.awt.headless", "false")
+
   override def methodBlock(frameworkMethod: FrameworkMethod): Statement = {
     val statement: Statement = super.methodBlock(frameworkMethod)
 
     new Statement {
       override def evaluate(): Unit = {
-        MethodCallStack.enterTest()
+        MethodCallStack.enterTest(frameworkMethod)
         var exception : Option[Throwable] = None
         try {
           statement.evaluate()
@@ -33,9 +38,3 @@ class CacioFESTLoggingRunner(clazz : Class[_]) extends BlockJUnit4ClassRunner(cl
   }
 }
 
-object CacioFESTLoggingRunner {
-  System.setProperty("awt.toolkit", classOf[CTCToolkit].getName)
-  System.setProperty("java.awt.graphicsenv", classOf[CTCGraphicsEnvironment].getName)
-  System.setProperty("swing.defaultlaf", classOf[MetalLookAndFeel].getName)
-  System.setProperty("java.awt.headless", "false")
-}
