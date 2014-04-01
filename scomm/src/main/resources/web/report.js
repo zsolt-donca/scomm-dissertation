@@ -2,24 +2,21 @@
 var nodeIdGenerator = 0;
 function buildExecutions(parentNodeId, execution, pushNode) {
     var data = {
-        method: execution.getElementsByTagName("method")[0].innerHTML,
-        args: execution.getElementsByTagName("args")[0].innerHTML,
-        result: execution.getElementsByTagName("result")[0].children[0].innerHTML,
-        startTime : new Date(execution.getElementsByTagName("start-time")[0].innerHTML),
-        endTime: new Date(execution.getElementsByTagName("end-time")[0].innerHTML),
-        beforeScreenshot: execution.getElementsByTagName("before-screenshot").length > 0 ? execution.getElementsByTagName("before-screenshot")[0].innerHTML : null,
-        afterScreenshot: execution.getElementsByTagName("after-screenshot").length > 0 ? execution.getElementsByTagName("after-screenshot")[0].innerHTML : null
+        method: execution.children("method").first().text(),
+        args: execution.children("args").first().text(),
+        result: execution.children("result").find().first().text(),
+        startTime : new Date(execution.children("start-time").first().text()),
+        endTime: new Date(execution.children("end-time").first().text()),
+        beforeScreenshot: parentNodeId < 0 ? execution.find("before-screenshot").first().text() : execution.children("before-screenshot").first().text(),
+        afterScreenshot: parentNodeId < 0 ? execution.find("after-screenshot").last().text() : execution.children("after-screenshot").last().text()
     };
 
     var nodeId = nodeIdGenerator++;
     pushNode(parentNodeId, nodeId, data);
-    var invocations = execution.getElementsByTagName("invocations")[0];
-    if (invocations != null) {
-        for (var i = 0; i < invocations.children.length; i++) {
-            var invocation = invocations.children[i];
-            buildExecutions(nodeId, invocation, pushNode);
-        }
-    }
+    var invocations = execution.children("invocations").first();
+    invocations.children().each(function(index, invocation) {
+        buildExecutions(nodeId, $(invocation), pushNode);
+    });
 }
 
 function addReport(xml) {
@@ -58,12 +55,10 @@ function addReport(xml) {
     }
 
     var firstId = nodeIdGenerator;
-    buildExecutions(-1, xml.documentElement, pushNode);
+    buildExecutions(-1, $(xml).children('execution').first(), pushNode);
 
     var table = $("#example-basic-expandable");
     table.treetable('loadBranch', null, rows);
     table.treetable('expandNode', firstId);
     table.treetable('collapseNode', firstId);
 }
-
-
