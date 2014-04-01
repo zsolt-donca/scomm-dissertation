@@ -21,9 +21,8 @@ object MethodCallStack {
   } ensuring (currentRunningExecutionOption != None)
 
   def enterTestMethod(joinPoint: JoinPoint) : Unit = {
-    currentRunningExecutionOption match {
-      case Some(execution) => currentRunningExecutionOption = Some(new RunningTestMethodExecution(joinPoint, execution))
-    }
+    val currentRunningExecution = currentRunningExecutionOption.get
+    currentRunningExecutionOption = Some(new RunningTestMethodExecution(joinPoint, currentRunningExecution))
   }
 
   def exitTestMethod(joinPoint: JoinPoint, result: AnyRef) : Unit = {
@@ -36,54 +35,40 @@ object MethodCallStack {
   }
 
   private[this] def exitTestMethod(joinPoint: JoinPoint, result: Result) : Unit = {
-
-    currentRunningExecutionOption match {
-      case Some(currentRunningExecution) =>
-        currentRunningExecution match {
-          case runningTestMethodExecution : RunningTestMethodExecution =>
-            assert(runningTestMethodExecution.joinPoint == joinPoint)
-            val args : Array[AnyRef] = if (joinPoint.getArgs != null) joinPoint.getArgs else Array.empty
-            val currentExecution = createExecution(runningTestMethodExecution, args, result)
-            val parentRunningExecution: RunningExecution = runningTestMethodExecution.parentRunningExecution
-            parentRunningExecution.invocations :+= currentExecution
-            currentRunningExecutionOption = Some(parentRunningExecution)
-        }
+    val currentRunningExecution = currentRunningExecutionOption.get
+    currentRunningExecution match {
+      case runningTestMethodExecution : RunningTestMethodExecution =>
+        assert(runningTestMethodExecution.joinPoint == joinPoint)
+        val args : Array[AnyRef] = if (joinPoint.getArgs != null) joinPoint.getArgs else Array.empty
+        val currentExecution = createExecution(runningTestMethodExecution, args, result)
+        val parentRunningExecution: RunningExecution = runningTestMethodExecution.parentRunningExecution
+        parentRunningExecution.invocations :+= currentExecution
+        currentRunningExecutionOption = Some(parentRunningExecution)
     }
   }
 
   def exitTest(frameworkMethod: FrameworkMethod, result : Result) : Execution = {
-    currentRunningExecutionOption match {
-      case Some(currentRunningExecution) =>
-        val method = frameworkMethod.getMethod
-        assert(currentRunningExecution.method == method)
-        val currentExecution = createExecution(currentRunningExecution, Array.empty, result)
-        currentRunningExecution match {
-          case runningTestExecution : RunningTestExecution =>
-            currentRunningExecutionOption = None
-            currentExecution
-        }
-    }
-  }
-
-  def getCurrentRunningExecution(joinPoint: JoinPoint) : RunningExecution = {
-    currentRunningExecutionOption match {
-      case Some(currentRunningExecution) =>
-        currentRunningExecution
+    val currentRunningExecution = currentRunningExecutionOption.get
+    assert(currentRunningExecution.method == frameworkMethod.getMethod)
+    val currentExecution = createExecution(currentRunningExecution, Array.empty, result)
+    currentRunningExecution match {
+      case _: RunningTestExecution =>
+        currentRunningExecutionOption = None
+        currentExecution
     }
   }
 
   def getCurrentRunningTestMethodExecution(joinPoint: JoinPoint) : RunningTestMethodExecution = {
-    getCurrentRunningExecution(joinPoint) match {
+    val currentRunningExecution = currentRunningExecutionOption.get
+    currentRunningExecution match {
       case runningTestMethodExecution : RunningTestMethodExecution =>
         runningTestMethodExecution
     }
   }
 
   def getCurrentRunningTestExecution(joinPoint: JoinPoint) : RunningTestExecution = {
-    currentRunningExecutionOption match {
-      case Some(currentRunningExecution) =>
-        getCurrentRunningTestExecution(currentRunningExecution)
-    }
+    val currentRunningExecution = currentRunningExecutionOption.get
+    getCurrentRunningTestExecution(currentRunningExecution)
   }
 
   @tailrec
