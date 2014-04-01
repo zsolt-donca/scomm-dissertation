@@ -4,7 +4,14 @@ function buildExecutions(parentNodeId, execution, pushNode) {
     var data = {
         method: execution.children("method").first().text(),
         args: execution.children("args").first().text(),
-        result: execution.children("result").find().first().text(),
+        result: function() {
+            var result = execution.children("result").first();
+            return {
+                returnResult: result.children("return-result").first().text(),
+                exceptionResult: result.children("exception-result").first().text(),
+                emptyResult: result.children("empty-result").length > 0
+            }
+        }(),
         startTime : new Date(execution.children("start-time").first().text()),
         endTime: new Date(execution.children("end-time").first().text()),
         beforeScreenshot: parentNodeId < 0 ? execution.find("before-screenshot").first().text() : execution.children("before-screenshot").first().text(),
@@ -34,11 +41,21 @@ function addReport(xml) {
             var cell = document.createElement('td');
             row.appendChild(cell);
             cell.innerHTML = text;
+            return cell;
         }
 
         pushCell(data.method);
         pushCell(data.args);
-        pushCell(data.result);
+
+        if (data.result.returnResult) {
+            pushCell(data.result.returnResult);
+        } else if (data.result.exceptionResult) {
+            var cell = pushCell(data.result.exceptionResult);
+            cell.setAttribute('class', 'exception-result');
+        } else if (data.result.emptyResult) {
+            pushCell("");
+        }
+
         pushCell(moment(data.startTime).format("HH:mm:ss.SSS"));
         pushCell(moment(data.endTime).format("HH:mm:ss.SSS"));
         var elapsed = moment.duration(moment(data.endTime).diff(data.startTime)).as('seconds');
