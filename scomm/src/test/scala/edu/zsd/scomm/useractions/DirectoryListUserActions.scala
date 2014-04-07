@@ -10,6 +10,8 @@ case class DirectoryListUserActions(componentName: String) {
 
   private [this] val directoryListAdapter = new DirectoryListAdapter(componentName)
 
+  def getCurrentDir = directoryListAdapter.getCurrentDir
+
   def requireCurrentDir(currentDir : String) : Unit = {
     directoryListAdapter.requireCurrentDir(currentDir)
   }

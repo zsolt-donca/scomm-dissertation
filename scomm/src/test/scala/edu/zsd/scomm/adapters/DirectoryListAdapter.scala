@@ -12,6 +12,8 @@ case class DirectoryListAdapter(componentName: String) {
   private[this] val currentDir = new JLabelFixture(robot, componentName + ".currentDirLabel")
   private[this] val summary = new JLabelFixture(robot, componentName + ".summaryLabel")
 
+  def getCurrentDir = this.currentDir.text()
+
   def requireCurrentDir(currentDir : String) : Unit = this.currentDir.requireText(currentDir)
 
   def requireContents(list : Seq[String]) : Unit = assertEquals(list, this.list.contents.toSeq)

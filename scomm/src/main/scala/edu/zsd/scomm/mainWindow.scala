@@ -67,9 +67,14 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
         contents += deleteButton
 
         val infoButton = new EventButton("Info")
+        infoButton.name = "infoButton"
         contents += infoButton
       }
       add(commandButtons, Position.South)
+
+      observe(directoriesPane.left.selectedFiles) {
+        selectedFiles => commandButtons.infoButton.enabled = selectedFiles.nonEmpty
+      }
 
       val infoActionReactor = Reactor.loop {
         self =>
@@ -78,7 +83,7 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
           val directories = selectedFiles.count(fileEntry => fileEntry.file.isDirectory)
           val files = selectedFiles.count(fileEntry => fileEntry.file.isFile)
           val message = s"There are $directories directories and $files files selected in ${directoriesPane.left.currentDir.now}"
-          JOptionPane.showMessageDialog(null, message)
+          JOptionPane.showMessageDialog(null, message, "View", JOptionPane.INFORMATION_MESSAGE)
       }
     }
 

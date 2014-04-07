@@ -7,10 +7,14 @@ import org.junit.runners.model.{Statement, FrameworkMethod}
 
 class CacioFESTLoggingRunner(clazz : Class[_]) extends BlockJUnit4ClassRunner(clazz) {
 
-  System.setProperty("awt.toolkit", classOf[CTCToolkit].getName)
-  System.setProperty("java.awt.graphicsenv", classOf[CTCGraphicsEnvironment].getName)
-  System.setProperty("swing.defaultlaf", classOf[MetalLookAndFeel].getName)
-  System.setProperty("java.awt.headless", "false")
+  val disabled = System.getProperty("cacio.disabled4testing", "false").toBoolean
+
+  if (!disabled) {
+    System.setProperty("awt.toolkit", classOf[CTCToolkit].getName)
+    System.setProperty("java.awt.graphicsenv", classOf[CTCGraphicsEnvironment].getName)
+    System.setProperty("swing.defaultlaf", classOf[MetalLookAndFeel].getName)
+    System.setProperty("java.awt.headless", "false")
+  }
 
   override def methodBlock(frameworkMethod: FrameworkMethod): Statement = {
     val statement: Statement = super.methodBlock(frameworkMethod)
