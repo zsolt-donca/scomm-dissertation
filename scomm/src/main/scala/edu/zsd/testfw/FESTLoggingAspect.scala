@@ -7,6 +7,9 @@ import java.io.File
 import edu.zsd.testfw.FESTLogging._
 import scala.compat.Platform
 import edu.zsd.testfw.MethodCallStack.RunningTestMethodExecution
+import javax.swing.SwingUtilities._
+import scala.Some
+import org.fest.swing.edt.{GuiQuery, GuiActionRunner}
 
 @Aspect
 class FESTLoggingAspect {
@@ -26,8 +29,18 @@ class FESTLoggingAspect {
   @Pointcut("execution(@edu.zsd.testfw.GUITestAction * *.*(..))")
   def guiTestActionMethods() {}
 
+  @Pointcut("execution(@edu.zsd.testfw.ExecuteInEDT * *.*(..))")
+  def executeInEDTMethods() {}
+
   @Pointcut("execution(public * org.fest.swing.core.BasicRobot.*(..))")
   def robotMethods() {}
+
+  @Around("executeInEDTMethods()")
+  def executeInEDT(joinPoint: ProceedingJoinPoint) : AnyRef = {
+    GuiActionRunner.execute(new GuiQuery[AnyRef] {
+      override def executeInEDT(): AnyRef = joinPoint.proceed()
+    })
+  }
 
   @Around("testMethods() || beforeMethods() || afterMethods() || guiTestBeanMethods()")
   def reportTestAndGUITestBeanMethods(joinPoint: ProceedingJoinPoint): AnyRef = {
