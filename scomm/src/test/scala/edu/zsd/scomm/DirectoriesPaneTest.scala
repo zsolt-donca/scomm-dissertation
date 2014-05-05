@@ -35,7 +35,7 @@ class DirectoriesPaneTest {
   @Test
   def testThatFails(): Unit = {
     println("tralla")
-    fail("hoho")
+    fail("hohoho happy xmas")
   }
 
   @Test
