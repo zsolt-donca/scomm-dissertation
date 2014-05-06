@@ -9,19 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>scomm</artifactId>
+    <artifactId>scala-react</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>edu.zsd</groupId>
-            <artifactId>scala-react</artifactId>
-            <version>0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.zsd</groupId>
-            <artifactId>fest-logging</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.10</artifactId>
+            <version>2.1.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -41,12 +35,13 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <!--<sourceDir>src/main/java</sourceDir>-->
                     <jvmArgs>
                         <jvmArg>-Xms64m</jvmArg>
                         <jvmArg>-Xmx1024m</jvmArg>
                     </jvmArgs>
                     <args>
+                        <arg>-deprecation</arg>
+                        <arg>-unchecked</arg>
                         <arg>-P:continuations:enable</arg>
                     </args>
                     <compilerPlugins>
@@ -58,51 +53,33 @@
                     </compilerPlugins>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-
-                <executions>
-                    <execution>
-                        <id>copy aspectj waver jar to target</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.aspectj</groupId>
-                                    <artifactId>aspectjweaver</artifactId>
-                                    <version>1.7.4</version>
-                                    <type>jar</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.17</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest-maven-plugin</artifactId>
+                <version>1.0-M2</version>
+                <configuration>
+                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                    <junitxml>.</junitxml>
+                    <filereports>WDF TestSuite.txt</filereports>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>test</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>test</goal>
                         </goals>
-                        <configuration>
-                            <argLine>-ea -javaagent:${project.build.directory}\aspectjweaver-1.7.4.jar</argLine>
-                            <workingDirectory>${project.build.directory}</workingDirectory>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
