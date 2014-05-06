@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package edu.zsd.scomm
 
 import scala.swing._
