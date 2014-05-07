@@ -28,7 +28,7 @@ object FESTTest {
     val right = new DirectoryListUserActions("directoriesPane.right")
   }
 
-  def deleteEmptyDirectoryPlaceholders(dir: File) {
+  private def deleteEmptyDirectoryPlaceholders(dir: File) {
     val emptyPlaceholder: File = new File(dir, "empty")
     if (emptyPlaceholder.exists()) {
       emptyPlaceholder.delete()

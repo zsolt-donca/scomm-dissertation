@@ -4,7 +4,7 @@ import java.io.File
 
 object FESTLogging {
 
-  val baseDir = new File("./reports")
+  val baseDir = new File("reports").getAbsoluteFile
   baseDir.mkdirs()
   
   val xmlDir = new File(baseDir, "xml")
