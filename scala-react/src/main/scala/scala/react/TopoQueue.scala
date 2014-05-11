@@ -1,5 +1,6 @@
 package scala.react
-import java.util.Arrays
+import java.util.{Comparator, Arrays}
+import scala.collection.parallel.mutable
 
 abstract class PropQueue[A >: Null: Manifest] {
   def clear()
@@ -255,4 +256,30 @@ abstract class TopoQueue[A >: Null: Manifest] extends PropQueue[A]  {
   }
 
   def reinsert(elem: A) = sys.error("not implemented")
+}
+
+abstract class ClassicQueue[A >: Null: Manifest] extends PropQueue[A] {
+
+  private[this] val queue = new java.util.PriorityQueue(16, new Comparator[A] {
+    override def compare(o1: A, o2: A): Int = {
+      priority(o1).compareTo(priority(o2))
+    }
+  })
+
+  def priority(a: A): Int
+
+  override def clear(): Unit = queue.clear()
+
+  override def reinsert(elem: A): Unit = {
+    if (queue.contains(elem)) {
+      queue.remove(elem)
+    }
+    queue.add(elem)
+  }
+
+  override def dequeue(): A = queue.remove()
+
+  override def +=(elem: A): Unit = queue.add(elem)
+
+  override def isEmpty: Boolean = queue.isEmpty
 }

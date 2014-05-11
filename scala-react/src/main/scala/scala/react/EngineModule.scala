@@ -55,12 +55,16 @@ abstract class EngineModule { self: Domain =>
     // the current propagation level at which this engine is or previously was
     protected var level = 0
 
-    private var propQueue: PropQueue[StrictNode] = System.getProperty("scala.react.propqueue", "prio").toLowerCase match {
+    // zsd: changing default queue because 'PriorityQueue' is buggy
+    private var propQueue: PropQueue[StrictNode] = System.getProperty("scala.react.propqueue", "classic").toLowerCase match {
       case "prio" => new PriorityQueue[StrictNode] {
         def priority(n: StrictNode) = n.level
       }
       case "topo" => new TopoQueue[StrictNode] {
         def depth(n: StrictNode) = n.level
+      }
+      case "classic" => new ClassicQueue[StrictNode] {
+        override def priority(n: StrictNode): Int = n.level
       }
     }
 
