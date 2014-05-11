@@ -1,27 +1,21 @@
-
-package edu.zsd.scomm
-
+package edu.zsd.scomm.controller
 
 import scala.swing._
-import edu.zsd.scomm.domain._
 import scala.swing.BorderPanel.Position
+import java.nio.file.Files
 import javax.swing.JOptionPane
-import java.nio.file.{Files, Paths, Path}
+import java.awt.Dimension
+import edu.zsd.scomm.domain._
+import edu.zsd.scomm.model.FileEntry
+import edu.zsd.scomm.view.{DirectoriesPaneView, EventButton}
+import edu.zsd.scomm.AppParams
 
-object mainWindow extends ReactiveSimpleSwingApplication with Observing {
+/**
+ * Controller.
+ */
+class MainWindow(appParams : AppParams) extends Observing {
 
-  var initLeftDir : Path = Paths.get("C:\\")
-  var initRightDir : Path = Paths.get("D:\\")
-  override def startup(args: Array[String]): Unit = {
-    if (args.length >= 1) {
-      val initDir = Paths.get(args(0))
-      initLeftDir = initDir
-      initRightDir = initDir
-    }
-    super.startup(args)
-  }
-
-  override def top: Frame = new MainFrame {
+  val frame = new MainFrame {
 
     menuBar = new MenuBar() {
       contents += new Menu("Files") {
@@ -42,7 +36,7 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
       }
     }
 
-    val directoriesPane = new DirectoriesPane("directoriesPane", initLeftDir, initRightDir)
+    val directoriesPane = new DirectoriesPaneView(appParams.initLeftDir, appParams.initRightDir)
 
     contents = new BorderPanel() {
       add(directoriesPane, Position.Center)
@@ -92,7 +86,6 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
     pack()
     peer.setLocationRelativeTo(null)
   }
+
+
 }
-
-
-

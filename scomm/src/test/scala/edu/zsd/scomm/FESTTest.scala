@@ -5,14 +5,14 @@ import org.fest.swing.finder.WindowFinder
 import java.awt.Frame
 import java.io.File
 import edu.zsd.scomm.useractions.{MainWindowUserActions, DirectoryListUserActions}
-import java.nio.file.{Files, Path}
+import java.nio.file.{DirectoryStream, Files, Path}
 import scala.collection.JavaConverters._
 
 object FESTTest {
 
   val testDir : Path = new File(this.getClass.getClassLoader.getResource("testDir").toURI).toPath
   deleteEmptyDirectoryPlaceholders(testDir)
-  edu.zsd.scomm.mainWindow.main(Array(testDir.toString))
+  edu.zsd.scomm.main.main(Array(testDir.toString))
 
   val robot: Robot = BasicRobot.robotWithCurrentAwtHierarchy
 
@@ -35,8 +35,13 @@ object FESTTest {
     if (Files.exists(emptyPlaceholder)) {
       Files.delete(emptyPlaceholder)
     }
-    val files = Files.newDirectoryStream(dir).asScala
-    for (file <- files if Files.isDirectory(file)) deleteEmptyDirectoryPlaceholders(file)
+    val directoryStream: DirectoryStream[Path] = Files.newDirectoryStream(dir)
+    try {
+      val files = directoryStream.asScala
+      for (file <- files if Files.isDirectory(file)) deleteEmptyDirectoryPlaceholders(file)
+    } finally {
+      directoryStream.close()
+    }
   }
 
 

@@ -1,4 +1,4 @@
-package edu.zsd.scomm
+package edu.zsd.scomm.model
 
 import edu.zsd.scomm.domain._
 import java.nio.file._
@@ -16,10 +16,14 @@ class DirectoryListModel(initDir : Path) extends Observing {
   // derived events and signals
   val currentDirContents: Signal[Seq[FileEntry]] = Strict {
     val currentDir: Path = DirectoryListModel.this.currentDir()
-    val directoryStream = Files.newDirectoryStream(currentDir).asScala.toSeq
-    val contents: Seq[FileEntry] = directoryStream.map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
-    val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
-    parentFile ++ contents
+    val directoryStream: DirectoryStream[Path] = Files.newDirectoryStream(currentDir)
+    try {
+      val contents: Seq[FileEntry] = directoryStream.asScala.toSeq.map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
+      val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
+      parentFile ++ contents
+    } finally {
+      directoryStream.close()
+    }
   }
 
   // TODO investigate why it fails if this is Strict
@@ -57,7 +61,3 @@ class DirectoryListModel(initDir : Path) extends Observing {
   currentDir() = initDir
 
 }
-
-case class SelectionInfo(size: Long, selectedFiles: Int, selectedFolders: Int)
-
-case class FileEntry(path: Path, name: String)

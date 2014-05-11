@@ -1,4 +1,4 @@
-package edu.zsd.scomm
+package edu.zsd.scomm.view
 
 import scala.swing.{Action, Button}
 import edu.zsd.scomm.domain._

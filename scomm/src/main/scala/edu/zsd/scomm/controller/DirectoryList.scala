@@ -1,8 +1,10 @@
-package edu.zsd.scomm
+package edu.zsd.scomm.controller
 
 import scala.swing.Reactor
 import scala.swing.event.{Key, KeyPressed, ListSelectionChanged, MouseClicked}
 import java.nio.file.Path
+import edu.zsd.scomm.model.DirectoryListModel
+import edu.zsd.scomm.view.DirectoryListView
 
 /**
  * Controller.

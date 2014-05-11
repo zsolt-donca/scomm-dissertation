@@ -1,9 +1,9 @@
-package edu.zsd.scomm
+package edu.zsd.scomm.view
 
 import scala.swing._
 import edu.zsd.scomm.domain._
 import scala.swing.BorderPanel.Position
-import scala.swing.event.Key
+import edu.zsd.scomm.model.DirectoryListModel
 
 class DirectoryListView(componentName : String, model : DirectoryListModel) extends BorderPanel with Observing {
 
