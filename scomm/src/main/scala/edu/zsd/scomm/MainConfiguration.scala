@@ -1,9 +1,9 @@
 package edu.zsd.scomm
 
 import org.springframework.scala.context.function.FunctionalConfiguration
-import edu.zsd.scomm.controller.{DirectoryList, MainWindow}
-import edu.zsd.scomm.view.{DirectoryListView, DirectoriesPaneView}
-import edu.zsd.scomm.model.DirectoryListModel
+import edu.zsd.scomm.controller.{MainWindow, DirectoryList}
+import edu.zsd.scomm.view.{MainWindowView, DirectoryListView, DirectoriesPaneView}
+import edu.zsd.scomm.model.{DirectoriesPaneModel, DirectoryListModel}
 
 class MainConfiguration extends FunctionalConfiguration {
 
@@ -35,11 +35,19 @@ class MainConfiguration extends FunctionalConfiguration {
     new DirectoryList(rightDirectoryListModel(), rightDirectoryListView())
   }
 
-  val directoriesPane = bean() {
-    new DirectoriesPaneView(leftDirectoryList(), rightDirectoryList())
+  val directoriesPaneModel = bean() {
+    new DirectoriesPaneModel(leftDirectoryListModel(), rightDirectoryListModel())
   }
 
-  val mainWindow = bean("mainWindow") {
-    new MainWindow(directoriesPane())
+  val directoriesPaneView = bean() {
+    new DirectoriesPaneView(directoriesPaneModel(), leftDirectoryListView(), rightDirectoryListView())
+  }
+
+  val mainWindowView = bean() {
+    new MainWindowView(directoriesPaneView())
+  }
+
+  val mainWindow = bean() {
+    new MainWindow(mainWindowView())
   }
 }

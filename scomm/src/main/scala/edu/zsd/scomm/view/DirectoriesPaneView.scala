@@ -1,17 +1,15 @@
 package edu.zsd.scomm.view
 
 import scala.swing.{Orientation, SplitPane}
-import java.nio.file.Path
-import edu.zsd.scomm.controller.DirectoryList
+import edu.zsd.scomm.model.DirectoriesPaneModel
 
-class DirectoriesPaneView(val leftDirectoryList : DirectoryList, val rightDirectoryList : DirectoryList) extends SplitPane {
-
-  val left = leftDirectoryList.view
-  val right = rightDirectoryList.view
+class DirectoriesPaneView(val model : DirectoriesPaneModel,
+                          val leftDirectoryListView : DirectoryListView,
+                          val rightDirectoryListView : DirectoryListView) extends SplitPane {
 
   name = "directoriesPane"
-  leftComponent = left
-  rightComponent = right
+  leftComponent = leftDirectoryListView
+  rightComponent = rightDirectoryListView
   orientation = Orientation.Vertical
   dividerLocation = 0.5
   resizeWeight = 0.5
