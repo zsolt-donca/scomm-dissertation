@@ -16,9 +16,9 @@ class DirectoriesPaneITCase {
   def setup() : Unit = {
 
     val currentDir = directoriesPane.left.getCurrentDir
-    if (currentDir != testDir) {
-      if (currentDir.startsWith(testDir)) {
-        while (directoriesPane.left.getCurrentDir != testDir) {
+    if (currentDir != testDir.toString) {
+      if (currentDir.startsWith(testDir.toString)) {
+        while (directoriesPane.left.getCurrentDir != testDir.toString) {
           directoriesPane.left.enterParentDirectory()
         }
       } else {
@@ -49,27 +49,27 @@ class DirectoriesPaneITCase {
 
   @Test
   def testSimpleList() : Unit = {
-    directoriesPane.left.requireCurrentDir(testDir)
+    directoriesPane.left.requireCurrentDir(testDir.toString)
     directoriesPane.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
   }
 
   @Test
   def testEnterDirectory() : Unit = {
-    directoriesPane.left.requireCurrentDir(testDir)
+    directoriesPane.left.requireCurrentDir(testDir.toString)
     directoriesPane.left.enterDirectory("zombie")
-    directoriesPane.left.requireCurrentDir(testDir + File.separator + "zombie")
+    directoriesPane.left.requireCurrentDir(testDir.resolve("zombie").toString)
     directoriesPane.left.requireContents(Seq("..", "more", "zombies", "here"))
 
     directoriesPane.left.enterParentDirectory()
-    directoriesPane.left.requireCurrentDir(testDir)
+    directoriesPane.left.requireCurrentDir(testDir.toString)
     directoriesPane.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
   }
 
   @Test
   def testEnterEmptyList() : Unit = {
-    directoriesPane.left.requireCurrentDir(testDir)
+    directoriesPane.left.requireCurrentDir(testDir.toString)
     directoriesPane.left.enterDirectory("troll")
-    directoriesPane.left.requireCurrentDir(testDir + File.separator + "troll")
+    directoriesPane.left.requireCurrentDir(testDir.resolve("troll").toString)
     directoriesPane.left.requireContents(Seq(".."))
     directoriesPane.left.enterParentDirectory()
   }
@@ -94,19 +94,19 @@ class DirectoriesPaneITCase {
   def testViewButton() : Unit = {
 
     directoriesPane.left.select("folder1")
-    FESTTest.mainWindow.requireInfoDialog(1, 0, testDir)
+    FESTTest.mainWindow.requireInfoDialog(1, 0, testDir.toString)
 
     directoriesPane.left.select("a.txt")
-    FESTTest.mainWindow.requireInfoDialog(0, 1, testDir)
+    FESTTest.mainWindow.requireInfoDialog(0, 1, testDir.toString)
 
     directoriesPane.left.selectRange("..", "xyz")
-    FESTTest.mainWindow.requireInfoDialog(4, 3, testDir)
+    FESTTest.mainWindow.requireInfoDialog(4, 3, testDir.toString)
 
     directoriesPane.left.enterDirectory("zombie")
     FESTTest.mainWindow.requireInfoButtonDisabled()
 
     directoriesPane.left.selectRange("more", "here")
-    FESTTest.mainWindow.requireInfoDialog(2, 1, testDir + File.separator + "zombie")
+    FESTTest.mainWindow.requireInfoDialog(2, 1, testDir.resolve("zombie").toString)
   }
 }
 

@@ -1,10 +1,9 @@
 package edu.zsd.scomm
 
-import scala.swing.{Publisher, Orientation, SplitPane}
-import java.io.File
-import scala.swing.event.{MouseClicked, FocusLost, FocusGained}
+import scala.swing.{Orientation, SplitPane}
+import java.nio.file.Path
 
-class DirectoriesPane(componentName : String, initLeftDir : File, initRightDir : File) extends SplitPane {
+class DirectoriesPane(componentName : String, initLeftDir : Path, initRightDir : Path) extends SplitPane {
 
   name = componentName
   val leftList = new DirectoryList(componentName + ".left", initLeftDir)

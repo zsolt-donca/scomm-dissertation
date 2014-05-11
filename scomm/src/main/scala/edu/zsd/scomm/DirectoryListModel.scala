@@ -1,23 +1,24 @@
 package edu.zsd.scomm
 
-import java.io.File
 import edu.zsd.scomm.domain._
+import java.nio.file._
+import scala.collection.JavaConverters._
 
-class DirectoryListModel(initDir : File) extends Observing {
+class DirectoryListModel(initDir : Path) extends Observing {
 
   // basic events and signals
   val enterDirectory = EventSource[Int]
   val goToParent = EventSource[Unit]
 
   val selectedIndices = Var[Set[Int]](Set.empty)
-  val currentDir = Var(new File(""))
+  val currentDir = Var(Paths.get(""))
 
   // derived events and signals
   val currentDirContents: Signal[Seq[FileEntry]] = Strict {
-    val currentDir: File = DirectoryListModel.this.currentDir()
-    val listFiles = currentDir.listFiles()
-    val contents: Seq[FileEntry] = if (listFiles != null) listFiles.map(file => FileEntry(file, file.getName)).sortBy(fileEntry => (fileEntry.file.isFile, fileEntry.name.toLowerCase)) else Seq.empty
-    val parentFile: Seq[FileEntry] = if (currentDir.getParentFile != null) Seq(FileEntry(currentDir.getParentFile, "..")) else Seq.empty
+    val currentDir: Path = DirectoryListModel.this.currentDir()
+    val directoryStream = Files.newDirectoryStream(currentDir).asScala.toSeq
+    val contents: Seq[FileEntry] = directoryStream.map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
+    val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
     parentFile ++ contents
   }
 
@@ -31,9 +32,9 @@ class DirectoryListModel(initDir : File) extends Observing {
 
   val selectionInfo: Signal[SelectionInfo] = Strict {
     val selected: Seq[FileEntry] = selectedFiles()
-    val size = selected.map(fileEntry => fileEntry.file.length).sum
-    val files = selected.count(fileEntry => fileEntry.file.isFile)
-    val directories = selected.count(fileEntry => fileEntry.file.isDirectory)
+    val size = selected.map(fileEntry => Files.size(fileEntry.path)).sum
+    val files = selected.count(fileEntry => Files.isRegularFile(fileEntry.path))
+    val directories = selected.count(fileEntry => Files.isDirectory(fileEntry.path))
 
     SelectionInfo(size, files, directories)
   }
@@ -41,14 +42,14 @@ class DirectoryListModel(initDir : File) extends Observing {
   observe(enterDirectory) {
     index =>
       val files = currentDirContents.now
-      val selectedFile: File = files(index).file
-      currentDir() = selectedFile
+      val selectedPath: Path = files(index).path
+      currentDir() = selectedPath
   }
 
   observe(goToParent) {
     _ =>
       val current = currentDir.now
-      if (current.getParentFile != null) {
+      if (current.getParent != null) {
         enterDirectory << 0
       }
   }
@@ -59,4 +60,4 @@ class DirectoryListModel(initDir : File) extends Observing {
 
 case class SelectionInfo(size: Long, selectedFiles: Int, selectedFolders: Int)
 
-case class FileEntry(file: File, name: String)
+case class FileEntry(path: Path, name: String)

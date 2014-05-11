@@ -1,8 +1,8 @@
 package edu.zsd.scomm
 
-import java.io.File
 import scala.swing.Reactor
 import scala.swing.event.{Key, KeyPressed, ListSelectionChanged, MouseClicked}
+import java.nio.file.Path
 
 /**
  * Controller.
@@ -10,7 +10,7 @@ import scala.swing.event.{Key, KeyPressed, ListSelectionChanged, MouseClicked}
  * @param componentName Swing component name
  * @param initDir initial directory
  */
-class DirectoryList(componentName : String, initDir : File) extends Reactor {
+class DirectoryList(componentName : String, initDir : Path) extends Reactor {
 
   val model = new DirectoryListModel(initDir)
   val view = new DirectoryListView(componentName, model)

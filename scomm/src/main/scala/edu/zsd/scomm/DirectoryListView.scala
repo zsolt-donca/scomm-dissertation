@@ -3,8 +3,7 @@ package edu.zsd.scomm
 import scala.swing._
 import edu.zsd.scomm.domain._
 import scala.swing.BorderPanel.Position
-import scala.swing.event.{Key, KeyPressed, ListSelectionChanged, MouseClicked}
-import java.io.File
+import scala.swing.event.Key
 
 class DirectoryListView(componentName : String, model : DirectoryListModel) extends BorderPanel with Observing {
 

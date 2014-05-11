@@ -6,15 +6,15 @@ import scala.swing._
 import edu.zsd.scomm.domain._
 import scala.swing.BorderPanel.Position
 import javax.swing.JOptionPane
-import java.io.File
+import java.nio.file.{Files, Paths, Path}
 
 object mainWindow extends ReactiveSimpleSwingApplication with Observing {
 
-  var initLeftDir : File = new File("C:\\")
-  var initRightDir : File = new File("D:\\")
+  var initLeftDir : Path = Paths.get("C:\\")
+  var initRightDir : Path = Paths.get("D:\\")
   override def startup(args: Array[String]): Unit = {
     if (args.length >= 1) {
-      val initDir = new File(args(0))
+      val initDir = Paths.get(args(0))
       initLeftDir = initDir
       initRightDir = initDir
     }
@@ -80,8 +80,8 @@ object mainWindow extends ReactiveSimpleSwingApplication with Observing {
         self =>
           self awaitNext commandButtons.infoButton.actionEvents
           val selectedFiles: Seq[FileEntry] = directoriesPane.leftList.model.selectedFiles.now
-          val directories = selectedFiles.count(fileEntry => fileEntry.file.isDirectory)
-          val files = selectedFiles.count(fileEntry => fileEntry.file.isFile)
+          val directories = selectedFiles.count(fileEntry => Files.isDirectory(fileEntry.path))
+          val files = selectedFiles.count(fileEntry => Files.isRegularFile(fileEntry.path))
           val message = s"There are $directories directories and $files files selected in ${directoriesPane.leftList.model.currentDir.now}"
           JOptionPane.showMessageDialog(null, message, "View", JOptionPane.INFORMATION_MESSAGE)
       }

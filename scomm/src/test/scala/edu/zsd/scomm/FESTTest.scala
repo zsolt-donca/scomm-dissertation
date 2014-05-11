@@ -5,12 +5,14 @@ import org.fest.swing.finder.WindowFinder
 import java.awt.Frame
 import java.io.File
 import edu.zsd.scomm.useractions.{MainWindowUserActions, DirectoryListUserActions}
+import java.nio.file.{Files, Path}
+import scala.collection.JavaConverters._
 
 object FESTTest {
 
-  val testDir : String = new File(this.getClass.getClassLoader.getResource("testDir").toURI).getPath
-  deleteEmptyDirectoryPlaceholders(new File(testDir))
-  edu.zsd.scomm.mainWindow.main(Array(testDir))
+  val testDir : Path = new File(this.getClass.getClassLoader.getResource("testDir").toURI).toPath
+  deleteEmptyDirectoryPlaceholders(testDir)
+  edu.zsd.scomm.mainWindow.main(Array(testDir.toString))
 
   val robot: Robot = BasicRobot.robotWithCurrentAwtHierarchy
 
@@ -28,15 +30,13 @@ object FESTTest {
     val right = new DirectoryListUserActions("directoriesPane.right")
   }
 
-  private def deleteEmptyDirectoryPlaceholders(dir: File) {
-    val emptyPlaceholder: File = new File(dir, "empty")
-    if (emptyPlaceholder.exists()) {
-      emptyPlaceholder.delete()
+  private def deleteEmptyDirectoryPlaceholders(dir: Path) {
+    val emptyPlaceholder: Path = dir.resolve("empty")
+    if (Files.exists(emptyPlaceholder)) {
+      Files.delete(emptyPlaceholder)
     }
-    val files = dir.listFiles()
-    if (files != null) {
-      for (file <- files if file.isDirectory) deleteEmptyDirectoryPlaceholders(file)
-    }
+    val files = Files.newDirectoryStream(dir).asScala
+    for (file <- files if Files.isDirectory(file)) deleteEmptyDirectoryPlaceholders(file)
   }
 
 
