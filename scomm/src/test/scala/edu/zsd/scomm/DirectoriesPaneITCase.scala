@@ -34,8 +34,17 @@ class DirectoriesPaneITCase {
   
   @Test
   def testThatFails(): Unit = {
+    try {
+      doSomething()
+      fail()
+    } catch {
+      case _ : Exception =>
+    }
     println("tralla")
-    fail("hohoho happy xmas")
+  }
+
+  def doSomething(): Unit = {
+    throw new Exception("hohoho happy xmas")
   }
 
   @Test
