@@ -10,6 +10,7 @@ class DirectoryListModel(initDir : Path) extends Observing {
   val enterDirectory = EventSource[Int]
   val goToParent = EventSource[Unit]
 
+  val active = Var[Boolean](false)
   val selectedIndices = Var[Set[Int]](Set.empty)
   val currentDir = Var(Paths.get(""))
 
@@ -58,6 +59,11 @@ class DirectoryListModel(initDir : Path) extends Observing {
       }
   }
 
-  currentDir() = initDir
+  observe(active) {
+    active =>
+      if (!active)
+        selectedIndices() = Set.empty
+  }
 
+  currentDir() = initDir
 }

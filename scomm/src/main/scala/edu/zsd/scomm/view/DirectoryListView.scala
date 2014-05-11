@@ -4,6 +4,7 @@ import scala.swing._
 import edu.zsd.scomm.domain._
 import scala.swing.BorderPanel.Position
 import edu.zsd.scomm.model.DirectoryListModel
+import java.awt.Color
 
 class DirectoryListView(componentName : String, model : DirectoryListModel) extends BorderPanel with Observing {
 
@@ -12,7 +13,11 @@ class DirectoryListView(componentName : String, model : DirectoryListModel) exte
   private[this] val currentDirLabel = new Label("<empty>")
   currentDirLabel.name = componentName + ".currentDirLabel"
   currentDirLabel.horizontalAlignment = Alignment.Left
-  add(currentDirLabel, Position.North)
+
+  private[this] val currentDirPanel = new BorderPanel() {
+    add(currentDirLabel, Position.Center)
+  }
+  add(currentDirPanel, Position.North)
 
   val listView = new ListView[String]()
   listView.name = componentName + ".listView"
@@ -39,4 +44,20 @@ class DirectoryListView(componentName : String, model : DirectoryListModel) exte
     info => summaryLabel.text = s"${info.size} bytes, ${info.selectedFiles} file(s), ${info.selectedFolders} folder(s)"
   }
 
+  observe(model.selectedIndices) {
+    selectedIndices : Set[Int] =>
+      listView.selection.indices.clear()
+      listView.selection.indices ++= selectedIndices
+  }
+
+  observe(model.active) {
+    active =>
+      if (active) {
+        currentDirPanel.background = Color.BLUE
+        currentDirLabel.foreground = Color.WHITE
+      } else {
+        currentDirPanel.background = Color.LIGHT_GRAY
+        currentDirLabel.foreground = Color.BLACK
+      }
+  }
 }

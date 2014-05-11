@@ -1,15 +1,17 @@
 package edu.zsd.scomm.controller
 
 import scala.swing.Reactor
-import scala.swing.event.{Key, KeyPressed, ListSelectionChanged, MouseClicked}
+import scala.swing.event._
 import edu.zsd.scomm.model.DirectoryListModel
 import edu.zsd.scomm.view.DirectoryListView
+import scala.swing.event.KeyPressed
+import scala.swing.event.MouseClicked
 
 /**
  * Controller.
  *
  */
-class DirectoryList(val model : DirectoryListModel, val view : DirectoryListView) extends Reactor {
+class DirectoryListController(val model : DirectoryListModel, val view : DirectoryListView) extends Reactor {
 
   listenTo(view.listView.mouse.clicks, view.listView.selection, view.listView.keys)
   reactions += {

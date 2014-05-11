@@ -3,8 +3,8 @@ package edu.zsd.scomm
 
 import edu.zsd.scomm.domain._
 import java.nio.file.Paths
-import edu.zsd.scomm.controller.MainWindow
 import org.springframework.scala.context.function.FunctionalConfigApplicationContext
+import edu.zsd.scomm.view.MainWindowView
 
 object main extends ReactiveSimpleSwingApplication {
 
@@ -22,7 +22,7 @@ object main extends ReactiveSimpleSwingApplication {
     super.startup(args)
   }
 
-  override def top = applicationContext.getBean(classOf[MainWindow]).mainWindowView
+  override def top = applicationContext.getBean(classOf[MainWindowView])
 
 }
 
