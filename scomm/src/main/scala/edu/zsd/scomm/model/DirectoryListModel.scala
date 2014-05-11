@@ -3,7 +3,6 @@ package edu.zsd.scomm.model
 import edu.zsd.scomm.domain._
 import java.nio.file._
 import scala.collection.JavaConverters._
-import javax.swing.JOptionPane
 
 class DirectoryListModel(initDir : Path) extends Observing {
 
@@ -34,7 +33,6 @@ class DirectoryListModel(initDir : Path) extends Observing {
     }
   }
 
-  // TODO investigate why it fails if this is Strict
   val selectedFiles: Signal[Seq[FileEntry]] = Strict {
     val indices = selectedIndices()
     val contents = currentDirContents()

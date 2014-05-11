@@ -44,7 +44,7 @@ class MainConfiguration extends FunctionalConfiguration {
   }
 
   val directoriesPaneController = bean() {
-    new DirectoriesPaneController(directoriesPaneView())
+    new DirectoriesPaneController(directoriesPaneView(), directoriesPaneModel())
   }
 
   val mainWindowView = bean() {
