@@ -3,11 +3,12 @@ package edu.zsd.scomm.model
 import edu.zsd.scomm.domain._
 import java.nio.file._
 import scala.collection.JavaConverters._
+import javax.swing.JOptionPane
 
 class DirectoryListModel(initDir : Path) extends Observing {
 
   // basic events and signals
-  val enterDirectory = EventSource[Int]
+  val processEntry = EventSource[Int]
   val goToParent = EventSource[Unit]
 
   val active = Var[Boolean](false)
@@ -17,18 +18,24 @@ class DirectoryListModel(initDir : Path) extends Observing {
   // derived events and signals
   val currentDirContents: Signal[Seq[FileEntry]] = Strict {
     val currentDir: Path = DirectoryListModel.this.currentDir()
-    val directoryStream: DirectoryStream[Path] = Files.newDirectoryStream(currentDir)
     try {
-      val contents: Seq[FileEntry] = directoryStream.asScala.toSeq.map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
-      val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
-      parentFile ++ contents
-    } finally {
-      directoryStream.close()
+      val directoryStream: DirectoryStream[Path] = Files.newDirectoryStream(currentDir)
+      try {
+        val contents: Seq[FileEntry] = directoryStream.asScala.toSeq.map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
+        val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
+        parentFile ++ contents
+      } finally {
+        directoryStream.close()
+      }
+    } catch {
+      case e : AccessDeniedException =>
+        e.printStackTrace()
+        Seq(FileEntry(currentDir.getParent, ".."))
     }
   }
 
   // TODO investigate why it fails if this is Strict
-  val selectedFiles: Signal[Seq[FileEntry]] = Lazy {
+  val selectedFiles: Signal[Seq[FileEntry]] = Strict {
     val indices = selectedIndices()
     val contents = currentDirContents()
 
@@ -44,18 +51,20 @@ class DirectoryListModel(initDir : Path) extends Observing {
     SelectionInfo(size, files, directories)
   }
 
-  observe(enterDirectory) {
+  observe(processEntry) {
     index =>
       val files = currentDirContents.now
       val selectedPath: Path = files(index).path
-      currentDir() = selectedPath
+      if (Files.isDirectory(selectedPath)) {
+        currentDir() = selectedPath
+      }
   }
 
   observe(goToParent) {
     _ =>
       val current = currentDir.now
       if (current.getParent != null) {
-        enterDirectory << 0
+        processEntry << 0
       }
   }
 
