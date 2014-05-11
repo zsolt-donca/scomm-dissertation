@@ -103,7 +103,7 @@ class DirectoriesPaneITCase {
     FESTTest.mainWindow.requireInfoDialog(4, 3, testDir.toString)
 
     directoriesPane.left.enterDirectory("zombie")
-    FESTTest.mainWindow.requireInfoButtonDisabled()
+    FESTTest.mainWindow.requireInfoDialog(0, 0, testDir.resolve("zombie").toString)
 
     directoriesPane.left.selectRange("more", "here")
     FESTTest.mainWindow.requireInfoDialog(2, 1, testDir.resolve("zombie").toString)
