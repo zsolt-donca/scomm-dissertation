@@ -9,13 +9,8 @@ import edu.zsd.scomm.view.DirectoryListView
 /**
  * Controller.
  *
- * @param componentName Swing component name
- * @param initDir initial directory
  */
-class DirectoryList(componentName : String, initDir : Path) extends Reactor {
-
-  val model = new DirectoryListModel(initDir)
-  val view = new DirectoryListView(componentName, model)
+class DirectoryList(val model : DirectoryListModel, val view : DirectoryListView) extends Reactor {
 
   listenTo(view.listView.mouse.clicks, view.listView.selection, view.listView.keys)
   reactions += {

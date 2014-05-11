@@ -4,15 +4,12 @@ import scala.swing.{Orientation, SplitPane}
 import java.nio.file.Path
 import edu.zsd.scomm.controller.DirectoryList
 
-class DirectoriesPaneView(initLeftDir : Path, initRightDir : Path) extends SplitPane {
+class DirectoriesPaneView(val leftDirectoryList : DirectoryList, val rightDirectoryList : DirectoryList) extends SplitPane {
+
+  val left = leftDirectoryList.view
+  val right = rightDirectoryList.view
 
   name = "directoriesPane"
-  val leftList = new DirectoryList("directoriesPane.left", initLeftDir)
-  val rightList = new DirectoryList("directoriesPane.right", initRightDir)
-
-  val left = leftList.view
-  val right = rightList.view
-  
   leftComponent = left
   rightComponent = right
   orientation = Orientation.Vertical

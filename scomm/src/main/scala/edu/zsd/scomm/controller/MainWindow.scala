@@ -13,7 +13,7 @@ import edu.zsd.scomm.AppParams
 /**
  * Controller.
  */
-class MainWindow(appParams : AppParams) extends Observing {
+class MainWindow(directoriesPane : DirectoriesPaneView) extends Observing {
 
   val frame = new MainFrame {
 
@@ -35,8 +35,6 @@ class MainWindow(appParams : AppParams) extends Observing {
         })
       }
     }
-
-    val directoriesPane = new DirectoriesPaneView(appParams.initLeftDir, appParams.initRightDir)
 
     contents = new BorderPanel() {
       add(directoriesPane, Position.Center)
@@ -66,17 +64,17 @@ class MainWindow(appParams : AppParams) extends Observing {
       }
       add(commandButtons, Position.South)
 
-      observe(directoriesPane.leftList.model.selectedFiles) {
+      observe(directoriesPane.leftDirectoryList.model.selectedFiles) {
         selectedFiles => commandButtons.infoButton.enabled = selectedFiles.nonEmpty
       }
 
       val infoActionReactor = Reactor.loop {
         self =>
           self awaitNext commandButtons.infoButton.actionEvents
-          val selectedFiles: Seq[FileEntry] = directoriesPane.leftList.model.selectedFiles.now
+          val selectedFiles: Seq[FileEntry] = directoriesPane.leftDirectoryList.model.selectedFiles.now
           val directories = selectedFiles.count(fileEntry => Files.isDirectory(fileEntry.path))
           val files = selectedFiles.count(fileEntry => Files.isRegularFile(fileEntry.path))
-          val message = s"There are $directories directories and $files files selected in ${directoriesPane.leftList.model.currentDir.now}"
+          val message = s"There are $directories directories and $files files selected in ${directoriesPane.leftDirectoryList.model.currentDir.now}"
           JOptionPane.showMessageDialog(null, message, "View", JOptionPane.INFORMATION_MESSAGE)
       }
     }

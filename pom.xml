@@ -17,6 +17,11 @@
             <name>Scala-tools Maven2 Repository</name>
             <url>http://scala-tools.org/repo-releases</url>
         </repository>
+        <repository>
+            <id>milestone.repo.springsource.org</id>
+            <name>repo.springsource.org-milestone</name>
+            <url>https://repo.springsource.org/libs-milestone</url>
+        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -69,6 +74,11 @@
             <version>0.8.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.scala</groupId>
+            <artifactId>spring-scala</artifactId>
+            <version>1.0.0.M2</version>
+        </dependency>
     </dependencies>
 
 
