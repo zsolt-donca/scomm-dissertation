@@ -4,7 +4,7 @@ import edu.zsd.scomm.domain._
 import java.nio.file._
 import scala.collection.JavaConverters._
 
-class DirectoryListModel(initDir : Path) extends Observing {
+abstract class DirectoryListModel(initDir : Path) extends Observing {
 
   // basic events and signals
   val processEntry = EventSource[Int]

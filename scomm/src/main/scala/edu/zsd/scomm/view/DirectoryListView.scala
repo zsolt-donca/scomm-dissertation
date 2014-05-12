@@ -6,7 +6,7 @@ import scala.swing.BorderPanel.Position
 import edu.zsd.scomm.model.DirectoryListModel
 import java.awt.Color
 
-class DirectoryListView(componentName : String, model : DirectoryListModel) extends BorderPanel with Observing {
+abstract class DirectoryListView(componentName : String, model : DirectoryListModel) extends BorderPanel with Observing {
 
   name = componentName
 

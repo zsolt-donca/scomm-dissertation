@@ -6,12 +6,15 @@ import edu.zsd.scomm.model.DirectoryListModel
 import edu.zsd.scomm.view.DirectoryListView
 import scala.swing.event.KeyPressed
 import scala.swing.event.MouseClicked
+import org.springframework.stereotype.Component
+import org.springframework.beans.factory.annotation.Autowired
 
 /**
  * Controller.
  *
  */
-class DirectoryListController(val model : DirectoryListModel, val view : DirectoryListView) extends Reactor {
+abstract class DirectoryListController (model : DirectoryListModel,
+                                        view : DirectoryListView) extends Reactor {
 
   listenTo(view.listView.mouse.clicks, view.listView.selection, view.listView.keys)
   reactions += {

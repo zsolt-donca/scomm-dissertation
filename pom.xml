@@ -22,6 +22,17 @@
             <name>repo.springsource.org-milestone</name>
             <url>https://repo.springsource.org/libs-milestone</url>
         </repository>
+        <repository>
+            <id>repository.springsource.milestone</id>
+            <name>SpringSource Milestone Repository</name>
+            <url>http://repo.springsource.org/milestone</url>
+        </repository>
+
+        <repository>
+            <id>repository.springsource.snapshot</id>
+            <name>SpringSource Snapshot Repository</name>
+            <url>http://repo.springsource.org/snapshot</url>
+        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -76,8 +87,8 @@
 
         <dependency>
             <groupId>org.springframework.scala</groupId>
-            <artifactId>spring-scala</artifactId>
-            <version>1.0.0.M2</version>
+            <artifactId>spring-scala_2.10</artifactId>
+            <version>1.0.0.RC1</version>
         </dependency>
     </dependencies>
 

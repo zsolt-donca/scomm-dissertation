@@ -5,9 +5,13 @@ import edu.zsd.scomm.model.{MainWindowModel, DirectoryListModel, FileEntry}
 import java.nio.file.Files
 import javax.swing.JOptionPane
 import edu.zsd.scomm.domain._
+import org.springframework.stereotype.Component
+import org.springframework.beans.factory.annotation.Autowired
 
 
-class MainWindowController(val mainWindowModel : MainWindowModel, val view : MainWindowView) extends Observing {
+@Component
+class MainWindowController @Autowired() (val model: MainWindowModel,
+                                         val view: MainWindowView) extends Observing {
 
   val infoActionReactor = Reactor.loop {
     self =>

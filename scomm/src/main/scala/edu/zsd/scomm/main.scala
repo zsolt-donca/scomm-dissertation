@@ -5,6 +5,7 @@ import edu.zsd.scomm.domain._
 import java.nio.file.Paths
 import org.springframework.scala.context.function.FunctionalConfigApplicationContext
 import edu.zsd.scomm.view.MainWindowView
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 object main extends ReactiveSimpleSwingApplication {
 

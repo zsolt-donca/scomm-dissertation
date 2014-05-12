@@ -1,9 +1,12 @@
 package edu.zsd.scomm.model
 
 import edu.zsd.scomm.domain._
+import org.springframework.stereotype.Component
+import org.springframework.beans.factory.annotation.Autowired
 
-class DirectoriesPaneModel(val left : DirectoryListModel,
-                           val right : DirectoryListModel) extends Observing {
+@Component
+class DirectoriesPaneModel @Autowired() (val left : LeftDirectoryListModel,
+                                         val right : RightDirectoryListModel) extends Observing {
 
   val activeList = Strict[Option[DirectoryListModel]] {
     if (left.active()) {

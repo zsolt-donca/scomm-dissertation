@@ -1,15 +1,18 @@
 package edu.zsd.scomm.view
 
-import scala.swing._
 import scala.swing.BorderPanel.Position
-import java.awt.Dimension
 import edu.zsd.scomm.domain._
 import edu.zsd.scomm.model.MainWindowModel
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+import scala.swing._
 
 /**
  * Controller.
  */
-class MainWindowView(val mainWindowModel : MainWindowModel, val directoriesPane : DirectoriesPaneView) extends MainFrame with Observing {
+@Component
+class MainWindowView @Autowired() (val mainWindowModel : MainWindowModel,
+                                   val directoriesPane : DirectoriesPaneView) extends MainFrame with Observing {
 
   menuBar = new MenuBar() {
     contents += new Menu("Files") {

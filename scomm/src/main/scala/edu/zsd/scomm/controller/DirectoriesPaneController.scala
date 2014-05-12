@@ -4,8 +4,12 @@ import scala.swing.{ListView, Reactor}
 import scala.swing.event.{FocusLost, FocusGained}
 import edu.zsd.scomm.view.DirectoriesPaneView
 import edu.zsd.scomm.model.DirectoriesPaneModel
+import org.springframework.stereotype.Component
+import org.springframework.beans.factory.annotation.Autowired
 
-class DirectoriesPaneController(val view : DirectoriesPaneView, val model : DirectoriesPaneModel) extends Reactor {
+@Component
+class DirectoriesPaneController @Autowired() (val view: DirectoriesPaneView,
+                                              val model: DirectoriesPaneModel) extends Reactor {
 
   private val leftListView: ListView[String] = view.leftDirectoryListView.listView
   private val rightListView: ListView[String] = view.rightDirectoryListView.listView

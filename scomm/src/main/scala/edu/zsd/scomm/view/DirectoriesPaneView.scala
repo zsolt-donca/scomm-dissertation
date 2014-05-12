@@ -2,10 +2,13 @@ package edu.zsd.scomm.view
 
 import scala.swing.{Orientation, SplitPane}
 import edu.zsd.scomm.model.DirectoriesPaneModel
+import org.springframework.stereotype.Component
+import org.springframework.beans.factory.annotation.Autowired
 
-class DirectoriesPaneView(val model : DirectoriesPaneModel,
-                          val leftDirectoryListView : DirectoryListView,
-                          val rightDirectoryListView : DirectoryListView) extends SplitPane {
+@Component
+class DirectoriesPaneView @Autowired() (val model : DirectoriesPaneModel,
+                                        val leftDirectoryListView : LeftDirectoryListView,
+                                        val rightDirectoryListView : RightDirectoryListView) extends SplitPane {
 
   name = "directoriesPane"
   leftComponent = leftDirectoryListView
