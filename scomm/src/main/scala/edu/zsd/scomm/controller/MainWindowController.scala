@@ -1,13 +1,13 @@
 package edu.zsd.scomm.controller
 
 import edu.zsd.scomm.view.MainWindowView
-import edu.zsd.scomm.model.{DirectoryListModel, FileEntry}
+import edu.zsd.scomm.model.{MainWindowModel, DirectoryListModel, FileEntry}
 import java.nio.file.Files
 import javax.swing.JOptionPane
 import edu.zsd.scomm.domain._
 
 
-class MainWindowController(val view : MainWindowView) extends Observing {
+class MainWindowController(val mainWindowModel : MainWindowModel, val view : MainWindowView) extends Observing {
 
   val infoActionReactor = Reactor.loop {
     self =>

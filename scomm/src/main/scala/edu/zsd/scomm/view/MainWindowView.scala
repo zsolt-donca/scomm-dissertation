@@ -4,11 +4,12 @@ import scala.swing._
 import scala.swing.BorderPanel.Position
 import java.awt.Dimension
 import edu.zsd.scomm.domain._
+import edu.zsd.scomm.model.MainWindowModel
 
 /**
  * Controller.
  */
-class MainWindowView(val directoriesPane : DirectoriesPaneView) extends MainFrame with Observing {
+class MainWindowView(val mainWindowModel : MainWindowModel, val directoriesPane : DirectoriesPaneView) extends MainFrame with Observing {
 
   menuBar = new MenuBar() {
     contents += new Menu("Files") {
