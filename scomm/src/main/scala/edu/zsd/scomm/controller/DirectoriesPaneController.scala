@@ -18,8 +18,10 @@ class DirectoriesPaneController @Autowired() (val view: DirectoriesPaneView,
   reactions += {
     case FocusGained(`leftListView`, _, _) =>
       model.left.active() = true
+      model.activeList() = view.leftDirectoryListView.model
     case FocusGained(`rightListView`, _, _) =>
       model.right.active() = true
+      model.activeList() = view.rightDirectoryListView.model
 
     case FocusLost(`leftListView`, Some(`rightListView`), _) =>
       model.left.active() = false

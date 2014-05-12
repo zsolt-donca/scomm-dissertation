@@ -7,7 +7,7 @@ class EventButton(title: String) extends Button {
 
   private[this] val _actionEvent = EventSource[Unit]
 
-  def actionEvents: Events[Unit] = _actionEvent
+  def apply() = _actionEvent
 
   action = new Action(title) {
     override def apply(): Unit = _actionEvent << Unit

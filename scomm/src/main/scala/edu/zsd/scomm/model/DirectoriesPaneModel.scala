@@ -8,15 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 class DirectoriesPaneModel @Autowired() (val left : LeftDirectoryListModel,
                                          val right : RightDirectoryListModel) extends Observing {
 
-  val activeList = Strict[Option[DirectoryListModel]] {
-    if (left.active()) {
-      Some(left)
-    } else if (right.active()) {
-      Some(right)
-    } else {
-      None
-    }
-  }
+  val activeList = Var[DirectoryListModel](left)
 
   left.active() = true
 }
