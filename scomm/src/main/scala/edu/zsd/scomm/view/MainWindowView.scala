@@ -57,9 +57,19 @@ class MainWindowView @Autowired() (val mainWindowModel : MainWindowModel,
     contents += infoButton
   }
 
+  val commandParamsPanel = new FlowPanel(FlowPanel.Alignment.Leading)() {
+    val button = new Button("?")
+    contents += button
+  }
+
+  val southPanel = new BorderPanel {
+    add(commandButtons, Position.North)
+    add(commandParamsPanel, Position.South)
+  }
+
   contents = new BorderPanel() {
     add(directoriesPane, Position.Center)
-    add(commandButtons, Position.South)
+    add(southPanel, Position.South)
   }
 
   title = "Scala Commander"
