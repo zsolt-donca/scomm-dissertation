@@ -16,7 +16,7 @@ object main extends ReactiveSimpleSwingApplication {
       val initDir = Paths.get(args(0))
       AppParams(initDir, initDir)
     } else {
-      AppParams(Paths.get("C:\\"), Paths.get("D:\\"))
+      AppParams(Paths.get("C:\\"), Paths.get("C:\\"))
     }
 
     applicationContext = FunctionalConfigApplicationContext[MainConfiguration]
