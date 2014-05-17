@@ -50,6 +50,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
               Files.createDirectory(newFolderPath)
               diskState.refresh()
               model.status() = s"Successfully created folder '$folderName'!"
+              view.directoriesPane.model.activeList.now.selectPaths << Seq(newFolderPath)
               close = true
             } catch {
               case e: FileAlreadyExistsException => model.status() = s"Folder '$folderName' already exists!";

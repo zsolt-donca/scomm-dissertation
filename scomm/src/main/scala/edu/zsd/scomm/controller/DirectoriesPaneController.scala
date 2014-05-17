@@ -1,7 +1,7 @@
 package edu.zsd.scomm.controller
 
 import scala.swing.{ListView, Reactor}
-import scala.swing.event.{FocusLost, FocusGained}
+import scala.swing.event.FocusGained
 import edu.zsd.scomm.view.DirectoriesPaneView
 import edu.zsd.scomm.model.DirectoriesPaneModel
 import org.springframework.stereotype.Component
@@ -18,15 +18,12 @@ class DirectoriesPaneController @Autowired() (val view: DirectoriesPaneView,
   reactions += {
     case FocusGained(`leftListView`, _, _) =>
       model.left.active() = true
+      model.right.active() = false
       model.activeList() = view.leftDirectoryListView.model
     case FocusGained(`rightListView`, _, _) =>
+      model.left.active() = false
       model.right.active() = true
       model.activeList() = view.rightDirectoryListView.model
-
-    case FocusLost(`leftListView`, Some(`rightListView`), _) =>
-      model.left.active() = false
-    case FocusLost(`rightListView`, Some(`leftListView`), _) =>
-      model.right.active() = false
   }
 
 }

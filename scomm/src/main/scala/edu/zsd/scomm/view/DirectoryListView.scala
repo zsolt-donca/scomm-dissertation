@@ -46,8 +46,11 @@ abstract class DirectoryListView(componentName : String, model : DirectoryListMo
 
   observe(model.selectedIndices) {
     selectedIndices : Set[Int] =>
-      listView.selection.indices.clear()
-      listView.selection.indices ++= selectedIndices
+      if (listView.selection.indices.toSet != selectedIndices) {
+        listView.selection.indices.clear()
+        listView.selection.indices ++= selectedIndices
+        listView.ensureIndexIsVisible(selectedIndices.toSeq(0))
+      }
   }
 
   observe(model.active) {

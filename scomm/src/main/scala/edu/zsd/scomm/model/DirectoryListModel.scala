@@ -9,10 +9,11 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
   // basic events and signals
   val processEntry = EventSource[Int]
   val goToParent = EventSource[Unit]
+  val selectPaths = EventSource[Seq[Path]]
 
   val active = Var[Boolean](false)
   val selectedIndices = Var[Set[Int]](Set.empty)
-  val currentDir = Var(Paths.get(""))
+  val currentDir = Var[Path](Paths.get(""))
 
   // derived events and signals
   val currentDirContents: Signal[Seq[FileEntry]] = Strict {
@@ -65,6 +66,13 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
       if (current.getParent != null) {
         processEntry << 0
       }
+  }
+
+  observe(selectPaths) {
+    selectedPaths =>
+      val contents: Seq[FileEntry] = currentDirContents.now
+      val indices: Seq[Int] = for ((fileEntry, index) <- contents.zipWithIndex if selectedPaths.contains(fileEntry.path)) yield index
+      selectedIndices() = indices.toSet
   }
 
   observe(active) {
