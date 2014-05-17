@@ -1,6 +1,6 @@
 package edu.zsd.scomm.controller
 
-import edu.zsd.scomm.view.{NewFolderPane, MainWindowView}
+import edu.zsd.scomm.view.{NewFolderPanel, MainWindowView}
 import edu.zsd.scomm.model.{DiskState, MainWindowModel, DirectoryListModel, FileEntry}
 import java.nio.file.{FileAlreadyExistsException, Path, Files}
 import javax.swing.JOptionPane
@@ -13,7 +13,8 @@ import java.io.IOException
 @Component
 class MainWindowController @Autowired()(val model: MainWindowModel,
                                         val view: MainWindowView,
-                                        val diskState: DiskState) extends Observing {
+                                        val diskState: DiskState,
+                                        val newFolderPanel: NewFolderPanel) extends Observing {
 
   val infoActionReactor = Reactor.loop {
     self =>
@@ -26,32 +27,30 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       JOptionPane.showMessageDialog(null, message, "View", JOptionPane.INFORMATION_MESSAGE)
   }
 
-  val newFolder = Reactor.loop {
+  val newFolderLoop = Reactor.loop {
     self =>
       self awaitNext view.commandButtons.newFolderButton()
       val activeList: DirectoryListModel = model.directoriesPaneModel.activeList.now
       val currentDir: Path = activeList.currentDir.now
 
-      val newFolder = new NewFolderPane
-
-      view.argumentsPane.panel = newFolder
+      view.argumentsPanel() = Some(newFolderPanel)
       val close = EventSource[Unit]
 
       self.loopUntil(close) {
-        self awaitNext newFolder.okButton()
-        val folderName: String = newFolder.folderName.text
+        self awaitNext newFolderPanel.okButton()
+        val folderName: String = newFolderPanel.folderName.text
 
         val newFolderPath: Path = currentDir.resolve(folderName)
         cps_try {
           try {
             Files.createDirectory(newFolderPath)
             diskState.refresh()
-            view.argumentsPane.resetPanel()
-            view.argumentsPane.statusPane.status = "Success!"
+            view.argumentsPanel() = None
+            model.status() = s"Successfully created folder '$folderName'!"
             close << Unit
           } catch {
-            case e: FileAlreadyExistsException => newFolder.message.text = "File already exists!";
-            case e: IOException => newFolder.message.text = "Error: " + e.getMessage;
+            case e: FileAlreadyExistsException => model.status() = s"Folder '$folderName' already exists!";
+            case e: IOException => model.status() = "Error: " + e.getMessage;
           }
           unit()
         }
