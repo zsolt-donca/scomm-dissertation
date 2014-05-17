@@ -37,24 +37,26 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       view.argumentsPanel() = Some(newFolderPanel)
       var close = false
 
-      while (!close) {
-        self awaitNext newFolderPanel.okButton()
-        val folderName: String = newFolderPanel.folderName.text
+      self.abortOn(newFolderPanel.cancelButton()) {
+        while (!close) {
+          self awaitNext newFolderPanel.okButton()
+          val folderName: String = newFolderPanel.folderName.text
 
-        val newFolderPath: Path = currentDir.resolve(folderName)
-        cps_try {
-          try {
-            Files.createDirectory(newFolderPath)
-            diskState.refresh()
-            model.status() = s"Successfully created folder '$folderName'!"
-            close = true
-          } catch {
-            case e: FileAlreadyExistsException => model.status() = s"Folder '$folderName' already exists!";
-            case e: IOException => model.status() = "Error: " + e.getMessage;
+          val newFolderPath: Path = currentDir.resolve(folderName)
+          cps_try {
+            try {
+              Files.createDirectory(newFolderPath)
+              diskState.refresh()
+              model.status() = s"Successfully created folder '$folderName'!"
+              close = true
+            } catch {
+              case e: FileAlreadyExistsException => model.status() = s"Folder '$folderName' already exists!";
+              case e: IOException => model.status() = "Error: " + e.getMessage;
+            }
+            unit()
           }
           unit()
         }
-        unit()
       }
 
       view.argumentsPanel() = None
