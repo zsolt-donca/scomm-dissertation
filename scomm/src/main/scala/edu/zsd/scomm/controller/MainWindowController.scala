@@ -30,14 +30,16 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
   val newFolderLoop = Reactor.loop {
     self =>
       self awaitNext view.commandButtons.newFolderButton()
-      val activeList: DirectoryListModel = model.directoriesPaneModel.activeList.now
-      val currentDir: Path = activeList.currentDir.now
 
       newFolderPanel.reset()
       view.argumentsPanel() = Some(newFolderPanel)
-      var close = false
 
       self.abortOn(newFolderPanel.cancelButton()) {
+
+        val activeList: DirectoryListModel = model.directoriesPaneModel.activeList.now
+        val currentDir: Path = activeList.currentDir.now
+
+        var close = false
         while (!close) {
           self awaitNext newFolderPanel.okButton()
           val folderName: String = newFolderPanel.folderName.text
