@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import edu.zsd.scomm.AppParams
 
 @Component
-class LeftDirectoryListModel @Autowired() (val appParams : AppParams) extends DirectoryListModel(appParams.initLeftDir) {
+class LeftDirectoryListModel @Autowired()(val appParams: AppParams,
+                                          val diskState: DiskState) extends DirectoryListModel(appParams.initLeftDir, diskState) {
 
 }

@@ -4,7 +4,7 @@ import edu.zsd.scomm.domain._
 import java.nio.file._
 import scala.collection.JavaConverters._
 
-abstract class DirectoryListModel(initDir : Path) extends Observing {
+abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends Observing {
 
   // basic events and signals
   val processEntry = EventSource[Int]
@@ -16,6 +16,7 @@ abstract class DirectoryListModel(initDir : Path) extends Observing {
 
   // derived events and signals
   val currentDirContents: Signal[Seq[FileEntry]] = Strict {
+    diskState()
     val currentDir: Path = DirectoryListModel.this.currentDir()
     try {
       val directoryStream: DirectoryStream[Path] = Files.newDirectoryStream(currentDir)

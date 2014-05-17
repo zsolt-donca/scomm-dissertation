@@ -1,7 +1,7 @@
 package edu.zsd.scomm.controller
 
 import edu.zsd.scomm.view.MainWindowView
-import edu.zsd.scomm.model.{MainWindowModel, DirectoryListModel, FileEntry}
+import edu.zsd.scomm.model.{DiskState, MainWindowModel, DirectoryListModel, FileEntry}
 import java.nio.file.{Path, Files}
 import javax.swing.JOptionPane
 import edu.zsd.scomm.domain._
@@ -12,7 +12,8 @@ import edu.zsd.scomm.actions.NewFolder
 
 @Component
 class MainWindowController @Autowired() (val model: MainWindowModel,
-                                         val view: MainWindowView) extends Observing {
+                                         val view: MainWindowView,
+                                         val diskState: DiskState) extends Observing {
 
   val infoActionReactor = Reactor.loop {
     self =>
@@ -40,6 +41,7 @@ class MainWindowController @Autowired() (val model: MainWindowModel,
 
       val newFolderPath: Path = currentDir.resolve(folderName)
       createDirectory(newFolderPath)
+      diskState.refresh()
   }
 
   def createDirectory(newFolderPath: Path) {
