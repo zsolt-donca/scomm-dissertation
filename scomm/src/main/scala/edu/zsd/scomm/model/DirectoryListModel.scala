@@ -6,16 +6,17 @@ import scala.collection.JavaConverters._
 
 abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends Observing {
 
-  // basic events and signals
+  // basic events
   val processEntry = EventSource[Int]
   val goToParent = EventSource[Unit]
   val selectPaths = EventSource[Seq[Path]]
 
-  val active = Var[Boolean](false)
-  val selectedIndices = Var[Set[Int]](Set.empty)
+  // basic variables
   val currentDir = Var[Path](Paths.get(""))
+  val selectedIndices = Var[Set[Int]](Set.empty)
+  val active = Var[Boolean](false)
 
-  // derived events and signals
+  // derived signals
   val currentDirContents: Signal[Seq[FileEntry]] = Strict {
     diskState()
     val currentDir: Path = DirectoryListModel.this.currentDir()
@@ -29,7 +30,7 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
         directoryStream.close()
       }
     } catch {
-      case e : AccessDeniedException =>
+      case e: AccessDeniedException =>
         e.printStackTrace()
         Seq(FileEntry(currentDir.getParent, ".."))
     }
@@ -51,12 +52,16 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
     SelectionInfo(size, files, directories)
   }
 
+  // observers
+
   observe(processEntry) {
     index =>
+      val previousDir = currentDir.now
       val files = currentDirContents.now
       val selectedPath: Path = files(index).path
       if (Files.isDirectory(selectedPath)) {
         currentDir() = selectedPath
+        selectPaths << Seq(previousDir)
       }
   }
 
@@ -72,6 +77,10 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
     selectedPaths =>
       val contents: Seq[FileEntry] = currentDirContents.now
       val indices: Seq[Int] = for ((fileEntry, index) <- contents.zipWithIndex if selectedPaths.contains(fileEntry.path)) yield index
+
+      if (indices.size != selectedPaths.size) {
+        println("Error: " + indices + ", " + selectedPaths)
+      }
       selectedIndices() = indices.toSet
   }
 
@@ -80,6 +89,10 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
       if (!active)
         selectedIndices() = Set.empty
   }
+
+  //  observe(currentDir) {
+  //    _ => selectedIndices() = Set.empty
+  //  }
 
   currentDir() = initDir
 }
