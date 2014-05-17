@@ -8,7 +8,6 @@ import edu.zsd.scomm.domain._
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.IOException
-import scala.util.continuations.cpsParam
 
 
 @Component
@@ -56,6 +55,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
             case e: FileAlreadyExistsException => newFolder.message.text = "File already exists!"; view.pack();
             case e: IOException => newFolder.message.text = "Error: " + e.getMessage; view.pack();
           }
+          println()
         }
 
         println()
