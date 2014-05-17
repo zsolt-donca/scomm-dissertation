@@ -3,8 +3,9 @@ package edu.zsd.scomm.view
 import scala.swing._
 import edu.zsd.scomm.domain._
 import scala.swing.BorderPanel.Position
-import edu.zsd.scomm.model.DirectoryListModel
+import edu.zsd.scomm.model.{FileEntry, DirectoryListModel}
 import java.awt.Color
+import java.nio.file.Path
 
 abstract class DirectoryListView(componentName : String, model : DirectoryListModel) extends BorderPanel with Observing {
 
@@ -44,8 +45,12 @@ abstract class DirectoryListView(componentName : String, model : DirectoryListMo
     info => summaryLabel.text = s"${info.size} bytes, ${info.selectedFiles} file(s), ${info.selectedFolders} folder(s)"
   }
 
-  observe(model.selectedIndices) {
-    selectedIndices : Set[Int] =>
+  observe(model.selectedPaths) {
+    selectedPaths: Set[Path] =>
+
+      val currentDirContents: Seq[FileEntry] = model.currentDirContents.now
+      val selectedIndices: Set[Int] = selectedPaths.map(path => currentDirContents.indexWhere(fileEntry => fileEntry.path == path))
+
       if (listView.selection.indices.toSet != selectedIndices) {
         println("setting selected indices to view: " + selectedIndices)
         listView.selection.indices.clear()

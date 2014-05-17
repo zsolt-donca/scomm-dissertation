@@ -1,7 +1,7 @@
 package edu.zsd.scomm.controller
 
 import edu.zsd.scomm.view.{NewFolderPanel, MainWindowView}
-import edu.zsd.scomm.model.{DiskState, MainWindowModel, DirectoryListModel, FileEntry}
+import edu.zsd.scomm.model.{DiskState, MainWindowModel, DirectoryListModel}
 import java.nio.file.{FileAlreadyExistsException, Path, Files}
 import javax.swing.JOptionPane
 import edu.zsd.scomm.domain._
@@ -20,9 +20,9 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
     self =>
       self awaitNext view.commandButtons.infoButton()
       val activeList: DirectoryListModel = view.directoriesPane.model.activeList.now
-      val selectedFiles: Seq[FileEntry] = activeList.selectedFiles.now
-      val directories = selectedFiles.count(fileEntry => Files.isDirectory(fileEntry.path))
-      val files = selectedFiles.count(fileEntry => Files.isRegularFile(fileEntry.path))
+      val selectedPaths: Set[Path] = activeList.selectedPaths.now
+      val directories = selectedPaths.count(path => Files.isDirectory(path))
+      val files = selectedPaths.count(path => Files.isRegularFile(path))
       val message = s"There are $directories directories and $files files selected in ${activeList.currentDir.now}"
       JOptionPane.showMessageDialog(null, message, "View", JOptionPane.INFORMATION_MESSAGE)
   }
@@ -50,7 +50,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
               Files.createDirectory(newFolderPath)
               diskState.refresh()
               model.status() = s"Successfully created folder '$folderName'!"
-              view.directoriesPane.model.activeList.now.selectPaths << Seq(newFolderPath)
+              view.directoriesPane.model.activeList.now.selectedPaths() = Set(newFolderPath)
               close = true
             } catch {
               case e: FileAlreadyExistsException => model.status() = s"Folder '$folderName' already exists!";

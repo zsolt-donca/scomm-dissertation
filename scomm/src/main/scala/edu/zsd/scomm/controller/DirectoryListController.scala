@@ -16,10 +16,9 @@ abstract class DirectoryListController (model : DirectoryListModel,
 
   listenTo(view.listView.mouse.clicks, view.listView.selection, view.listView.keys)
   reactions += {
-    case MouseClicked(_, _, _, 2, _) => model.processEntry << view.listView.selection.leadIndex
-    //    case ListSelectionChanged(_, _, _) => model.selectedIndices() = view.listView.selection.indices.toSet
-    case KeyPressed(_, Key.Enter, _, _) => model.processEntry << view.listView.selection.leadIndex
+    case MouseClicked(_, _, _, 2, _) => model.goToIndex << view.listView.selection.leadIndex
+    case ListSelectionChanged(_, _, _) => model.selectIndices << view.listView.selection.indices.toSet
+    case KeyPressed(_, Key.Enter, _, _) => model.goToIndex << view.listView.selection.leadIndex
     case KeyPressed(_, Key.BackSpace, _, _) => model.goToParent << Unit
   }
-
 }

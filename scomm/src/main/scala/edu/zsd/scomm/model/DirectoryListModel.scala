@@ -7,13 +7,14 @@ import scala.collection.JavaConverters._
 abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends Observing {
 
   // basic events
-  val processEntry = EventSource[Int]
+  val processPath = EventSource[Path]
   val goToParent = EventSource[Unit]
-  val selectPaths = EventSource[Seq[Path]]
+  val goToIndex = EventSource[Int]
+  val selectIndices = EventSource[Set[Int]]
 
   // basic variables
   val currentDir = Var[Path](Paths.get(""))
-  val selectedIndices = Var[Set[Int]](Set.empty)
+  val selectedPaths = Var[Set[Path]](Set.empty)
   val active = Var[Boolean](false)
 
   // derived signals
@@ -36,63 +37,47 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
     }
   }
 
-  val selectedFiles: Signal[Seq[FileEntry]] = Strict {
-    val indices = selectedIndices()
-    val contents = currentDirContents()
-
-    for ((fileEntry, index) <- contents.zipWithIndex if indices.contains(index)) yield fileEntry
-  }
-
   val selectionInfo: Signal[SelectionInfo] = Strict {
-    val selected: Seq[FileEntry] = selectedFiles()
-    val size = selected.map(fileEntry => Files.size(fileEntry.path)).sum
-    val files = selected.count(fileEntry => Files.isRegularFile(fileEntry.path))
-    val directories = selected.count(fileEntry => Files.isDirectory(fileEntry.path))
+    val selected: Set[Path] = selectedPaths()
+    val size = selected.map(path => Files.size(path)).sum
+    val files = selected.count(path => Files.isRegularFile(path))
+    val directories = selected.count(path => Files.isDirectory(path))
 
     SelectionInfo(size, files, directories)
   }
 
   // observers
 
-  observe(processEntry) {
-    index =>
+  observe(processPath) {
+    path =>
       val previousDir = currentDir.now
-      val files = currentDirContents.now
-      val selectedPath: Path = files(index).path
-      if (Files.isDirectory(selectedPath)) {
-        currentDir() = selectedPath
-        selectPaths << Seq(previousDir)
+      if (Files.isDirectory(path)) {
+        currentDir() = path
+        selectedPaths() = Set(previousDir)
       }
   }
 
   observe(goToParent) {
     _ =>
-      val current = currentDir.now
-      if (current.getParent != null) {
-        processEntry << 0
+      val parent = currentDir.now.getParent
+      if (parent != null) {
+        processPath << parent
       }
   }
 
-  observe(selectPaths) {
-    selectedPaths =>
-      val contents: Seq[FileEntry] = currentDirContents.now
-      val indices: Seq[Int] = for ((fileEntry, index) <- contents.zipWithIndex if selectedPaths.contains(fileEntry.path)) yield index
+  observe(goToIndex) {
+    index => processPath << currentDirContents.now(index).path
+  }
 
-      if (indices.size != selectedPaths.size) {
-        println("Error: " + indices + ", " + selectedPaths)
-      }
-      selectedIndices() = indices.toSet
+  observe(selectIndices) {
+    indices =>
+      val contents = currentDirContents.now
+      selectedPaths() = indices.map(index => contents(index).path)
   }
 
   observe(active) {
-    active =>
-      if (!active)
-        selectedIndices() = Set.empty
+    active => if (!active) selectedPaths() = Set.empty
   }
-
-  //  observe(currentDir) {
-  //    _ => selectedIndices() = Set.empty
-  //  }
 
   currentDir() = initDir
 }
