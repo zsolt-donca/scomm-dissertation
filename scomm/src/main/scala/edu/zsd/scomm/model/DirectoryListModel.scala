@@ -72,7 +72,8 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
   observe(selectIndices) {
     indices =>
       val contents = currentDirContents.now
-      selectedPaths() = indices.map(index => contents(index).path)
+      val paths: Set[Path] = indices.map(index => contents(index).path)
+      selectedPaths() = paths
   }
 
   observe(active) {

@@ -20,7 +20,7 @@ abstract class DirectoryListView(componentName : String, model : DirectoryListMo
   }
   add(currentDirPanel, Position.North)
 
-  val listView = new ListView[String]()
+  val listView = new FilesListView
   listView.name = componentName + ".listView"
   add(new ScrollPane(listView), Position.Center)
 
@@ -34,7 +34,7 @@ abstract class DirectoryListView(componentName : String, model : DirectoryListMo
   observe(model.currentDir) {
     currentDir =>
       currentDirLabel.text = currentDir.toString
-      listView.selection.indices.clear()
+    //      listView.selection.indices.clear()
   }
 
   observe(model.currentDirContents) {
