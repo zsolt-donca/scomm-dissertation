@@ -2,6 +2,7 @@ package edu.zsd.scomm
 
 import scala.react.Domain
 import scala.swing.SimpleSwingApplication
+import scala.util.continuations.suspendable
 
 object domain extends Domain {
 
@@ -14,6 +15,12 @@ object domain extends Domain {
         startup(args)
       }
       start()
+    }
+  }
+
+  object cps_closure {
+    def apply(comp: => Unit@suspendable): Unit@suspendable = {
+      comp
     }
   }
 

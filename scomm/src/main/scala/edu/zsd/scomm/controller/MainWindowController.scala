@@ -8,12 +8,13 @@ import edu.zsd.scomm.domain._
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.IOException
+import scala.util.continuations.cpsParam
 
 
 @Component
-class MainWindowController @Autowired() (val model: MainWindowModel,
-                                         val view: MainWindowView,
-                                         val diskState: DiskState) extends Observing {
+class MainWindowController @Autowired()(val model: MainWindowModel,
+                                        val view: MainWindowView,
+                                        val diskState: DiskState) extends Observing {
 
   val infoActionReactor = Reactor.loop {
     self =>
@@ -29,39 +30,36 @@ class MainWindowController @Autowired() (val model: MainWindowModel,
   val newFolder = Reactor.loop {
     self =>
       self awaitNext view.commandButtons.newFolderButton()
-      val activeList : DirectoryListModel = model.directoriesPaneModel.activeList.now
-      val currentDir : Path = activeList.currentDir.now
+      val activeList: DirectoryListModel = model.directoriesPaneModel.activeList.now
+      val currentDir: Path = activeList.currentDir.now
 
       val newFolder = new NewFolderPane
 
       view.argumentsPane.panel = newFolder
       view.pack()
+      val close = EventSource[Unit]
 
-      var repeat = true
-      while (repeat) {
+      self.loopUntil(close) {
         self awaitNext newFolder.okButton()
         val folderName: String = newFolder.folderName.text
 
         val newFolderPath: Path = currentDir.resolve(folderName)
-        val success = createDirectory(newFolderPath, newFolder)
-        if (success) {
-          diskState.refresh()
-          repeat = false
+        cps_closure {
+          try {
+            Files.createDirectory(newFolderPath)
+            newFolder.message.text = "Success!"
+            diskState.refresh()
+            view.argumentsPane.clearPanel()
+            view.pack()
+            close << Unit
+          } catch {
+            case e: FileAlreadyExistsException => newFolder.message.text = "File already exists!"; view.pack();
+            case e: IOException => newFolder.message.text = "Error: " + e.getMessage; view.pack();
+          }
         }
-      }
-      view.argumentsPane.clearPanel()
-      view.pack()
-      println()
-  }
 
-  def createDirectory(newFolderPath: Path, newFolder: NewFolderPane) = {
-    try {
-      Files.createDirectory(newFolderPath)
-      newFolder.message.text = "Success!"
-      true
-    } catch {
-      case e: FileAlreadyExistsException => newFolder.message.text = "File already exists!"; view.pack(); false
-      case e: IOException => newFolder.message.text = "Error: " + e.getMessage; view.pack(); false
-    }
+        println()
+      }
+      println()
   }
 }
