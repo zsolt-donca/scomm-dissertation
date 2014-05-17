@@ -35,9 +35,9 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
 
       newFolderPanel.reset()
       view.argumentsPanel() = Some(newFolderPanel)
-      val close = EventSource[Unit]
+      var close = false
 
-      self.loopUntil(close) {
+      while (!close) {
         self awaitNext newFolderPanel.okButton()
         val folderName: String = newFolderPanel.folderName.text
 
@@ -46,9 +46,8 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
           try {
             Files.createDirectory(newFolderPath)
             diskState.refresh()
-            view.argumentsPanel() = None
             model.status() = s"Successfully created folder '$folderName'!"
-            close << Unit
+            close = true
           } catch {
             case e: FileAlreadyExistsException => model.status() = s"Folder '$folderName' already exists!";
             case e: IOException => model.status() = "Error: " + e.getMessage;
@@ -57,5 +56,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
         }
         unit()
       }
+
+      view.argumentsPanel() = None
   }
 }
