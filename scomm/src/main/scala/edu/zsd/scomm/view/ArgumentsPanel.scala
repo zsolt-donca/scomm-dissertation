@@ -1,16 +1,18 @@
 package edu.zsd.scomm.view
 
-import scala.swing.Panel
+import scala.swing.{BorderPanel, Panel}
 import org.springframework.stereotype.Component
+import scala.swing.BorderPanel.Position
 
 @Component
-class ArgumentsPane extends Panel {
+class ArgumentsPanel extends BorderPanel {
 
-  //  preferredSize = new Dimension()
+  val statusPane = new StatusPane
+  panel = statusPane
 
   def panel_=(panel: Panel): Unit = {
     _contents.clear()
-    _contents += panel
+    add(panel, Position.Center)
     repaint()
   }
 
@@ -18,9 +20,7 @@ class ArgumentsPane extends Panel {
     if (contents.isEmpty) None else Some(contents(0).asInstanceOf[Panel])
   }
 
-  def clearPanel() {
-    panel = new EmptyPane
+  def resetPanel() {
+    panel = statusPane
   }
-
-  clearPanel()
 }

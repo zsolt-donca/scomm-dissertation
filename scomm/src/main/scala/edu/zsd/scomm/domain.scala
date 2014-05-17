@@ -18,9 +18,16 @@ object domain extends Domain {
     }
   }
 
-  object cps_closure {
+  // TODO investigate how to eliminate the need for the below helper functions
+
+  object cps_try {
     def apply(comp: => Unit@suspendable): Unit@suspendable = {
       comp
+    }
+  }
+
+  object unit {
+    def apply() {
     }
   }
 

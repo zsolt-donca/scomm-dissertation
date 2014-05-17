@@ -43,23 +43,21 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
         val folderName: String = newFolder.folderName.text
 
         val newFolderPath: Path = currentDir.resolve(folderName)
-        cps_closure {
+        cps_try {
           try {
             Files.createDirectory(newFolderPath)
-            newFolder.message.text = "Success!"
             diskState.refresh()
-            view.argumentsPane.clearPanel()
+            view.argumentsPane.resetPanel()
+            view.argumentsPane.statusPane.status = "Success!"
             view.pack()
             close << Unit
           } catch {
             case e: FileAlreadyExistsException => newFolder.message.text = "File already exists!"; view.pack();
             case e: IOException => newFolder.message.text = "Error: " + e.getMessage; view.pack();
           }
-          println()
+          unit()
         }
-
-        println()
+        unit()
       }
-      println()
   }
 }

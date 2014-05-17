@@ -11,9 +11,9 @@ import scala.swing._
  * Controller.
  */
 @Component
-class MainWindowView @Autowired() (val mainWindowModel : MainWindowModel,
-                                   val directoriesPane: DirectoriesPaneView,
-                                   val argumentsPane: ArgumentsPane) extends MainFrame with Observing {
+class MainWindowView @Autowired()(val mainWindowModel: MainWindowModel,
+                                  val directoriesPane: DirectoriesPaneView,
+                                  val argumentsPane: ArgumentsPanel) extends MainFrame with Observing {
 
   menuBar = new MenuBar() {
     contents += new Menu("Files") {

@@ -3,7 +3,7 @@ package edu.zsd.scomm.view
 import scala.swing._
 
 
-class NewFolderPane extends FlowPanel(FlowPanel.Alignment.Leading)() {
+class NewFolderPane extends FlowPanel(FlowPanel.Alignment.Left)() {
 
   val prompt = new Label("New folder (directory)")
   val folderName = new TextField("")
