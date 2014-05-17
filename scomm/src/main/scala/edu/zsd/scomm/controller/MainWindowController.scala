@@ -35,7 +35,6 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       val newFolder = new NewFolderPane
 
       view.argumentsPane.panel = newFolder
-      view.pack()
       val close = EventSource[Unit]
 
       self.loopUntil(close) {
@@ -49,11 +48,10 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
             diskState.refresh()
             view.argumentsPane.resetPanel()
             view.argumentsPane.statusPane.status = "Success!"
-            view.pack()
             close << Unit
           } catch {
-            case e: FileAlreadyExistsException => newFolder.message.text = "File already exists!"; view.pack();
-            case e: IOException => newFolder.message.text = "Error: " + e.getMessage; view.pack();
+            case e: FileAlreadyExistsException => newFolder.message.text = "File already exists!";
+            case e: IOException => newFolder.message.text = "Error: " + e.getMessage;
           }
           unit()
         }

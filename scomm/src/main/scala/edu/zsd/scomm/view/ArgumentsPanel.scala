@@ -13,7 +13,7 @@ class ArgumentsPanel extends BorderPanel {
   def panel_=(panel: Panel): Unit = {
     _contents.clear()
     add(panel, Position.Center)
-    repaint()
+    revalidate()
   }
 
   def panel: Option[Panel] = {
