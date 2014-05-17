@@ -1,13 +1,13 @@
 package edu.zsd.scomm.controller
 
-import edu.zsd.scomm.view.MainWindowView
+import edu.zsd.scomm.view.{NewFolderPane, MainWindowView}
 import edu.zsd.scomm.model.{DiskState, MainWindowModel, DirectoryListModel, FileEntry}
-import java.nio.file.{Path, Files}
+import java.nio.file.{FileAlreadyExistsException, Path, Files}
 import javax.swing.JOptionPane
 import edu.zsd.scomm.domain._
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
-import edu.zsd.scomm.actions.NewFolder
+import java.io.IOException
 
 
 @Component
@@ -32,19 +32,36 @@ class MainWindowController @Autowired() (val model: MainWindowModel,
       val activeList : DirectoryListModel = model.directoriesPaneModel.activeList.now
       val currentDir : Path = activeList.currentDir.now
 
-      val newFolder = new NewFolder(view)
+      val newFolder = new NewFolderPane
 
-      newFolder.dialog.visible = true
-      self awaitNext newFolder.dialog.okButton()
-      val folderName : String = newFolder.dialog.folderName.text
-      newFolder.dialog.dispose()
+      view.argumentsPane.panel = newFolder
+      view.pack()
 
-      val newFolderPath: Path = currentDir.resolve(folderName)
-      createDirectory(newFolderPath)
-      diskState.refresh()
+      var repeat = true
+      while (repeat) {
+        self awaitNext newFolder.okButton()
+        val folderName: String = newFolder.folderName.text
+
+        val newFolderPath: Path = currentDir.resolve(folderName)
+        val success = createDirectory(newFolderPath, newFolder)
+        if (success) {
+          diskState.refresh()
+          repeat = false
+        }
+      }
+      view.argumentsPane.clearPanel()
+      view.pack()
+      println()
   }
 
-  def createDirectory(newFolderPath: Path) {
-    Files.createDirectory(newFolderPath)
+  def createDirectory(newFolderPath: Path, newFolder: NewFolderPane) = {
+    try {
+      Files.createDirectory(newFolderPath)
+      newFolder.message.text = "Success!"
+      true
+    } catch {
+      case e: FileAlreadyExistsException => newFolder.message.text = "File already exists!"; view.pack(); false
+      case e: IOException => newFolder.message.text = "Error: " + e.getMessage; view.pack(); false
+    }
   }
 }

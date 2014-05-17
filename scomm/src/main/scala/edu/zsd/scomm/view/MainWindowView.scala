@@ -12,7 +12,8 @@ import scala.swing._
  */
 @Component
 class MainWindowView @Autowired() (val mainWindowModel : MainWindowModel,
-                                   val directoriesPane : DirectoriesPaneView) extends MainFrame with Observing {
+                                   val directoriesPane: DirectoriesPaneView,
+                                   val argumentsPane: ArgumentsPane) extends MainFrame with Observing {
 
   menuBar = new MenuBar() {
     contents += new Menu("Files") {
@@ -57,14 +58,9 @@ class MainWindowView @Autowired() (val mainWindowModel : MainWindowModel,
     contents += infoButton
   }
 
-  val commandParamsPanel = new FlowPanel(FlowPanel.Alignment.Leading)() {
-    val button = new Button("?")
-    contents += button
-  }
-
   val southPanel = new BorderPanel {
     add(commandButtons, Position.North)
-    add(commandParamsPanel, Position.South)
+    add(argumentsPane, Position.South)
   }
 
   contents = new BorderPanel() {
