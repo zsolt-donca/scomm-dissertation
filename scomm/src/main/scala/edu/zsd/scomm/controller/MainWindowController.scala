@@ -33,6 +33,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       val activeList: DirectoryListModel = model.directoriesPaneModel.activeList.now
       val currentDir: Path = activeList.currentDir.now
 
+      newFolderPanel.reset()
       view.argumentsPanel() = Some(newFolderPanel)
       val close = EventSource[Unit]
 

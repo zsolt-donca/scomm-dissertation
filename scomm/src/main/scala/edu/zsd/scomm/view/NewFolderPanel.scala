@@ -11,8 +11,9 @@ class NewFolderPanel extends FlowPanel(FlowPanel.Alignment.Left)() {
   folderName.preferredSize = new Dimension(200, 20)
   folderName.horizontalAlignment = Alignment.Left
   val okButton = new EventButton("OK")
+  val cancelButton = new EventButton("Cancel")
 
-  contents ++= Seq(prompt, folderName, okButton)
+  contents ++= Seq(prompt, folderName, okButton, cancelButton)
 
   def reset() {
     folderName.text = ""
