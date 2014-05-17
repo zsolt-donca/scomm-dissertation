@@ -21,6 +21,7 @@ abstract class DirectoryListView(componentName : String, model : DirectoryListMo
   add(currentDirPanel, Position.North)
 
   val listView = new FilesListView
+  //  val listView = new ListView[String]
   listView.name = componentName + ".listView"
   add(new ScrollPane(listView), Position.Center)
 
