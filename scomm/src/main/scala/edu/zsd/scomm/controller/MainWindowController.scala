@@ -5,7 +5,7 @@ import edu.zsd.scomm.model.{SelectionInfo, DiskState, MainWindowModel, Directory
 import java.nio.file.{Paths, FileAlreadyExistsException, Path, Files}
 import javax.swing.JOptionPane
 import edu.zsd.scomm.Domain._
-import edu.zsd.scomm.CPSUtils._
+import edu.zsd.scomm.Utils._
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.IOException

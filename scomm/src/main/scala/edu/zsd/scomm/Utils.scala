@@ -2,9 +2,10 @@ package edu.zsd.scomm
 
 import scala.util.continuations.{suspendable, cpsParam}
 import scala.collection.IterableLike
-import java.nio.file.{Files, Path}
+import java.nio.file.{DirectoryStream, Files, Path}
+import scala.collection.JavaConverters._
 
-object CPSUtils {
+object Utils {
 
   object suspendable_block {
     def apply(comp: => Unit@suspendable): Unit@suspendable = {
@@ -34,7 +35,7 @@ object CPSUtils {
         action(path)
         suspendable_block {
           if (Files.isDirectory(path)) {
-            val list: Seq[Path] = FileUtils.directoryList(path)
+            val list: Seq[Path] = directoryList(path)
             walkPathsPreOrder(list)(action)
           }
         }
@@ -49,11 +50,21 @@ object CPSUtils {
       path =>
         suspendable_block {
           if (Files.isDirectory(path)) {
-            val list: Seq[Path] = FileUtils.directoryList(path)
+            val list: Seq[Path] = directoryList(path)
             walkPathsPostOrder(list)(action)
           }
         }
         action(path)
+    }
+  }
+
+  def directoryList(path: Path): Seq[Path] = {
+    val stream: DirectoryStream[Path] = Files.newDirectoryStream(path)
+    try {
+      val seq: Seq[Path] = stream.asScala.toIndexedSeq
+      seq
+    } finally {
+      stream.close()
     }
   }
 

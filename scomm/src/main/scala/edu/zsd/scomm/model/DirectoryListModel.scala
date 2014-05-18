@@ -2,7 +2,7 @@ package edu.zsd.scomm.model
 
 import edu.zsd.scomm.Domain._
 import java.nio.file._
-import edu.zsd.scomm.FileUtils
+import edu.zsd.scomm.Utils.directoryList
 
 abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends Observing {
 
@@ -22,7 +22,7 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
     diskState()
     val currentDir: Path = DirectoryListModel.this.currentDir()
     try {
-      val list = FileUtils.directoryList(currentDir)
+      val list = directoryList(currentDir)
       val contents: Seq[FileEntry] = list.map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
       val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
       parentFile ++ contents
