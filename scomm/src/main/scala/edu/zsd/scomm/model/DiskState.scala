@@ -1,6 +1,6 @@
 package edu.zsd.scomm.model
 
-import edu.zsd.scomm.domain._
+import edu.zsd.scomm.Domain._
 import org.springframework.stereotype.Component
 
 @Component

@@ -1,12 +1,12 @@
 
 package edu.zsd.scomm
 
-import edu.zsd.scomm.domain._
+import edu.zsd.scomm.Domain._
 import java.nio.file.Paths
 import org.springframework.scala.context.function.FunctionalConfigApplicationContext
 import edu.zsd.scomm.view.MainWindowView
 
-object main extends ReactiveSimpleSwingApplication {
+object Main extends ReactiveSimpleSwingApplication {
 
   var applicationContext : FunctionalConfigApplicationContext = null
   var appParams : AppParams = null

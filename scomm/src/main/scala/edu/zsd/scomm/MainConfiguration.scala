@@ -1,15 +1,12 @@
 package edu.zsd.scomm
 
 import org.springframework.scala.context.function.{ContextSupport, FunctionalConfiguration}
-import edu.zsd.scomm.controller.MainWindowController
-import edu.zsd.scomm.view.DirectoriesPaneView
-import edu.zsd.scomm.model.DirectoriesPaneModel
-import org.springframework.context.annotation.{Bean, Configuration, ComponentScan}
+import org.springframework.context.annotation.Configuration
 
 class MainConfiguration extends FunctionalConfiguration with ContextSupport {
 
   val appParams = bean("appParams") {
-    edu.zsd.scomm.main.appParams
+    edu.zsd.scomm.Main.appParams
   }
 
   componentScan("edu.zsd.scomm")

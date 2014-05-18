@@ -1,7 +1,7 @@
 package edu.zsd.scomm.view
 
 import scala.swing.BorderPanel.Position
-import edu.zsd.scomm.domain._
+import edu.zsd.scomm.Domain._
 import edu.zsd.scomm.model.MainWindowModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

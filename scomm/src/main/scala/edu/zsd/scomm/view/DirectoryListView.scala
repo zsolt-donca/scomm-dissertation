@@ -1,7 +1,7 @@
 package edu.zsd.scomm.view
 
 import scala.swing._
-import edu.zsd.scomm.domain._
+import edu.zsd.scomm.Domain._
 import scala.swing.BorderPanel.Position
 import edu.zsd.scomm.model.{FileEntry, DirectoryListModel}
 import java.awt.Color

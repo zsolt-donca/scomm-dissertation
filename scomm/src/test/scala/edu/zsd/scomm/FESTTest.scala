@@ -10,14 +10,14 @@ import scala.collection.JavaConverters._
 
 object FESTTest {
 
-  val testDir : Path = new File(this.getClass.getClassLoader.getResource("testDir").toURI).toPath
+  val testDir: Path = new File(this.getClass.getClassLoader.getResource("testDir").toURI).toPath
   deleteEmptyDirectoryPlaceholders(testDir)
-  edu.zsd.scomm.main.main(Array(testDir.toString))
+  edu.zsd.scomm.Main.main(Array(testDir.toString))
 
   val robot: Robot = BasicRobot.robotWithCurrentAwtHierarchy
 
   val frame = WindowFinder.findFrame(new GenericTypeMatcher[Frame](classOf[Frame], true) {
-    def isMatching(frame : Frame) : Boolean = {
+    def isMatching(frame: Frame): Boolean = {
       frame.isShowing
     }
   }).using(robot)

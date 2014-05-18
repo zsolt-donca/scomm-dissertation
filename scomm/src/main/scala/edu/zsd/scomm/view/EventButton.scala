@@ -1,7 +1,7 @@
 package edu.zsd.scomm.view
 
 import scala.swing.{Action, Button}
-import edu.zsd.scomm.domain._
+import edu.zsd.scomm.Domain._
 
 class EventButton(title: String) extends Button {
 
