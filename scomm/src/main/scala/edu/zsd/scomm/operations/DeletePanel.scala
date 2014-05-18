@@ -13,6 +13,8 @@ class DeletePanel @Autowired()(val model: MainWindowModel) extends FlowPanel(Flo
   val okButton = new EventButton("OK")
   val cancelButton = new EventButton("Cancel")
 
+  contents ++= Seq(prompt, okButton, cancelButton)
+
   def reset() {
     val directoryListModel: DirectoryListModel = model.directoriesPaneModel.activeList.now
     val selectionInfo: SelectionInfo = directoryListModel.selectionInfo.now
@@ -22,6 +24,7 @@ class DeletePanel @Autowired()(val model: MainWindowModel) extends FlowPanel(Flo
       case SelectionInfo.SingleFolder(folder) => s"Are you sure you want to delete the folder '${folder.getFileName}' and its contents?"
       case SelectionInfo.MultipleFiles(count, files) => s"Are you sure you want to delete the $count selected files?"
       case SelectionInfo.MultipleFolders(count, folders) => s"Are you sure you want to delete the $count selected folders and all their contents?"
+      case SelectionInfo.FilesAndFolders(filesCount, foldersCount, paths) => s"Are you sure you want to delete the selected $filesCount file(s) and $foldersCount folder(s) and all their contents?"
       case _ => s"Are you sure you want to delete the ${selectionInfo.paths.size} items?"
     }
 

@@ -1,14 +1,15 @@
 package edu.zsd.scomm.controller
 
 import edu.zsd.scomm.view.MainWindowView
-import edu.zsd.scomm.model.{DiskState, MainWindowModel, DirectoryListModel}
-import java.nio.file.{FileAlreadyExistsException, Path, Files}
+import edu.zsd.scomm.model.{SelectionInfo, DiskState, MainWindowModel, DirectoryListModel}
+import java.nio.file.{DirectoryStream, FileAlreadyExistsException, Path, Files}
 import javax.swing.JOptionPane
 import edu.zsd.scomm.domain._
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.IOException
 import edu.zsd.scomm.operations.{DeletePanel, NewFolderPanel}
+import scala.collection.JavaConverters._
 
 
 @Component
@@ -67,28 +68,41 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       view.argumentsPanel() = None
   }
 
-  //  val deleteLoop = Reactor.loop {
-  //    self =>
-  //      self awaitNext view.commandButtons.deleteButton()
-  //
-  //      deletePanel.reset()
-  //      view.argumentsPanel() = Some(deletePanel)
-  //
-  //      self.abortOn(deletePanel.cancelButton()) {
-  //        val selectionInfo: SelectionInfo = model.directoriesPaneModel.activeList.now.selectionInfo.now
-  //
-  //        self awaitNext deletePanel.okButton()
-  //
-  //        deleteRecursively(selectionInfo.paths)
-  //      }
-  //
-  //      def deleteRecursively(paths: Iterable[Path]) {
-  //
-  //        for (path <- paths) {
-  //          if (Files.isDirectory(path)) {
-  //
-  //          }
-  //        }
-  //      }
-  //  }
+  val deleteLoop = Reactor.loop {
+    self =>
+      self awaitNext view.commandButtons.deleteButton()
+
+      deletePanel.reset()
+      view.argumentsPanel() = Some(deletePanel)
+
+      self.abortOn(deletePanel.cancelButton()) {
+        val selectionInfo: SelectionInfo = model.directoriesPaneModel.activeList.now.selectionInfo.now
+
+        self awaitNext deletePanel.okButton()
+        deleteRecursively(selectionInfo.paths)
+        diskState.refresh()
+
+        model.status() = s"Successfully deleted!"
+      }
+
+      view.argumentsPanel() = None
+  }
+
+  def deleteRecursively(paths: Iterable[Path]) {
+    for (path <- paths) {
+      if (Files.isDirectory(path)) {
+        val directoryStream: DirectoryStream[Path] = Files.newDirectoryStream(path)
+        try {
+          deleteRecursively(directoryStream.asScala)
+        } finally {
+          directoryStream.close()
+        }
+      }
+      try {
+        Files.delete(path)
+      } catch {
+        case e: IOException => e.printStackTrace()
+      }
+    }
+  }
 }
