@@ -9,6 +9,8 @@ class FilesListView extends ListView[String] {
 
   private val model = new MyListModel
 
+  var updating = false
+
   override def listData: Seq[String] = {
     super.listData
   }

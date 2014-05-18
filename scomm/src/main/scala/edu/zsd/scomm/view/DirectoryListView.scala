@@ -7,7 +7,7 @@ import edu.zsd.scomm.model.{FileEntry, DirectoryListModel}
 import java.awt.Color
 import java.nio.file.Path
 
-abstract class DirectoryListView(componentName : String, model : DirectoryListModel) extends BorderPanel with Observing {
+abstract class DirectoryListView(componentName: String, model: DirectoryListModel) extends BorderPanel with Observing {
 
   name = componentName
 
@@ -21,7 +21,6 @@ abstract class DirectoryListView(componentName : String, model : DirectoryListMo
   add(currentDirPanel, Position.North)
 
   val listView = new FilesListView
-  //  val listView = new ListView[String]
   listView.name = componentName + ".listView"
   add(new ScrollPane(listView), Position.Center)
 
@@ -39,7 +38,13 @@ abstract class DirectoryListView(componentName : String, model : DirectoryListMo
   }
 
   observe(model.currentDirContents) {
-    contents => listView.listData = contents.map(file => file.name)
+    contents =>
+      try {
+        listView.updating = true
+        listView.listData = contents.map(file => file.name)
+      } finally {
+        listView.updating = false
+      }
   }
 
   observe(model.selectionInfo) {
@@ -54,9 +59,14 @@ abstract class DirectoryListView(componentName : String, model : DirectoryListMo
 
       if (listView.selection.indices.toSet != selectedIndices) {
         println("setting selected indices to view: " + selectedIndices)
-        listView.selection.indices.clear()
-        listView.selection.indices ++= selectedIndices
 
+        try {
+          listView.updating = true
+          listView.selection.indices.clear()
+          listView.selection.indices ++= selectedIndices
+        } finally {
+          listView.updating = false
+        }
         if (selectedIndices.nonEmpty) {
           listView.ensureIndexIsVisible(selectedIndices.toSeq(0))
         }
