@@ -56,8 +56,6 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
     val infoButton = new EventButton("Info")
     infoButton.name = "infoButton"
     contents += infoButton
-
-    val anyButton: Events[Unit] = newFolderButton() merge deleteButton()
   }
 
   val statusPanel = new BorderPanel() {

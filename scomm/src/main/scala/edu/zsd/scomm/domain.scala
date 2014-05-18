@@ -2,7 +2,8 @@ package edu.zsd.scomm
 
 import scala.react.Domain
 import scala.swing.SimpleSwingApplication
-import scala.util.continuations.suspendable
+import scala.util.continuations.{cpsParam, suspendable}
+import scala.collection.IterableLike
 
 object domain extends Domain {
 
@@ -20,7 +21,7 @@ object domain extends Domain {
 
   // TODO investigate how to eliminate the need for the below helper functions
 
-  object suspendable_try {
+  object suspendable_block {
     def apply(comp: => Unit@suspendable): Unit@suspendable = {
       comp
     }
@@ -28,6 +29,15 @@ object domain extends Domain {
 
   object unit {
     def apply() {
+    }
+  }
+
+  implicit def cpsIterable[A, Repr](xs: IterableLike[A, Repr]) = new {
+    def cps = new {
+      def foreach[B](f: A => Any@cpsParam[Unit, Unit]): Unit@cpsParam[Unit, Unit] = {
+        val it = xs.iterator
+        while (it.hasNext) f(it.next())
+      }
     }
   }
 

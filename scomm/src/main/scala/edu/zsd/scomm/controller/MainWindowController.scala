@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.io.IOException
 import edu.zsd.scomm.operations.{DeletePanel, NewFolderPanel}
 import scala.collection.JavaConverters._
+import scala.util.continuations.suspendable
 
 
 @Component
@@ -46,7 +47,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
           self awaitNext newFolderPanel.okButton()
           val folderName: String = newFolderPanel.folderName.text
           val newFolderPath: Path = currentDir.resolve(folderName)
-          suspendable_try {
+          suspendable_block {
             try {
               Files.createDirectory(newFolderPath)
               diskState.refresh()
@@ -79,7 +80,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
         val selectionInfo: SelectionInfo = model.directoriesPaneModel.activeList.now.selectionInfo.now
 
         self awaitNext deletePanel.okButton()
-        deleteRecursively(selectionInfo.paths)
+        deleteRecursively(selectionInfo.paths, self)
         diskState.refresh()
 
         model.status() = s"Successfully deleted!"
@@ -88,21 +89,32 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       view.argumentsPanel() = None
   }
 
-  def deleteRecursively(paths: Iterable[Path]) {
-    for (path <- paths) {
-      if (Files.isDirectory(path)) {
-        val directoryStream: DirectoryStream[Path] = Files.newDirectoryStream(path)
-        try {
-          deleteRecursively(directoryStream.asScala)
-        } finally {
-          directoryStream.close()
+  def deleteRecursively(paths: Iterable[Path], flowOps: FlowOps): Unit@suspendable = {
+    // instead of 'for (path: Path <- paths)'
+    paths.cps foreach {
+      path =>
+        suspendable_block {
+          if (Files.isDirectory(path)) {
+            val directoryStream: DirectoryStream[Path] = Files.newDirectoryStream(path)
+            try {
+              deleteRecursively(directoryStream.asScala, flowOps)
+              // instead of finally
+              directoryStream.close()
+            } catch {
+              // instead of finally
+              case e: Throwable => directoryStream.close(); throw e
+            }
+          }
         }
-      }
-      try {
-        Files.delete(path)
-      } catch {
-        case e: IOException => e.printStackTrace()
-      }
+        suspendable_block {
+          try {
+            model.status() = s"Deleting '$path'..."
+            Files.delete(path)
+            flowOps.pause
+          } catch {
+            case e: IOException => e.printStackTrace()
+          }
+        }
     }
   }
 }
