@@ -34,14 +34,16 @@ abstract class DirectoryListView(componentName: String, model: DirectoryListMode
   observe(model.currentDir) {
     currentDir =>
       currentDirLabel.text = currentDir.toString
-    //      listView.selection.indices.clear()
   }
 
   observe(model.currentDirContents) {
     contents =>
       try {
         listView.updating = true
+        val selection = listView.selection.indices.toSeq
         listView.listData = contents.map(file => file.name)
+        listView.selection.indices.clear()
+        listView.selection.indices ++= selection
       } finally {
         listView.updating = false
       }

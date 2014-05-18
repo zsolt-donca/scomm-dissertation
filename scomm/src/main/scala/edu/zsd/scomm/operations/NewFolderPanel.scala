@@ -1,7 +1,8 @@
-package edu.zsd.scomm.view
+package edu.zsd.scomm.operations
 
 import scala.swing.{FlowPanel, Label, TextField, Dimension, Alignment}
 import org.springframework.stereotype.Component
+import edu.zsd.scomm.view.EventButton
 
 @Component
 class NewFolderPanel extends FlowPanel(FlowPanel.Alignment.Left)() {

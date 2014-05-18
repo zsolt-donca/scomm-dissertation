@@ -20,7 +20,7 @@ object domain extends Domain {
 
   // TODO investigate how to eliminate the need for the below helper functions
 
-  object cps_try {
+  object suspendable_try {
     def apply(comp: => Unit@suspendable): Unit@suspendable = {
       comp
     }
