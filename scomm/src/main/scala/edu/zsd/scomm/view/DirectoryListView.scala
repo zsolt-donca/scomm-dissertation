@@ -20,7 +20,10 @@ abstract class DirectoryListView(componentName: String, model: DirectoryListMode
   }
   add(currentDirPanel, Position.North)
 
-  val listView = new FilesListView
+  //  val listView = new FilesListView
+  val listView = new ListView[String] {
+    var updating = false
+  }
   listView.name = componentName + ".listView"
   add(new ScrollPane(listView), Position.Center)
 
@@ -60,8 +63,6 @@ abstract class DirectoryListView(componentName: String, model: DirectoryListMode
       val selectedIndices: Set[Int] = selectedPaths.map(path => currentDirContents.indexWhere(fileEntry => fileEntry.path == path))
 
       if (listView.selection.indices.toSet != selectedIndices) {
-        println("setting selected indices to view: " + selectedIndices)
-
         try {
           listView.updating = true
           listView.selection.indices.clear()
@@ -72,8 +73,6 @@ abstract class DirectoryListView(componentName: String, model: DirectoryListMode
         if (selectedIndices.nonEmpty) {
           listView.ensureIndexIsVisible(selectedIndices.toSeq(0))
         }
-      } else {
-        println("selected indices equal: " + selectedIndices)
       }
   }
 
