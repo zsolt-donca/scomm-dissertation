@@ -2,7 +2,6 @@ package edu.zsd.scomm
 
 import org.junit.{After, Before, Test}
 import edu.zsd.scomm.FESTTest._
-import java.io.File
 import org.fest.swing.annotation.GUITest
 import org.junit.Assert._
 import edu.zsd.testfw.CacioFESTLoggingRunner
@@ -86,7 +85,7 @@ class DirectoriesPaneITCase {
 
     directoriesPane.left.selectRange("..", "xyz")
     directoriesPane.left.requireSelection(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
-    directoriesPane.left.requireSummary(bytes = 16, files = 3, folders = 4)
+    directoriesPane.left.requireSummary(bytes = 16, files = 3, folders = 3)
   }
 
 
@@ -100,7 +99,7 @@ class DirectoriesPaneITCase {
     FESTTest.mainWindow.requireInfoDialog(0, 1, testDir.toString)
 
     directoriesPane.left.selectRange("..", "xyz")
-    FESTTest.mainWindow.requireInfoDialog(4, 3, testDir.toString)
+    FESTTest.mainWindow.requireInfoDialog(3, 3, testDir.toString)
 
     directoriesPane.left.enterDirectory("zombie")
     FESTTest.mainWindow.requireInfoDialog(0, 0, testDir.resolve("zombie").toString)

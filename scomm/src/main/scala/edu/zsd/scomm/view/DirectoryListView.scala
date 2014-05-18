@@ -53,7 +53,7 @@ abstract class DirectoryListView(componentName: String, model: DirectoryListMode
   }
 
   observe(model.selectionInfo) {
-    info => summaryLabel.text = s"${info.size} bytes, ${info.selectedFiles} file(s), ${info.selectedFolders} folder(s)"
+    info => summaryLabel.text = s"${info.size} bytes, ${info.files} file(s), ${info.folders} folder(s)"
   }
 
   observe(model.selectedPaths) {

@@ -8,22 +8,23 @@ import edu.zsd.scomm.domain._
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.IOException
-import edu.zsd.scomm.operations.NewFolderPanel
+import edu.zsd.scomm.operations.{DeletePanel, NewFolderPanel}
 
 
 @Component
 class MainWindowController @Autowired()(val model: MainWindowModel,
                                         val view: MainWindowView,
                                         val diskState: DiskState,
-                                        val newFolderPanel: NewFolderPanel) extends Observing {
+                                        val newFolderPanel: NewFolderPanel,
+                                        val deletePanel: DeletePanel) extends Observing {
 
   val infoActionReactor = Reactor.loop {
     self =>
       self awaitNext view.commandButtons.infoButton()
       val activeList: DirectoryListModel = view.directoriesPane.model.activeList.now
-      val selectedPaths: Set[Path] = activeList.selectedPaths.now
-      val directories = selectedPaths.count(path => Files.isDirectory(path))
-      val files = selectedPaths.count(path => Files.isRegularFile(path))
+      val selectionInfo = activeList.selectionInfo.now
+      val directories = selectionInfo.folders
+      val files = selectionInfo.files
       val message = s"There are $directories directories and $files files selected in ${activeList.currentDir.now}"
       JOptionPane.showMessageDialog(null, message, "View", JOptionPane.INFORMATION_MESSAGE)
   }
@@ -65,4 +66,29 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
 
       view.argumentsPanel() = None
   }
+
+  //  val deleteLoop = Reactor.loop {
+  //    self =>
+  //      self awaitNext view.commandButtons.deleteButton()
+  //
+  //      deletePanel.reset()
+  //      view.argumentsPanel() = Some(deletePanel)
+  //
+  //      self.abortOn(deletePanel.cancelButton()) {
+  //        val selectionInfo: SelectionInfo = model.directoriesPaneModel.activeList.now.selectionInfo.now
+  //
+  //        self awaitNext deletePanel.okButton()
+  //
+  //        deleteRecursively(selectionInfo.paths)
+  //      }
+  //
+  //      def deleteRecursively(paths: Iterable[Path]) {
+  //
+  //        for (path <- paths) {
+  //          if (Files.isDirectory(path)) {
+  //
+  //          }
+  //        }
+  //      }
+  //  }
 }

@@ -38,12 +38,19 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
   }
 
   val selectionInfo: Signal[SelectionInfo] = Strict {
-    val selected: Set[Path] = selectedPaths()
-    val size = selected.map(path => Files.size(path)).sum
-    val files = selected.count(path => Files.isRegularFile(path))
-    val directories = selected.count(path => Files.isDirectory(path))
 
-    SelectionInfo(size, files, directories)
+    val currentDir = this.currentDir()
+    val selected: Set[Path] = selectedPaths()
+
+    val paths = if (currentDir.getParent != null && selected(currentDir.getParent))
+      selected - currentDir.getParent
+    else selected
+
+    val size = paths.map(path => Files.size(path)).sum
+    val files = paths.count(path => Files.isRegularFile(path))
+    val directories = paths.count(path => Files.isDirectory(path))
+
+    SelectionInfo(size, files, directories, paths)
   }
 
   // observers
