@@ -2,8 +2,7 @@ package edu.zsd.scomm
 
 import scala.util.continuations.{suspendable, cpsParam}
 import scala.collection.IterableLike
-import java.nio.file.{DirectoryStream, Files, Path}
-import scala.collection.JavaConverters._
+import java.nio.file.{Files, Path}
 
 object CPSUtils {
 
@@ -27,27 +26,35 @@ object CPSUtils {
     }
   }
 
-  def processRecursively(paths: Iterable[Path])(action: Path => Unit@suspendable): Unit@suspendable = {
+  def walkPathsPreOrder(paths: Iterable[Path])(action: Path => Unit@suspendable): Unit@suspendable = {
+
+    // instead of 'for (path: Path <- paths)'
+    paths.cps foreach {
+      path =>
+        action(path)
+        suspendable_block {
+          if (Files.isDirectory(path)) {
+            val list: Seq[Path] = FileUtils.directoryList(path)
+            walkPathsPreOrder(list)(action)
+          }
+        }
+    }
+
+  }
+
+  def walkPathsPostOrder(paths: Iterable[Path])(action: Path => Unit@suspendable): Unit@suspendable = {
 
     // instead of 'for (path: Path <- paths)'
     paths.cps foreach {
       path =>
         suspendable_block {
           if (Files.isDirectory(path)) {
-            val directoryStream: DirectoryStream[Path] = Files.newDirectoryStream(path)
-            try {
-              processRecursively(directoryStream.asScala)(action)
-              // instead of finally
-              directoryStream.close()
-            } catch {
-              // instead of finally
-              case e: Throwable => directoryStream.close(); throw e
-            }
+            val list: Seq[Path] = FileUtils.directoryList(path)
+            walkPathsPostOrder(list)(action)
           }
         }
         action(path)
     }
-
   }
 
 }

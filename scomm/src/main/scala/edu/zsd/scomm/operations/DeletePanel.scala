@@ -23,8 +23,8 @@ class DeletePanel @Autowired()(val model: MainWindowModel) extends FlowPanel(Flo
       case SelectionInfo.Nothing() => s"Nothing to delete!"
       case SelectionInfo.SingleFile(file) => s"Delete the file '${file.getFileName}'?"
       case SelectionInfo.SingleFolder(folder) => s"Delete the folder '${folder.getFileName}' and its contents?"
-      case SelectionInfo.MultipleFiles(count, files) => s"Delete the $count selected files?"
-      case SelectionInfo.MultipleFolders(count, folders) => s"Delete the $count selected folders and all their contents?"
+      case SelectionInfo.MultipleFiles(count, files) => s"Delete the selected $count files?"
+      case SelectionInfo.MultipleFolders(count, folders) => s"Delete the selected $count folders and all their contents?"
       case SelectionInfo.FilesAndFolders(filesCount, foldersCount, paths) => s"Delete the selected $filesCount file(s) and $foldersCount folder(s) and all their contents?"
     }
 

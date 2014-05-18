@@ -24,12 +24,14 @@ class CopyPanel @Autowired()(val model: MainWindowModel) extends FlowPanel(FlowP
     val selectionInfo: SelectionInfo = directoryListModel.selectionInfo.now
 
     prompt.text = selectionInfo match {
-      case SelectionInfo.Nothing() => s"Nothing to move!"
-      case SelectionInfo.SingleFile(file) => s"Move the file '${file.getFileName}' to:"
-      case SelectionInfo.SingleFolder(folder) => s"Move the folder '${folder.getFileName}' and its contents to:"
-      case SelectionInfo.MultipleFiles(count, files) => s"Move the $count selected files to:"
-      case SelectionInfo.MultipleFolders(count, folders) => s"Move the $count selected folders and all their contents to:"
-      case SelectionInfo.FilesAndFolders(filesCount, foldersCount, paths) => s"Move the selected $filesCount file(s) and $foldersCount folder(s) and all their contents to:"
+      case SelectionInfo.Nothing() => s"Nothing to copy!"
+      case SelectionInfo.SingleFile(file) => s"Copy the file '${file.getFileName}' to:"
+      case SelectionInfo.SingleFolder(folder) => s"Copy the folder '${folder.getFileName}' and its contents to:"
+      case SelectionInfo.MultipleFiles(count, files) => s"Copy the selected $count files to:"
+      case SelectionInfo.MultipleFolders(count, folders) => s"Copy the selected $count folders and all their contents to:"
+      case SelectionInfo.FilesAndFolders(filesCount, foldersCount, paths) => s"Copy the selected $filesCount file(s) and $foldersCount folder(s) and all their contents to:"
     }
+
+    destination.text = model.directoriesPaneModel.inactiveList.now.currentDir.now.toString
   }
 }

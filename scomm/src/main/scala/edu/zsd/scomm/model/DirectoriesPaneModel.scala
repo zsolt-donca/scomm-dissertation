@@ -9,6 +9,7 @@ class DirectoriesPaneModel @Autowired()(val left: LeftDirectoryListModel,
                                         val right: RightDirectoryListModel) extends Observing {
 
   val activeList = Var[DirectoryListModel](left)
+  val inactiveList = Var[DirectoryListModel](right)
 
   left.active() = true
 }

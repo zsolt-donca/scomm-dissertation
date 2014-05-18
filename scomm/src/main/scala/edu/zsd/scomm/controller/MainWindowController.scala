@@ -2,14 +2,14 @@ package edu.zsd.scomm.controller
 
 import edu.zsd.scomm.view.MainWindowView
 import edu.zsd.scomm.model.{SelectionInfo, DiskState, MainWindowModel, DirectoryListModel}
-import java.nio.file.{FileAlreadyExistsException, Path, Files}
+import java.nio.file.{Paths, FileAlreadyExistsException, Path, Files}
 import javax.swing.JOptionPane
 import edu.zsd.scomm.Domain._
 import edu.zsd.scomm.CPSUtils._
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.IOException
-import edu.zsd.scomm.operations.{DeletePanel, NewFolderPanel}
+import edu.zsd.scomm.operations.{CopyPanel, DeletePanel, NewFolderPanel}
 
 
 @Component
@@ -17,7 +17,8 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
                                         val view: MainWindowView,
                                         val diskState: DiskState,
                                         val newFolderPanel: NewFolderPanel,
-                                        val deletePanel: DeletePanel) extends Observing {
+                                        val deletePanel: DeletePanel,
+                                        val copyPanel: CopyPanel) extends Observing {
 
   val infoActionReactor = Reactor.loop {
     self =>
@@ -79,7 +80,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
         val selectionInfo: SelectionInfo = model.directoriesPaneModel.activeList.now.selectionInfo.now
 
         self awaitNext deletePanel.okButton()
-        processRecursively(selectionInfo.paths) {
+        walkPathsPostOrder(selectionInfo.paths) {
           path =>
             try {
               model.status() = s"Deleting '$path'..."
@@ -92,6 +93,45 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
         diskState.refresh()
 
         model.status() = s"Successfully deleted!"
+      }
+
+      view.argumentsPanel() = None
+  }
+
+  val copyLoop = Reactor.loop {
+    self =>
+      self awaitNext view.commandButtons.copyButton()
+
+      copyPanel.reset()
+      view.argumentsPanel() = Some(copyPanel)
+
+      self.abortOn(copyPanel.cancelButton()) {
+        val directoryListModel = model.directoriesPaneModel.activeList.now
+        val sourceDir = directoryListModel.currentDir.now
+        val selectionInfo: SelectionInfo = directoryListModel.selectionInfo.now
+        val destinationDir: Path = Paths.get(copyPanel.destination.text)
+
+        self awaitNext copyPanel.okButton()
+        walkPathsPreOrder(selectionInfo.paths) {
+          sourcePath =>
+            try {
+              val destinationPath = destinationDir.resolve(sourceDir.relativize(sourcePath))
+
+              if (Files.isRegularFile(sourcePath)) {
+                model.status() = s"Copying '$sourcePath' to '${destinationPath.getParent}'..."
+                Files.copy(sourcePath, destinationPath)
+              } else if (Files.isDirectory(sourcePath)) {
+                model.status() = s"Creating directory '$destinationPath'..."
+                Files.createDirectory(destinationPath)
+              }
+              self.pause
+            } catch {
+              case e: IOException => e.printStackTrace()
+            }
+        }
+        diskState.refresh()
+
+        model.status() = s"Successfully copied!"
       }
 
       view.argumentsPanel() = None

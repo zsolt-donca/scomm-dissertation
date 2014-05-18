@@ -2,7 +2,7 @@ package edu.zsd.scomm.model
 
 import edu.zsd.scomm.Domain._
 import java.nio.file._
-import scala.collection.JavaConverters._
+import edu.zsd.scomm.FileUtils
 
 abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends Observing {
 
@@ -22,14 +22,10 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
     diskState()
     val currentDir: Path = DirectoryListModel.this.currentDir()
     try {
-      val directoryStream: DirectoryStream[Path] = Files.newDirectoryStream(currentDir)
-      try {
-        val contents: Seq[FileEntry] = directoryStream.asScala.toSeq.map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
-        val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
-        parentFile ++ contents
-      } finally {
-        directoryStream.close()
-      }
+      val list = FileUtils.directoryList(currentDir)
+      val contents: Seq[FileEntry] = list.map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
+      val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
+      parentFile ++ contents
     } catch {
       case e: AccessDeniedException =>
         e.printStackTrace()
