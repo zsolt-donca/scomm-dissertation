@@ -3,8 +3,9 @@ package edu.zsd.scomm.model
 import edu.zsd.scomm.Domain._
 import java.nio.file._
 import edu.zsd.scomm.Utils.directoryList
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
-abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends Observing {
+abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends Observing with StrictLogging {
 
   // basic events
   val processPath = EventSource[Path]
@@ -23,13 +24,15 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
     val currentDir: Path = DirectoryListModel.this.currentDir()
     try {
       val list = directoryList(currentDir)
+      logger.debug(s"Calculating currentDirContents, currentDir: $currentDir, list: $list")
       val contents: Seq[FileEntry] = list.map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
       val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
       parentFile ++ contents
     } catch {
       case e: AccessDeniedException =>
-        e.printStackTrace()
+        logger.error(e.toString, e)
         Seq(FileEntry(currentDir.getParent, ".."))
+    } finally {
     }
   }
 

@@ -2,14 +2,15 @@ package edu.zsd.scomm.controller
 
 import edu.zsd.scomm.view.MainWindowView
 import edu.zsd.scomm.model.{SelectionInfo, DiskState, MainWindowModel, DirectoryListModel}
-import java.nio.file.{Paths, FileAlreadyExistsException, Path, Files}
+import java.nio.file.{Paths, Path, Files}
 import javax.swing.JOptionPane
 import edu.zsd.scomm.Domain._
 import edu.zsd.scomm.Utils._
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.IOException
-import edu.zsd.scomm.operations.{CopyPanel, DeletePanel, NewFolderPanel}
+import edu.zsd.scomm.operations.{NewFolderOperation, CopyPanel, DeletePanel, NewFolderPanel}
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
 
 @Component
@@ -18,7 +19,9 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
                                         val diskState: DiskState,
                                         val newFolderPanel: NewFolderPanel,
                                         val deletePanel: DeletePanel,
-                                        val copyPanel: CopyPanel) extends Observing {
+                                        val copyPanel: CopyPanel,
+                                        val directoriesPaneController: DirectoriesPaneController)
+  extends Observing with StrictLogging {
 
   val infoActionReactor = Reactor.loop {
     self =>
@@ -42,36 +45,39 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
 
       newFolderPanel.reset()
       view.argumentsPanel() = Some(newFolderPanel)
+      val activeListModel: DirectoryListModel = model.directoriesPaneModel.activeList.now
+      val currentDir: Path = activeListModel.currentDir.now
 
       self.abortOn(newFolderPanel.cancelButton()) {
-        val activeList: DirectoryListModel = model.directoriesPaneModel.activeList.now
-        val currentDir: Path = activeList.currentDir.now
 
         var repeat = true
         while (repeat) {
           self awaitNext newFolderPanel.okButton()
           val folderName: String = newFolderPanel.folderName.text
           val newFolderPath: Path = currentDir.resolve(folderName)
-          suspendable_block {
-            try {
-              Files.createDirectory(newFolderPath)
+
+          val op = new NewFolderOperation(newFolderPath)
+          val result = op.execute()
+          result match {
+            case NewFolderOperation.Success() =>
               diskState.refresh()
               model.status() = s"Successfully created folder '$folderName'!"
-              activeList.selectedPaths() = Set(newFolderPath)
+              activeListModel.selectedPaths() = Set(newFolderPath)
               repeat = false
-            } catch {
-              case e: FileAlreadyExistsException =>
-                model.status() = s"Folder '$folderName' already exists!"
-              case e: IOException =>
-                model.status() = "Error: " + e.getMessage
-            }
-            unit()
+            case NewFolderOperation.FileAlreadyExists() =>
+              model.status() = s"Folder '$folderName' already exists!"
+            case NewFolderOperation.GenericError(e) =>
+              model.status() = "Error: " + e.getMessage
           }
         }
-        unit()
       }
 
       view.argumentsPanel() = None
+
+      //      val activeListView = view.directoriesPane.activeList.now
+      //      logger.info(s"Requesting focus to active list: $activeListView")
+      //      directoriesPaneController.setFocusTo(left = false)
+      unit()
   }
 
   val deleteLoop = Reactor.loop {

@@ -7,7 +7,7 @@ import edu.zsd.scomm.model.{FileEntry, DirectoryListModel}
 import java.awt.Color
 import java.nio.file.Path
 
-abstract class DirectoryListView(componentName: String, model: DirectoryListModel) extends BorderPanel with Observing {
+abstract class DirectoryListView(val componentName: String, model: DirectoryListModel) extends BorderPanel with Observing {
 
   name = componentName
 

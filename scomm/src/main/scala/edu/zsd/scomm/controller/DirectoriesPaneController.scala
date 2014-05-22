@@ -6,26 +6,35 @@ import edu.zsd.scomm.view.DirectoriesPaneView
 import edu.zsd.scomm.model.DirectoriesPaneModel
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
 @Component
 class DirectoriesPaneController @Autowired()(val view: DirectoriesPaneView,
-                                             val model: DirectoriesPaneModel) extends Reactor {
+                                             val model: DirectoriesPaneModel) extends Reactor with StrictLogging {
 
   private val leftListView: ListView[String] = view.leftDirectoryListView.listView
   private val rightListView: ListView[String] = view.rightDirectoryListView.listView
   listenTo(leftListView, rightListView)
 
   reactions += {
-    case FocusGained(`leftListView`, _, _) =>
-      model.left.active() = true
-      model.right.active() = false
-      model.activeList() = view.leftDirectoryListView.model
-      model.inactiveList() = view.rightDirectoryListView.model
-    case FocusGained(`rightListView`, _, _) =>
-      model.left.active() = false
-      model.right.active() = true
-      model.activeList() = view.rightDirectoryListView.model
-      model.inactiveList() = view.leftDirectoryListView.model
+    case FocusGained(`leftListView`, Some(`rightListView`), temporary) =>
+      logger.debug(s"Focus gained for left list view, temporary: $temporary")
+      setFocusTo(left = true)
+
+    case FocusGained(`rightListView`, Some(`leftListView`), temporary) =>
+      logger.debug(s"Focus gained for right list view, temporary: $temporary")
+
+      setFocusTo(left = false)
   }
 
+  def setFocusTo(left: Boolean) {
+    logger.debug(s"Setting focus to ${if (left) "left" else "right"} list view")
+
+    model.left.active() = left
+    model.right.active() = !left
+    model.activeList() = if (left) view.leftDirectoryListView.model else view.rightDirectoryListView.model
+    model.inactiveList() = if (left) view.rightDirectoryListView.model else view.leftDirectoryListView.model
+    view.activeList() = if (left) view.leftDirectoryListView else view.rightDirectoryListView
+    view.inactiveList() = if (left) view.rightDirectoryListView else view.leftDirectoryListView
+  }
 }
