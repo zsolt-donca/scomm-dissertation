@@ -31,6 +31,11 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       JOptionPane.showMessageDialog(null, message, "View", JOptionPane.INFORMATION_MESSAGE)
   }
 
+  observe(view.commandButtons.refreshButton()) {
+    _ =>
+      diskState.refresh()
+  }
+
   val newFolderLoop = Reactor.loop {
     self =>
       self awaitNext view.commandButtons.newFolderButton()
@@ -84,6 +89,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
           path =>
             try {
               model.status() = s"Deleting '$path'..."
+              Files.setAttribute(path, "dos:readonly", false)
               Files.delete(path)
               self.pause
             } catch {

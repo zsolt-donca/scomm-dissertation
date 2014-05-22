@@ -56,6 +56,9 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
     val infoButton = new EventButton("Info")
     infoButton.name = "infoButton"
     contents += infoButton
+
+    val refreshButton = new EventButton("Refresh")
+    contents += refreshButton
   }
 
   val statusPanel = new BorderPanel() {

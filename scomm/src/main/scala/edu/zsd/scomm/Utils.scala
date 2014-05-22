@@ -18,20 +18,16 @@ object Utils {
     }
   }
 
-  implicit def cpsIterable[A, Repr](xs: IterableLike[A, Repr]) = new {
-    def cps = new {
-      def foreach[B](f: A => Any@cpsParam[Unit, Unit]): Unit@cpsParam[Unit, Unit] = {
-        val it = xs.iterator
-        while (it.hasNext) f(it.next())
-      }
-    }
+  def cps_foreach[A, Repr, B](xs: IterableLike[A, Repr])(f: A => Any@cpsParam[Unit, Unit]): Unit@cpsParam[Unit, Unit] = {
+    val it = xs.iterator
+    while (it.hasNext) f(it.next())
   }
 
   def walkPathsPreOrder(paths: Iterable[Path])(action: Path => Unit@suspendable): Unit@suspendable = {
 
     // instead of 'for (path: Path <- paths)'
-    paths.cps foreach {
-      path =>
+    cps_foreach(paths) {
+      path: Path =>
         action(path)
         suspendable_block {
           if (Files.isDirectory(path)) {
@@ -46,8 +42,8 @@ object Utils {
   def walkPathsPostOrder(paths: Iterable[Path])(action: Path => Unit@suspendable): Unit@suspendable = {
 
     // instead of 'for (path: Path <- paths)'
-    paths.cps foreach {
-      path =>
+    cps_foreach(paths) {
+      path: Path =>
         suspendable_block {
           if (Files.isDirectory(path)) {
             val list: Seq[Path] = directoryList(path)
