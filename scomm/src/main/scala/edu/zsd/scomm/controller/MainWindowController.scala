@@ -113,31 +113,41 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
 
       self.abortOn(copyPanel.cancelButton()) {
         val directoryListModel = model.directoriesPaneModel.activeList.now
-        val sourceDir = directoryListModel.currentDir.now
         val selectionInfo: SelectionInfo = directoryListModel.selectionInfo.now
-        val destinationDir: Path = Paths.get(copyPanel.destination.text)
+
+        val sourceDir = directoryListModel.currentDir.now
+        val sourceDirs: Set[Path] = selectionInfo.paths
 
         self awaitNext copyPanel.okButton()
-        walkPathsPreOrder(selectionInfo.paths) {
-          sourcePath =>
-            try {
-              val destinationPath = destinationDir.resolve(sourceDir.relativize(sourcePath))
 
-              if (Files.isRegularFile(sourcePath)) {
-                model.status() = s"Copying '$sourcePath' to '${destinationPath.getParent}'..."
-                Files.copy(sourcePath, destinationPath)
-              } else if (Files.isDirectory(sourcePath)) {
-                model.status() = s"Creating directory '$destinationPath'..."
-                Files.createDirectory(destinationPath)
+        val destinationDir: Path = Paths.get(copyPanel.destination.text)
+
+        val wrong: Set[Path] = sourceDirs.filter(dir => destinationDir.startsWith(dir))
+        if (wrong.nonEmpty) {
+          model.status() = "You cannot copy a directory to its own subdirectory!"
+        } else {
+
+          walkPathsPreOrder(sourceDirs) {
+            sourcePath =>
+              try {
+                val destinationPath = destinationDir.resolve(sourceDir.relativize(sourcePath))
+
+                if (Files.isRegularFile(sourcePath)) {
+                  model.status() = s"Copying '$sourcePath' to '${destinationPath.getParent}'..."
+                  Files.copy(sourcePath, destinationPath)
+                } else if (Files.isDirectory(sourcePath)) {
+                  model.status() = s"Creating directory '$destinationPath'..."
+                  Files.createDirectory(destinationPath)
+                }
+                self.pause
+              } catch {
+                case e: IOException => e.printStackTrace()
               }
-              self.pause
-            } catch {
-              case e: IOException => e.printStackTrace()
-            }
-        }
-        diskState.refresh()
+          }
+          diskState.refresh()
 
-        model.status() = s"Successfully copied!"
+          model.status() = s"Successfully copied!"
+        }
       }
 
       view.argumentsPanel() = None
