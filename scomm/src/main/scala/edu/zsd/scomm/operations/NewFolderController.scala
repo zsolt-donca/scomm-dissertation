@@ -3,7 +3,7 @@ package edu.zsd.scomm.operations
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import edu.zsd.scomm.view.MainWindowView
-import edu.zsd.scomm.Domain
+import edu.zsd.scomm.Domain._
 import edu.zsd.scomm.model.{DiskState, MainWindowModel, DirectoryListModel}
 import java.nio.file.Path
 import scala.util.continuations.suspendable
@@ -16,11 +16,11 @@ class NewFolderController @Autowired()(val mainWindowView: MainWindowView,
                                        val diskState: DiskState) extends SimpleOperationController {
 
   override val commandView: BaseCommandView = newFolderPanel
-  override val triggerEvent: Domain.Events[_] = mainWindowView.commandButtons.newFolderButton()
-  override val continueEvent: Domain.Events[_] = newFolderPanel.okButton()
-  override val abortEvent: Domain.Events[_] = newFolderPanel.cancelButton()
+  override val triggerEvent: Events[_] = mainWindowView.commandButtons.newFolderButton()
+  override val continueEvent: Events[_] = newFolderPanel.okButton()
+  override val abortEvent: Events[_] = newFolderPanel.cancelButton()
 
-  override def execute(): Unit@suspendable = {
+  override def execute(self: FlowOps): Unit@suspendable = {
     val activeListModel: DirectoryListModel = model.directoriesPaneModel.activeList.now
     val currentDir: Path = activeListModel.currentDir.now
 

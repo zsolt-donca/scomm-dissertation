@@ -24,13 +24,13 @@ trait SimpleOperationController extends Observing with StrictLogging {
 
       self.abortOn(abortEvent) {
         self awaitNext continueEvent
-        execute()
+        execute(self)
       }
 
       logger.debug("Loop done, resetting arguments panel")
       mainWindowView.argumentsPanel() = None
   }
 
-  def execute(): Unit@suspendable
+  def execute(self: FlowOps): Unit@suspendable
 
 }

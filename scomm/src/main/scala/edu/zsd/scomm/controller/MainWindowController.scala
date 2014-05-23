@@ -2,7 +2,7 @@ package edu.zsd.scomm.controller
 
 import edu.zsd.scomm.view.MainWindowView
 import edu.zsd.scomm.model.{SelectionInfo, DiskState, MainWindowModel, DirectoryListModel}
-import java.nio.file.{Paths, Path, Files}
+import java.nio.file.Files
 import javax.swing.JOptionPane
 import edu.zsd.scomm.Domain._
 import edu.zsd.scomm.Utils._
@@ -39,43 +39,6 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       diskState.refresh()
   }
 
-  //  val newFolderLoop = Reactor.loop {
-  //    self =>
-  //      self awaitNext view.commandButtons.newFolderButton()
-  //
-  //      newFolderPanel.reset()
-  //      view.argumentsPanel() = Some(newFolderPanel)
-  //      val activeListModel: DirectoryListModel = model.directoriesPaneModel.activeList.now
-  //      val currentDir: Path = activeListModel.currentDir.now
-  //
-  //      self.abortOn(newFolderPanel.cancelButton()) {
-  //
-  //        self awaitNext newFolderPanel.okButton()
-  //        val folderName: String = newFolderPanel.folderName.text
-  //        val newFolderPath: Path = currentDir.resolve(folderName)
-  //
-  //        val op = new NewFolderOperation(newFolderPath)
-  //        val result = op.execute()
-  //        result match {
-  //          case NewFolderOperation.Success() =>
-  //            diskState.refresh()
-  //            model.status() = s"Successfully created folder '$folderName'!"
-  //            activeListModel.selectedPaths() = Set(newFolderPath)
-  //          case NewFolderOperation.FileAlreadyExists() =>
-  //            model.status() = s"Folder '$folderName' already exists!"
-  //          case NewFolderOperation.GenericError(e) =>
-  //            model.status() = "Error: " + e.getMessage
-  //        }
-  //      }
-  //
-  //      view.argumentsPanel() = None
-  //
-  //      //      val activeListView = view.directoriesPane.activeList.now
-  //      //      logger.info(s"Requesting focus to active list: $activeListView")
-  //      //      directoriesPaneController.setFocusTo(left = false)
-  //      unit()
-  //  }
-
   val deleteLoop = Reactor.loop {
     self =>
       self awaitNext view.commandButtons.deleteButton()
@@ -106,52 +69,4 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       view.argumentsPanel() = None
   }
 
-  val copyLoop = Reactor.loop {
-    self =>
-      self awaitNext view.commandButtons.copyButton()
-
-      copyPanel.reset()
-      view.argumentsPanel() = Some(copyPanel)
-
-      self.abortOn(copyPanel.cancelButton()) {
-        val directoryListModel = model.directoriesPaneModel.activeList.now
-        val selectionInfo: SelectionInfo = directoryListModel.selectionInfo.now
-
-        val sourceDir = directoryListModel.currentDir.now
-        val sourceDirs: Set[Path] = selectionInfo.paths
-
-        self awaitNext copyPanel.okButton()
-
-        val destinationDir: Path = Paths.get(copyPanel.destination.text)
-
-        val wrong: Set[Path] = sourceDirs.filter(dir => destinationDir.startsWith(dir))
-        if (wrong.nonEmpty) {
-          model.status() = "You cannot copy a directory to its own subdirectory!"
-        } else {
-
-          walkPathsPreOrder(sourceDirs) {
-            sourcePath =>
-              try {
-                val destinationPath = destinationDir.resolve(sourceDir.relativize(sourcePath))
-
-                if (Files.isRegularFile(sourcePath)) {
-                  model.status() = s"Copying '$sourcePath' to '${destinationPath.getParent}'..."
-                  Files.copy(sourcePath, destinationPath)
-                } else if (Files.isDirectory(sourcePath)) {
-                  model.status() = s"Creating directory '$destinationPath'..."
-                  Files.createDirectory(destinationPath)
-                }
-                self.pause
-              } catch {
-                case e: IOException => e.printStackTrace()
-              }
-          }
-          diskState.refresh()
-
-          model.status() = s"Successfully copied!"
-        }
-      }
-
-      view.argumentsPanel() = None
-  }
 }
