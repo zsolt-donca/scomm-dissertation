@@ -52,7 +52,7 @@ abstract class DirectoryListController(val model: DirectoryListModel,
 
   val myTransferHandler = new TransferHandler() {
 
-    private val activeReactors = mutable.Set[Reactor]()
+    private val activeReactors = scala.collection.mutable.Set[Reactor]()
 
     override def canImport(info: TransferSupport): Boolean = {
       val supported: Boolean = info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
