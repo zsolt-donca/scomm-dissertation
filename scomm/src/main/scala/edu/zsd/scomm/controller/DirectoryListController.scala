@@ -50,8 +50,7 @@ abstract class DirectoryListController(val model: DirectoryListModel,
   var list = view.listView.peer
   list.setDragEnabled(true)
   list.setDropMode(DropMode.ON)
-
-  val myTransferHandler = new TransferHandler() {
+  list.setTransferHandler(new TransferHandler() {
 
     private val activeReactors = scala.collection.mutable.Set[Reactor]()
 
@@ -136,7 +135,5 @@ abstract class DirectoryListController(val model: DirectoryListModel,
         override def isDataFlavorSupported(flavor: DataFlavor): Boolean = Set(stringFlavor, javaFileListFlavor)(flavor)
       }
     }
-  }
-
-  list.setTransferHandler(myTransferHandler)
+  })
 }

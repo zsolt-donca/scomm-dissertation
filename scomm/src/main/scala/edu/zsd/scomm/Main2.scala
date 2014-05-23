@@ -6,15 +6,20 @@ import java.nio.file.Paths
 import org.springframework.scala.context.function.FunctionalConfigApplicationContext
 import edu.zsd.scomm.view.MainWindowView
 import javax.swing.UIManager
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
-object Main extends ReactiveSimpleSwingApplication {
+object Main2 extends ReactiveSimpleSwingApplication with StrictLogging {
 
   var applicationContext: FunctionalConfigApplicationContext = null
   var appParams: AppParams = null
 
   override def startup(args: Array[String]): Unit = {
 
-    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
+    } catch {
+      case e: Exception => logger.warn(s"Could not set system look and feel ${UIManager.getSystemLookAndFeelClassName}: $e", e)
+    }
 
     appParams = if (args.length >= 1) {
       val initDir = Paths.get(args(0))

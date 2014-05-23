@@ -5,7 +5,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel
 import org.junit.runners.BlockJUnit4ClassRunner
 import org.junit.runners.model.{Statement, FrameworkMethod}
 
-class CacioFESTLoggingRunner(clazz : Class[_]) extends BlockJUnit4ClassRunner(clazz) {
+class CacioFESTLoggingRunner(clazz: Class[_]) extends BlockJUnit4ClassRunner(clazz) {
 
   val disabled = System.getProperty("cacio.disabled4testing", "false").toBoolean
 
@@ -13,6 +13,7 @@ class CacioFESTLoggingRunner(clazz : Class[_]) extends BlockJUnit4ClassRunner(cl
     System.setProperty("awt.toolkit", classOf[CTCToolkit].getName)
     System.setProperty("java.awt.graphicsenv", classOf[CTCGraphicsEnvironment].getName)
     System.setProperty("swing.defaultlaf", classOf[MetalLookAndFeel].getName)
+    System.setProperty("swing.systemlaf", classOf[MetalLookAndFeel].getName)
     System.setProperty("java.awt.headless", "false")
   }
 
@@ -22,7 +23,7 @@ class CacioFESTLoggingRunner(clazz : Class[_]) extends BlockJUnit4ClassRunner(cl
     new Statement {
       override def evaluate(): Unit = {
         MethodCallStack.enterTest(frameworkMethod)
-        var exception : Option[Throwable] = None
+        var exception: Option[Throwable] = None
         try {
           statement.evaluate()
         } catch {
