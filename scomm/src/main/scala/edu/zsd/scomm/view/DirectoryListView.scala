@@ -7,12 +7,13 @@ import edu.zsd.scomm.model.{FileEntry, DirectoryListModel}
 import java.awt.Color
 import java.nio.file.Path
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import scala.swing.ListView.Renderer
 
 abstract class DirectoryListView(val componentName: String, model: DirectoryListModel) extends BorderPanel with Observing with StrictLogging {
 
   name = componentName
 
-  private[this] val currentDirLabel = new Label("<empty>")
+  val currentDirLabel = new Label("<empty>")
   currentDirLabel.name = componentName + ".currentDirLabel"
   currentDirLabel.horizontalAlignment = Alignment.Left
 
@@ -24,6 +25,8 @@ abstract class DirectoryListView(val componentName: String, model: DirectoryList
   //  val listView = new FilesListView
   val listView = new ListView[FileEntry] {
     var updating = false
+
+    renderer = Renderer(_.name)
   }
   listView.name = componentName + ".listView"
   add(new ScrollPane(listView), Position.Center)

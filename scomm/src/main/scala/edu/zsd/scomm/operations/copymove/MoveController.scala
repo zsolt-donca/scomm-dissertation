@@ -23,19 +23,19 @@ class MoveController @Autowired()(val mainWindowView: MainWindowView,
 
   override def execute(self: FlowOps): Unit@suspendable = {
 
-    val sourceParent: Path = model.sourceParent.now
     val sourcePaths = model.source.now.paths
     val destination = model.destination.now
 
-    execute(self, sourceParent, sourcePaths, destination)
+    execute(self, sourcePaths, destination)
 
   }
 
-  def execute(self: FlowOps, sourceParent: Path, sourcePaths: Set[Path], destination: Path): Unit@suspendable = {
+  def execute(self: FlowOps, sourcePaths: Set[Path], destination: Path): Unit@suspendable = {
+    // TODO should walk recursively over directories which could not be simply moved
     sourcePaths.foreach {
       sourcePath: Path =>
         try {
-          val destinationPath = destination.resolve(sourceParent.relativize(sourcePath))
+          val destinationPath = destination.resolve(sourcePath.getFileName)
           Files.move(sourcePath, destinationPath)
           diskState.refresh()
         }

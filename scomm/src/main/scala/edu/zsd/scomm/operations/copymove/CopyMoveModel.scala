@@ -11,8 +11,6 @@ class CopyMoveModel @Autowired()(directoriesPaneModel: DirectoriesPaneModel) {
 
   val source: Signal[SelectionInfo] = directoriesPaneModel.activeSelection
 
-  val sourceParent: Signal[Path] = directoriesPaneModel.activeCurrentDir
-
   val destination: Signal[Path] = directoriesPaneModel.inactiveCurrentDir
 
 }

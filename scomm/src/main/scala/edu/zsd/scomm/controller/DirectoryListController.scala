@@ -12,8 +12,9 @@ import scala.collection.JavaConverters._
 import java.io.File
 import edu.zsd.scomm.operations.copymove.{MoveController, CopyController}
 import edu.zsd.scomm.Domain._
-import javax.swing.{JComponent, TransferHandler, DropMode}
+import javax.swing.{JList, JComponent, TransferHandler, DropMode}
 import edu.zsd.scomm.Utils.unit
+import java.nio.file.Paths
 
 
 /**
@@ -77,7 +78,13 @@ abstract class DirectoryListController(val model: DirectoryListModel,
         val transferable: Transferable = info.getTransferable
         val data = transferable.getTransferData(DataFlavor.javaFileListFlavor).asInstanceOf[java.util.List[File]]
         val sourcePaths = data.asScala.map(_.toPath).toSet
-        val sourceParent = sourcePaths.toSeq(0).getParent
+
+        val dropLocation: JList.DropLocation = info.getDropLocation.asInstanceOf[JList.DropLocation]
+        val destinationPath = if (dropLocation.isInsert || dropLocation.getIndex < 0) {
+          Paths.get(view.currentDirLabel.text) // current directory
+        } else {
+          view.listView.listData(dropLocation.getIndex).path
+        }
 
         val dropAction: Int = info.getDropAction
         if (dropAction == TransferHandler.MOVE || dropAction == TransferHandler.COPY) {
@@ -85,8 +92,8 @@ abstract class DirectoryListController(val model: DirectoryListModel,
             lazy val copyFlow: Reactor = Reactor.flow {
               self =>
                 dropAction match {
-                  case TransferHandler.MOVE => moveController.execute(self, sourceParent, sourcePaths, model.currentDir.now)
-                  case TransferHandler.COPY => copyController.execute(self, sourceParent, sourcePaths, model.currentDir.now)
+                  case TransferHandler.MOVE => moveController.execute(self, sourcePaths, destinationPath)
+                  case TransferHandler.COPY => copyController.execute(self, sourcePaths, destinationPath)
                 }
                 activeReactors -= copyFlow
                 unit()
@@ -94,15 +101,9 @@ abstract class DirectoryListController(val model: DirectoryListModel,
             activeReactors += copyFlow
             unit()
           }
-        }
-        dropAction match {
-          case TransferHandler.COPY =>
-            logger.info(s"Needs to copy these paths: $sourcePaths")
-
-
-            true
-          case _ =>
-            false
+          true
+        } else {
+          false
         }
       } catch {
         case e: Exception =>
@@ -119,18 +120,20 @@ abstract class DirectoryListController(val model: DirectoryListModel,
 
         import DataFlavor._
 
-        private val paths = view.listView.selection.items.map(_.path)
-        private val files: java.util.List[File] = new java.util.ArrayList(paths.map(_.toFile).asJavaCollection)
+        private val paths = view.listView.selection.items.filter(_.name != "..").map(_.path)
+        private lazy val string = paths.map(_.toString).mkString("\n")
+        private lazy val files: java.util.List[File] = new java.util.ArrayList(paths.map(_.toFile).asJavaCollection)
 
-        override def getTransferDataFlavors: Array[DataFlavor] = Array(javaFileListFlavor)
+        override def getTransferDataFlavors: Array[DataFlavor] = Array(stringFlavor, javaFileListFlavor)
 
         override def getTransferData(flavor: DataFlavor): AnyRef =
           flavor match {
+            case `stringFlavor` => string
             case `javaFileListFlavor` => files
             case _ => null
           }
 
-        override def isDataFlavorSupported(flavor: DataFlavor): Boolean = javaFileListFlavor == flavor
+        override def isDataFlavorSupported(flavor: DataFlavor): Boolean = Set(stringFlavor, javaFileListFlavor)(flavor)
       }
     }
   }
