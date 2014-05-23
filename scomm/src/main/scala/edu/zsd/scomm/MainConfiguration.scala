@@ -5,7 +5,7 @@ import org.springframework.scala.context.function.{ContextSupport, FunctionalCon
 class MainConfiguration extends FunctionalConfiguration with ContextSupport {
 
   val appParams = bean("appParams") {
-    edu.zsd.scomm.Main2.appParams
+    edu.zsd.scomm.Main.appParams
   }
 
   componentScan("edu.zsd.scomm")

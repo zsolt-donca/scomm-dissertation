@@ -12,7 +12,7 @@ object FESTTest {
 
   val testDir: Path = new File(this.getClass.getClassLoader.getResource("testDir").toURI).toPath
   deleteEmptyDirectoryPlaceholders(testDir)
-  edu.zsd.scomm.Main2.main(Array(testDir.toString))
+  edu.zsd.scomm.Main.main(Array(testDir.toString))
 
   val robot: Robot = BasicRobot.robotWithCurrentAwtHierarchy
 

@@ -8,7 +8,7 @@ import edu.zsd.scomm.view.MainWindowView
 import javax.swing.UIManager
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
-object Main2 extends ReactiveSimpleSwingApplication with StrictLogging {
+object Main extends ReactiveSimpleSwingApplication with StrictLogging {
 
   var applicationContext: FunctionalConfigApplicationContext = null
   var appParams: AppParams = null
