@@ -1,4 +1,4 @@
-package edu.zsd.scomm.operations
+package edu.zsd.scomm.operations.copy
 
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
@@ -7,10 +7,12 @@ import edu.zsd.scomm.view.EventButton
 import java.awt.Dimension
 import edu.zsd.scomm.model.SelectionInfo
 import edu.zsd.scomm.Domain._
+import edu.zsd.scomm.operations.CommandView
+import java.nio.file.Path
 
 
 @Component
-class CopyPanel @Autowired()(val model: CopyModel) extends FlowPanel(FlowPanel.Alignment.Left)() with Observing with BaseCommandView {
+class CopyPanel @Autowired()(val model: CopyModel) extends FlowPanel(FlowPanel.Alignment.Left)() with Observing with CommandView {
 
   val promptLabel = new Label("")
   val destinationTextField = new TextField("")
@@ -22,9 +24,10 @@ class CopyPanel @Autowired()(val model: CopyModel) extends FlowPanel(FlowPanel.A
   contents ++= Seq(promptLabel, destinationTextField, okButton, cancelButton)
 
   override def reset() {
+    destinationTextField.text = model.destination.now.toString
   }
 
-  observe(model.selection) {
+  observe(model.source) {
     selection: SelectionInfo =>
       promptLabel.text = selection match {
         case SelectionInfo.Nothing() => s"Nothing to copy!"
@@ -37,7 +40,7 @@ class CopyPanel @Autowired()(val model: CopyModel) extends FlowPanel(FlowPanel.A
   }
 
   observe(model.destination) {
-    destination =>
+    destination: Path =>
       destinationTextField.text = destination.toString
   }
 }

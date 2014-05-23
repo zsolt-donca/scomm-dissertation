@@ -7,11 +7,15 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 trait SimpleOperationController extends Observing with StrictLogging {
 
-  val mainWindowView: MainWindowView
-  val commandView: BaseCommandView
-  val triggerEvent: Events[_]
-  val continueEvent: Events[_]
-  val abortEvent: Events[_]
+  def mainWindowView: MainWindowView
+
+  def commandView: CommandView
+
+  def triggerEvent: Events[_]
+
+  def continueEvent: Events[_] = commandView.okButton()
+
+  def abortEvent: Events[_] = commandView.cancelButton()
 
   def reactorLoop(): Reactor = Reactor.loop {
 

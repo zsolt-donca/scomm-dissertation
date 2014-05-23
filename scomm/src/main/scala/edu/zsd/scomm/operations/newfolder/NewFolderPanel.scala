@@ -1,12 +1,13 @@
-package edu.zsd.scomm.operations
+package edu.zsd.scomm.operations.newfolder
 
 import scala.swing.{FlowPanel, Label, TextField, Dimension, Alignment}
 import org.springframework.stereotype.Component
 import edu.zsd.scomm.view.EventButton
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import edu.zsd.scomm.operations.CommandView
 
 @Component
-class NewFolderPanel extends FlowPanel(FlowPanel.Alignment.Left)() with BaseCommandView with StrictLogging {
+class NewFolderPanel extends FlowPanel(FlowPanel.Alignment.Left)() with CommandView with StrictLogging {
 
   val prompt = new Label("New folder (directory)")
   val folderName = new TextField("")

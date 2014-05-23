@@ -32,8 +32,8 @@ class DirectoriesPaneController @Autowired()(val view: DirectoriesPaneView,
 
     model.left.active() = left
     model.right.active() = !left
-    model.activeList() = if (left) view.leftDirectoryListView.model else view.rightDirectoryListView.model
-    model.inactiveList() = if (left) view.rightDirectoryListView.model else view.leftDirectoryListView.model
+    model.activeListModel() = if (left) view.leftDirectoryListView.model else view.rightDirectoryListView.model
+    model.inactiveListModel() = if (left) view.rightDirectoryListView.model else view.leftDirectoryListView.model
     view.activeList() = if (left) view.leftDirectoryListView else view.rightDirectoryListView
     view.inactiveList() = if (left) view.rightDirectoryListView else view.leftDirectoryListView
   }
