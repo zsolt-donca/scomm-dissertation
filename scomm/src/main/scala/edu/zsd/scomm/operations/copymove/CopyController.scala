@@ -1,4 +1,4 @@
-package edu.zsd.scomm.operations.copy
+package edu.zsd.scomm.operations.copymove
 
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,15 +17,15 @@ class CopyController @Autowired()(val mainWindowView: MainWindowView,
                                   val mainWindowModel: MainWindowModel,
                                   val diskState: DiskState,
                                   val view: CopyPanel,
-                                  val model: CopyModel) extends SimpleOperationController {
+                                  val model: CopyMoveModel) extends SimpleOperationController {
   override val commandView: CommandView = view
   override val triggerEvent: Domain.Events[_] = mainWindowView.commandButtons.copyButton()
 
   override def execute(self: FlowOps): Unit@suspendable = {
 
-    val sourceParen: Path = model.sourceParent.now
+    val sourceParent: Path = model.sourceParent.now
     val sourceDirs: Set[Path] = model.source.now.paths
-    val destinationDir: Path = Paths.get(view.destinationTextField.text)
+    val destinationDir: Path = Paths.get(view.destination)
 
     val overlapping: Set[Path] = sourceDirs.filter(dir => destinationDir.startsWith(dir))
     if (overlapping.nonEmpty) {
@@ -35,7 +35,7 @@ class CopyController @Autowired()(val mainWindowView: MainWindowView,
       walkPathsPreOrder(sourceDirs) {
         sourcePath =>
           try {
-            val destinationPath = destinationDir.resolve(sourceParen.relativize(sourcePath))
+            val destinationPath = destinationDir.resolve(sourceParent.relativize(sourcePath))
 
             if (Files.isRegularFile(sourcePath)) {
               mainWindowModel.status() = s"Copying '$sourcePath' to '${destinationPath.getParent}'..."
