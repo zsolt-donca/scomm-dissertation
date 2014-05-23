@@ -6,8 +6,9 @@ import scala.swing.BorderPanel.Position
 import edu.zsd.scomm.model.{FileEntry, DirectoryListModel}
 import java.awt.Color
 import java.nio.file.Path
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
-abstract class DirectoryListView(val componentName: String, model: DirectoryListModel) extends BorderPanel with Observing {
+abstract class DirectoryListView(val componentName: String, model: DirectoryListModel) extends BorderPanel with Observing with StrictLogging {
 
   name = componentName
 
@@ -21,7 +22,7 @@ abstract class DirectoryListView(val componentName: String, model: DirectoryList
   add(currentDirPanel, Position.North)
 
   //  val listView = new FilesListView
-  val listView = new ListView[String] {
+  val listView = new ListView[FileEntry] {
     var updating = false
   }
   listView.name = componentName + ".listView"
@@ -44,7 +45,7 @@ abstract class DirectoryListView(val componentName: String, model: DirectoryList
       try {
         listView.updating = true
         val selection = listView.selection.indices.toSeq
-        listView.listData = contents.map(file => file.name)
+        listView.listData = contents
         listView.selection.indices.clear()
         listView.selection.indices ++= selection
       } finally {

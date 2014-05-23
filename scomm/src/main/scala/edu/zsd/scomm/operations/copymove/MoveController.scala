@@ -5,12 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import edu.zsd.scomm.view.MainWindowView
 import edu.zsd.scomm.model.{DiskState, MainWindowModel}
 import edu.zsd.scomm.operations.{CommandView, SimpleOperationController}
-import edu.zsd.scomm.Domain
+import edu.zsd.scomm.Domain._
 import scala.util.continuations.suspendable
 import java.nio.file.{Files, Path}
 import java.io.IOException
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import edu.zsd.scomm.Utils._
 
 @Component
 class MoveController @Autowired()(val mainWindowView: MainWindowView,
@@ -20,15 +19,20 @@ class MoveController @Autowired()(val mainWindowView: MainWindowView,
                                   val model: CopyMoveModel) extends SimpleOperationController with StrictLogging {
 
   override val commandView: CommandView = view
-  override val triggerEvent: Domain.Events[_] = mainWindowView.commandButtons.moveButton()
+  override val triggerEvent: Events[_] = mainWindowView.commandButtons.moveButton()
 
-  override def execute(self: Domain.FlowOps): Unit@suspendable = {
+  override def execute(self: FlowOps): Unit@suspendable = {
 
     val sourceParent: Path = model.sourceParent.now
     val sourcePaths = model.source.now.paths
     val destination = model.destination.now
 
-    cps_foreach(sourcePaths) {
+    execute(self, sourceParent, sourcePaths, destination)
+
+  }
+
+  def execute(self: FlowOps, sourceParent: Path, sourcePaths: Set[Path], destination: Path): Unit@suspendable = {
+    sourcePaths.foreach {
       sourcePath: Path =>
         try {
           val destinationPath = destination.resolve(sourceParent.relativize(sourcePath))
@@ -40,7 +44,6 @@ class MoveController @Autowired()(val mainWindowView: MainWindowView,
             logger.error(e.toString, e)
         }
     }
-
   }
 
   val moveLoop = reactorLoop()

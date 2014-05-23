@@ -12,8 +12,8 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 class DirectoriesPaneController @Autowired()(val view: DirectoriesPaneView,
                                              val model: DirectoriesPaneModel) extends Reactor with StrictLogging {
 
-  private val leftListView: ListView[String] = view.leftDirectoryListView.listView
-  private val rightListView: ListView[String] = view.rightDirectoryListView.listView
+  private val leftListView: ListView[_] = view.leftDirectoryListView.listView
+  private val rightListView: ListView[_] = view.rightDirectoryListView.listView
   listenTo(leftListView, rightListView)
 
   reactions += {

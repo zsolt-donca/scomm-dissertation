@@ -27,6 +27,11 @@ class CopyController @Autowired()(val mainWindowView: MainWindowView,
     val sourceDirs: Set[Path] = model.source.now.paths
     val destinationDir: Path = Paths.get(view.destination)
 
+    execute(self, sourceParent, sourceDirs, destinationDir)
+  }
+
+  def execute(self: FlowOps, sourceParent: Path, sourceDirs: Set[Path], destinationDir: Path): Unit@suspendable = {
+
     val overlapping: Set[Path] = sourceDirs.filter(dir => destinationDir.startsWith(dir))
     if (overlapping.nonEmpty) {
       mainWindowModel.status() = "You cannot copy a directory to its own subdirectory!"
