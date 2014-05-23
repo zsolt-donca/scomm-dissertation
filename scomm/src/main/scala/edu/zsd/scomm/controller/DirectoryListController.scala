@@ -79,22 +79,27 @@ abstract class DirectoryListController(val model: DirectoryListModel,
         val sourcePaths = data.asScala.map(_.toPath).toSet
         val sourceParent = sourcePaths.toSeq(0).getParent
 
-        info.getDropAction match {
+        val dropAction: Int = info.getDropAction
+        if (dropAction == TransferHandler.MOVE || dropAction == TransferHandler.COPY) {
+          schedule {
+            lazy val copyFlow: Reactor = Reactor.flow {
+              self =>
+                dropAction match {
+                  case TransferHandler.MOVE => moveController.execute(self, sourceParent, sourcePaths, model.currentDir.now)
+                  case TransferHandler.COPY => copyController.execute(self, sourceParent, sourcePaths, model.currentDir.now)
+                }
+                activeReactors -= copyFlow
+                unit()
+            }
+            activeReactors += copyFlow
+            unit()
+          }
+        }
+        dropAction match {
           case TransferHandler.COPY =>
             logger.info(s"Needs to copy these paths: $sourcePaths")
 
-            schedule {
-              val copyFlow: Reactor = Reactor.flow {
-                self =>
-                  copyController.execute(self, sourceParent, sourcePaths, model.currentDir.now)
-                  unit()
-              }
-              activeReactors += copyFlow
-              unit()
-            }
-            true
-          case TransferHandler.MOVE =>
-            logger.info(s"Needs to move these paths: $sourcePaths")
+
             true
           case _ =>
             false
@@ -115,19 +120,17 @@ abstract class DirectoryListController(val model: DirectoryListModel,
         import DataFlavor._
 
         private val paths = view.listView.selection.items.map(_.path)
-        private lazy val string = paths.map(_.toString).mkString(" ")
-        private lazy val files: java.util.List[File] = new java.util.ArrayList(paths.map(_.toFile).asJavaCollection)
+        private val files: java.util.List[File] = new java.util.ArrayList(paths.map(_.toFile).asJavaCollection)
 
-        override def getTransferDataFlavors: Array[DataFlavor] = Array(stringFlavor, javaFileListFlavor)
+        override def getTransferDataFlavors: Array[DataFlavor] = Array(javaFileListFlavor)
 
         override def getTransferData(flavor: DataFlavor): AnyRef =
           flavor match {
-            case `stringFlavor` => string
             case `javaFileListFlavor` => files
             case _ => null
           }
 
-        override def isDataFlavorSupported(flavor: DataFlavor): Boolean = Set(stringFlavor, javaFileListFlavor)(flavor)
+        override def isDataFlavorSupported(flavor: DataFlavor): Boolean = javaFileListFlavor == flavor
       }
     }
   }
