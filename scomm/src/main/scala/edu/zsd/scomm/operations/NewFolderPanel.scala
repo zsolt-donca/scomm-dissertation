@@ -3,9 +3,10 @@ package edu.zsd.scomm.operations
 import scala.swing.{FlowPanel, Label, TextField, Dimension, Alignment}
 import org.springframework.stereotype.Component
 import edu.zsd.scomm.view.EventButton
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
 @Component
-class NewFolderPanel extends FlowPanel(FlowPanel.Alignment.Left)() {
+class NewFolderPanel extends FlowPanel(FlowPanel.Alignment.Left)() with BaseCommandView with StrictLogging {
 
   val prompt = new Label("New folder (directory)")
   val folderName = new TextField("")
@@ -16,7 +17,7 @@ class NewFolderPanel extends FlowPanel(FlowPanel.Alignment.Left)() {
 
   contents ++= Seq(prompt, folderName, okButton, cancelButton)
 
-  def reset() {
+  override def reset() {
     folderName.text = ""
   }
 }

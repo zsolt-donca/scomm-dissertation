@@ -9,7 +9,7 @@ import edu.zsd.scomm.Utils._
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.IOException
-import edu.zsd.scomm.operations.{NewFolderOperation, CopyPanel, DeletePanel, NewFolderPanel}
+import edu.zsd.scomm.operations.{CopyPanel, DeletePanel, NewFolderPanel}
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 
@@ -39,46 +39,42 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       diskState.refresh()
   }
 
-  val newFolderLoop = Reactor.loop {
-    self =>
-      self awaitNext view.commandButtons.newFolderButton()
-
-      newFolderPanel.reset()
-      view.argumentsPanel() = Some(newFolderPanel)
-      val activeListModel: DirectoryListModel = model.directoriesPaneModel.activeList.now
-      val currentDir: Path = activeListModel.currentDir.now
-
-      self.abortOn(newFolderPanel.cancelButton()) {
-
-        var repeat = true
-        while (repeat) {
-          self awaitNext newFolderPanel.okButton()
-          val folderName: String = newFolderPanel.folderName.text
-          val newFolderPath: Path = currentDir.resolve(folderName)
-
-          val op = new NewFolderOperation(newFolderPath)
-          val result = op.execute()
-          result match {
-            case NewFolderOperation.Success() =>
-              diskState.refresh()
-              model.status() = s"Successfully created folder '$folderName'!"
-              activeListModel.selectedPaths() = Set(newFolderPath)
-              repeat = false
-            case NewFolderOperation.FileAlreadyExists() =>
-              model.status() = s"Folder '$folderName' already exists!"
-            case NewFolderOperation.GenericError(e) =>
-              model.status() = "Error: " + e.getMessage
-          }
-        }
-      }
-
-      view.argumentsPanel() = None
-
-      //      val activeListView = view.directoriesPane.activeList.now
-      //      logger.info(s"Requesting focus to active list: $activeListView")
-      //      directoriesPaneController.setFocusTo(left = false)
-      unit()
-  }
+  //  val newFolderLoop = Reactor.loop {
+  //    self =>
+  //      self awaitNext view.commandButtons.newFolderButton()
+  //
+  //      newFolderPanel.reset()
+  //      view.argumentsPanel() = Some(newFolderPanel)
+  //      val activeListModel: DirectoryListModel = model.directoriesPaneModel.activeList.now
+  //      val currentDir: Path = activeListModel.currentDir.now
+  //
+  //      self.abortOn(newFolderPanel.cancelButton()) {
+  //
+  //        self awaitNext newFolderPanel.okButton()
+  //        val folderName: String = newFolderPanel.folderName.text
+  //        val newFolderPath: Path = currentDir.resolve(folderName)
+  //
+  //        val op = new NewFolderOperation(newFolderPath)
+  //        val result = op.execute()
+  //        result match {
+  //          case NewFolderOperation.Success() =>
+  //            diskState.refresh()
+  //            model.status() = s"Successfully created folder '$folderName'!"
+  //            activeListModel.selectedPaths() = Set(newFolderPath)
+  //          case NewFolderOperation.FileAlreadyExists() =>
+  //            model.status() = s"Folder '$folderName' already exists!"
+  //          case NewFolderOperation.GenericError(e) =>
+  //            model.status() = "Error: " + e.getMessage
+  //        }
+  //      }
+  //
+  //      view.argumentsPanel() = None
+  //
+  //      //      val activeListView = view.directoriesPane.activeList.now
+  //      //      logger.info(s"Requesting focus to active list: $activeListView")
+  //      //      directoriesPaneController.setFocusTo(left = false)
+  //      unit()
+  //  }
 
   val deleteLoop = Reactor.loop {
     self =>
