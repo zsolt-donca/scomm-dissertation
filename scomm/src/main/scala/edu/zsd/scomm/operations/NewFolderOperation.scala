@@ -5,8 +5,6 @@ import java.io.IOException
 
 class NewFolderOperation(val newFolderPath: Path) {
 
-  import NewFolderOperation._
-
   def execute(): OperationResult = {
     try {
       Files.createDirectory(newFolderPath)
@@ -16,9 +14,6 @@ class NewFolderOperation(val newFolderPath: Path) {
       case e: IOException => GenericError(e)
     }
   }
-}
-
-object NewFolderOperation {
 
   abstract sealed class OperationResult()
 

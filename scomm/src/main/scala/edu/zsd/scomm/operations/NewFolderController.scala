@@ -30,13 +30,13 @@ class NewFolderController @Autowired()(val mainWindowView: MainWindowView,
     val op = new NewFolderOperation(newFolderPath)
     val result = op.execute()
     result match {
-      case NewFolderOperation.Success() =>
+      case op.Success() =>
         diskState.refresh()
         model.status() = s"Successfully created folder '$folderName'!"
         activeListModel.selectedPaths() = Set(newFolderPath)
-      case NewFolderOperation.FileAlreadyExists() =>
+      case op.FileAlreadyExists() =>
         model.status() = s"Folder '$folderName' already exists!"
-      case NewFolderOperation.GenericError(e) =>
+      case op.GenericError(e) =>
         model.status() = "Error: " + e.getMessage
     }
   }
