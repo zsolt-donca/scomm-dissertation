@@ -13,12 +13,12 @@ import scala.util.continuations.suspendable
 class NewFolderController @Autowired()(val mainWindowView: MainWindowView,
                                        val model: MainWindowModel,
                                        val newFolderPanel: NewFolderPanel,
-                                       val diskState: DiskState) extends BaseCommandController(mainWindowView) {
+                                       val diskState: DiskState) extends SimpleOperationController {
 
   override val commandView: BaseCommandView = newFolderPanel
-  override val triggerEvent: Domain.Events[Any] = mainWindowView.commandButtons.newFolderButton()
-  override val continueEvent: Domain.Events[Any] = newFolderPanel.okButton()
-  override val abortEvent: Domain.Events[Any] = newFolderPanel.cancelButton()
+  override val triggerEvent: Domain.Events[_] = mainWindowView.commandButtons.newFolderButton()
+  override val continueEvent: Domain.Events[_] = newFolderPanel.okButton()
+  override val abortEvent: Domain.Events[_] = newFolderPanel.cancelButton()
 
   override def execute(): Unit@suspendable = {
     val activeListModel: DirectoryListModel = model.directoriesPaneModel.activeList.now
