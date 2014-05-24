@@ -12,31 +12,27 @@ object TwelveDaysOfChristmas extends App {
   val days = daysAndGifts.map(_._1)
   val gifts = daysAndGifts.map(_._2)
 
-  reset {
-    val dayIndex = shift { verse: (Int => Unit) =>
-      for (dayIndex <- 0 to days.length - 1) {
-        verse(dayIndex)
-      }
+  val carol: List[String] = reset {
+    val dayIndex: Int = shift { verse: (Int => List[String]) =>
+      (0 to days.length - 1).foldRight(List.empty[String])((day, list) => "" :: verse(day) ::: list)
     }
 
     val day = days(dayIndex)
-    println(s"On the $day day of Christmas my true love sent to me")
+    val dayLine = s"On the $day day of Christmas my true love sent to me"
 
-    val giftIndex = shift { k: (Int => Unit) =>
-      for (giftIndex <- dayIndex to 0 by -1) {
-        k(giftIndex)
-      }
-      println("")
+    val giftIndex: Int = shift { k: (Int => String) =>
+      dayLine :: (0 to dayIndex).foldLeft(List.empty[String])((list, gift) => k(gift) :: list)
     }
 
     val gift = gifts(giftIndex)
     if (dayIndex == 0) {
-      println(s"$gift.")
+      s"$gift."
     } else if (giftIndex > 0) {
-      println(s"$gift,")
+      s"$gift,"
     } else {
-      println(s"and $gift.")
+      s"and $gift."
     }
   }
 
+  carol.foreach(println(_))
 }
