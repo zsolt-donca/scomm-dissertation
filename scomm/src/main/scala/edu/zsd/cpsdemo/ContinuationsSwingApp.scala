@@ -15,12 +15,6 @@ object ContinuationsSwingApp extends SimpleSwingApplication {
     }
   }
 
-  val textField = new TextArea(10, 40)
-  val label = new Label("Welcome to the demo app")
-  val button = new Button(new Action("Next") {
-    override def apply(): Unit = continue()
-  })
-
   def ask(prompt: String): String@cpsParam[Unit, Unit] = {
     label.text = prompt
     shift {
@@ -30,6 +24,12 @@ object ContinuationsSwingApp extends SimpleSwingApplication {
     }
     textField.text
   }
+
+  val textField = new TextArea(10, 40)
+  val label = new Label("Welcome to the demo app")
+  val button = new Button(new Action("Next") {
+    override def apply(): Unit = continue()
+  })
 
   override def top: swing.Frame = new MainFrame {
     contents = new BorderPanel {
