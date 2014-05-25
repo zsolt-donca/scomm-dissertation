@@ -1,4 +1,4 @@
-package edu.zsd.scomm
+package edu.zsd.cpsdemo
 
 import scala.util.continuations._
 
