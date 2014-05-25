@@ -18,12 +18,16 @@ object TwelveDaysOfChristmas extends App {
         (0 to days.length - 1).foldRight(List.empty[String])((day, list) => "" :: verse(day) ::: list)
     }
 
+    // the continuation below this line calculated a single verse for the day identified by `dayIndex`
+
     val dayLine = s"On the ${days(dayIndex)} day of Christmas my true love sent to me"
 
     val giftIndex: Int = shift {
       line: (Int => String) =>
         dayLine :: (0 to dayIndex).foldLeft(List.empty[String])((list, gift) => line(gift) :: list)
     }
+
+    // the continuation below this line calculates a single line of a verse, the line identified by `giftIndex`
 
     val gift = gifts(giftIndex)
     val line = if (dayIndex == 0) {
@@ -36,5 +40,20 @@ object TwelveDaysOfChristmas extends App {
     line
   }
 
+  // print each line to the console
   carol.foreach(println(_))
+
+  /*
+  On the First day of Christmas my true love sent to me
+  a Patridge in a Pear Tree.
+
+  On the Second day of Christmas my true love sent to me
+  Two Turtle Doves,
+  and a Patridge in a Pear Tree.
+
+  On the Third day of Christmas my true love sent to me
+  Three French Hens,
+  Two Turtle Doves,
+  and a Patridge in a Pear Tree.
+   */
 }

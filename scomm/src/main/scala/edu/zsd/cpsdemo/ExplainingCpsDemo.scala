@@ -36,11 +36,11 @@ object ExplainingCpsDemo extends App {
     println(reset) // prints 12
   }
 
-  val names = reset {
-    val names = Seq("Joe", "Bill", "Jack")
-    for (name <- names) {
-      println(name)
-    }
-    names
-  }
+  //  val names = reset {
+  //    val names = Seq("Joe", "Bill", "Jack")
+  //    for (name <- names) {
+  //      println(name)
+  //    }
+  //    names
+  //  }
 }
