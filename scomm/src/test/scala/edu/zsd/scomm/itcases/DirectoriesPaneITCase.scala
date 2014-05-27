@@ -11,64 +11,74 @@ class DirectoriesPaneITCase extends BaseScommITCase {
 
   @Test
   def testSimpleList(): Unit = {
-    directoriesPane.left.requireCurrentDir(testDir.toString)
-    directoriesPane.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+    for (directoryList: DirectoryListUserActions <- directoriesPane.directoryLists) {
+      directoryList.requireCurrentDir(testDir.toString)
+      directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+    }
   }
 
   @Test
   def testEnterDirectory(): Unit = {
-    directoriesPane.left.requireCurrentDir(testDir.toString)
-    directoriesPane.left.enterDirectory("zombie")
-    directoriesPane.left.requireCurrentDir(testDir.resolve("zombie").toString)
-    directoriesPane.left.requireContents(Seq("..", "more", "zombies", "here"))
+    for (directoryList: DirectoryListUserActions <- directoriesPane.directoryLists) {
+      directoryList.requireCurrentDir(testDir.toString)
+      directoryList.enterDirectory("zombie")
+      directoryList.requireCurrentDir(testDir.resolve("zombie").toString)
+      directoryList.requireContents(Seq("..", "more", "zombies", "here"))
 
-    directoriesPane.left.enterParentDirectory()
-    directoriesPane.left.requireCurrentDir(testDir.toString)
-    directoriesPane.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+      directoryList.enterParentDirectory()
+      directoryList.requireCurrentDir(testDir.toString)
+      directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+    }
   }
 
   @Test
   def testEnterEmptyList(): Unit = {
-    directoriesPane.left.requireCurrentDir(testDir.toString)
-    directoriesPane.left.enterDirectory("troll")
-    directoriesPane.left.requireCurrentDir(testDir.resolve("troll").toString)
-    directoriesPane.left.requireContents(Seq(".."))
-    directoriesPane.left.enterParentDirectory()
+    for (directoryList: DirectoryListUserActions <- directoriesPane.directoryLists) {
+      directoryList.requireCurrentDir(testDir.toString)
+      directoryList.enterDirectory("troll")
+      directoryList.requireCurrentDir(testDir.resolve("troll").toString)
+      directoryList.requireContents(Seq(".."))
+      directoryList.enterParentDirectory()
+    }
   }
 
   @Test
   def testSelection(): Unit = {
-    directoriesPane.left.select("folder1")
-    directoriesPane.left.requireSelection("folder1")
-    directoriesPane.left.requireSummary(folders = 1)
+    for (directoryList: DirectoryListUserActions <- directoriesPane.directoryLists) {
+      directoryList.select("folder1")
+      directoryList.requireSelection("folder1")
+      directoryList.requireSummary(folders = 1)
 
-    directoriesPane.left.select("a.txt")
-    directoriesPane.left.requireSelection("a.txt")
-    directoriesPane.left.requireSummary(bytes = 3, files = 1)
+      directoryList.select("a.txt")
+      directoryList.requireSelection("a.txt")
+      directoryList.requireSummary(bytes = 3, files = 1)
 
-    directoriesPane.left.selectRange("..", "xyz")
-    directoriesPane.left.requireSelection("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz")
-    directoriesPane.left.requireSummary(bytes = 16, files = 3, folders = 3)
+      directoryList.selectRange("..", "xyz")
+      directoryList.requireSelection("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz")
+      directoryList.requireSummary(bytes = 16, files = 3, folders = 3)
+    }
   }
 
 
   @Test
   def testViewButton(): Unit = {
 
-    directoriesPane.left.select("folder1")
-    FESTTest.mainWindow.requireInfoDialog(1, 0, testDir.toString)
+    for (directoryList: DirectoryListUserActions <- directoriesPane.directoryLists) {
+      directoryList.select("folder1")
+      FESTTest.mainWindow.requireInfoDialog(1, 0, testDir.toString)
 
-    directoriesPane.left.select("a.txt")
-    FESTTest.mainWindow.requireInfoDialog(0, 1, testDir.toString)
+      directoryList.select("a.txt")
+      FESTTest.mainWindow.requireInfoDialog(0, 1, testDir.toString)
 
-    directoriesPane.left.selectRange("..", "xyz")
-    FESTTest.mainWindow.requireInfoDialog(3, 3, testDir.toString)
+      directoryList.selectRange("..", "xyz")
+      FESTTest.mainWindow.requireInfoDialog(3, 3, testDir.toString)
 
-    directoriesPane.left.enterDirectory("zombie")
-    FESTTest.mainWindow.requireInfoDialog(0, 0, testDir.resolve("zombie").toString)
+      directoryList.enterDirectory("zombie")
+      FESTTest.mainWindow.requireInfoDialog(0, 0, testDir.resolve("zombie").toString)
 
-    directoriesPane.left.selectRange("more", "here")
-    FESTTest.mainWindow.requireInfoDialog(2, 1, testDir.resolve("zombie").toString)
+      directoryList.selectRange("more", "here")
+      FESTTest.mainWindow.requireInfoDialog(2, 1, testDir.resolve("zombie").toString)
+    }
   }
 
   @Test
@@ -95,7 +105,7 @@ class DirectoriesPaneITCase extends BaseScommITCase {
 
   @Test
   def testNavigationAutoSelectsDestination(): Unit = {
-    for (directoryList: DirectoryListUserActions <- Seq(directoriesPane.left, directoriesPane.right)) {
+    for (directoryList: DirectoryListUserActions <- directoriesPane.directoryLists) {
       directoryList.select("folder1")
 
       directoryList.enterDirectory("zombie")

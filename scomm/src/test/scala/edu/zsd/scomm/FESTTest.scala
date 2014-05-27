@@ -28,6 +28,7 @@ object FESTTest {
   val directoriesPane = new {
     val left = new DirectoryListUserActions("directoriesPane.left")
     val right = new DirectoryListUserActions("directoriesPane.right")
+    val directoryLists = Seq(left, right)
   }
 
   private def deleteEmptyDirectoryPlaceholders(dir: Path) {
