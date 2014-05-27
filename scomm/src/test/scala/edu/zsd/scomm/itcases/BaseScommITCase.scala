@@ -20,8 +20,13 @@ abstract class BaseScommITCase {
     val currentDir = directoryList.currentDir
     if (currentDir != testDir.toString) {
       if (currentDir.startsWith(testDir.toString)) {
-        while (directoriesPane.left.currentDir != testDir.toString) {
-          directoriesPane.left.enterParentDirectory()
+        var cycles = 0
+        while (directoryList.currentDir != testDir.toString) {
+          directoryList.enterParentDirectory()
+          cycles += 1
+          if (cycles > 20) {
+            fail("Got into an infinite cycle? Current dir: " + directoryList.currentDir)
+          }
         }
       } else {
         fail("Some test navigated the directories pane outside the testing environment; impossible to fix.")
