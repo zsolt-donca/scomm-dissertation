@@ -4,6 +4,7 @@ import org.junit.Test
 import edu.zsd.scomm.FESTTest._
 import org.fest.swing.annotation.GUITest
 import edu.zsd.scomm.FESTTest
+import edu.zsd.scomm.useractions.DirectoryListUserActions
 
 @GUITest
 class DirectoriesPaneITCase extends BaseScommITCase {
@@ -38,15 +39,15 @@ class DirectoriesPaneITCase extends BaseScommITCase {
   @Test
   def testSelection(): Unit = {
     directoriesPane.left.select("folder1")
-    directoriesPane.left.requireSelection(Seq("folder1"))
+    directoriesPane.left.requireSelection("folder1")
     directoriesPane.left.requireSummary(folders = 1)
 
     directoriesPane.left.select("a.txt")
-    directoriesPane.left.requireSelection(Seq("a.txt"))
+    directoriesPane.left.requireSelection("a.txt")
     directoriesPane.left.requireSummary(bytes = 3, files = 1)
 
     directoriesPane.left.selectRange("..", "xyz")
-    directoriesPane.left.requireSelection(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+    directoriesPane.left.requireSelection("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz")
     directoriesPane.left.requireSummary(bytes = 16, files = 3, folders = 3)
   }
 
@@ -84,12 +85,31 @@ class DirectoriesPaneITCase extends BaseScommITCase {
   @Test
   def testTabSwitchingSelectionCleared(): Unit = {
     directoriesPane.left.select("folder1")
-    directoriesPane.left.requireSelection(Seq("folder1"))
-    directoriesPane.right.requireSelection(Seq.empty)
+    directoriesPane.left.requireSelection("folder1")
+    directoriesPane.right.requireSelection()
 
     directoriesPane.right.select("folder1")
-    directoriesPane.right.requireSelection(Seq("folder1"))
-    directoriesPane.left.requireSelection(Seq.empty)
+    directoriesPane.right.requireSelection("folder1")
+    directoriesPane.left.requireSelection()
+  }
+
+  @Test
+  def testNavigationAutoSelectsDestination(): Unit = {
+    for (directoryList: DirectoryListUserActions <- Seq(directoriesPane.left, directoriesPane.right)) {
+      directoryList.select("folder1")
+
+      directoryList.enterDirectory("zombie")
+      directoryList.requireSelection("..")
+
+      directoryList.enterDirectory("zombies")
+      directoryList.requireSelection("..")
+
+      directoryList.enterParentDirectory()
+      directoryList.requireSelection("zombies")
+
+      directoryList.enterParentDirectory()
+      directoryList.requireSelection("zombie")
+    }
   }
 }
 
