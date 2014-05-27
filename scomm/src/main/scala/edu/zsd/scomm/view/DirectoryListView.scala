@@ -18,7 +18,12 @@ abstract class DirectoryListView(val componentName: String, model: DirectoryList
   currentDirLabel.horizontalAlignment = Alignment.Left
 
   private[this] val currentDirPanel = new BorderPanel() {
+    name = componentName + ".currentDirPanel"
     add(currentDirLabel, Position.Center)
+
+    // inactive
+    background = Color.LIGHT_GRAY
+    foreground = Color.BLACK
   }
   add(currentDirPanel, Position.North)
 

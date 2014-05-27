@@ -1,59 +1,21 @@
-package edu.zsd.scomm
+package edu.zsd.scomm.itcases
 
-import org.junit.{After, Before, Test}
+import org.junit.Test
 import edu.zsd.scomm.FESTTest._
 import org.fest.swing.annotation.GUITest
-import org.junit.Assert._
-import edu.zsd.testfw.CacioFESTLoggingRunner
-import org.junit.runner.RunWith
+import edu.zsd.scomm.FESTTest
 
 @GUITest
-@RunWith(classOf[CacioFESTLoggingRunner])
-class DirectoriesPaneITCase {
-
-  @Before
-  def setup() : Unit = {
-
-    val currentDir = directoriesPane.left.getCurrentDir
-    if (currentDir != testDir.toString) {
-      if (currentDir.startsWith(testDir.toString)) {
-        while (directoriesPane.left.getCurrentDir != testDir.toString) {
-          directoriesPane.left.enterParentDirectory()
-        }
-      } else {
-        fail("Some test navigated the directories pane outside the testing environment; impossible to fix.")
-      }
-    }
-  }
-  
-  @After
-  def teardown() : Unit = {
-    println("teardown")
-  }
-  
-  @Test
-  def testThatFails(): Unit = {
-    try {
-      doSomething()
-      fail()
-    } catch {
-      case _ : Exception =>
-    }
-    println("tralla")
-  }
-
-  def doSomething(): Unit = {
-    throw new Exception("hohoho happy xmas")
-  }
+class DirectoriesPaneITCase extends BaseScommITCase {
 
   @Test
-  def testSimpleList() : Unit = {
+  def testSimpleList(): Unit = {
     directoriesPane.left.requireCurrentDir(testDir.toString)
     directoriesPane.left.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
   }
 
   @Test
-  def testEnterDirectory() : Unit = {
+  def testEnterDirectory(): Unit = {
     directoriesPane.left.requireCurrentDir(testDir.toString)
     directoriesPane.left.enterDirectory("zombie")
     directoriesPane.left.requireCurrentDir(testDir.resolve("zombie").toString)
@@ -65,7 +27,7 @@ class DirectoriesPaneITCase {
   }
 
   @Test
-  def testEnterEmptyList() : Unit = {
+  def testEnterEmptyList(): Unit = {
     directoriesPane.left.requireCurrentDir(testDir.toString)
     directoriesPane.left.enterDirectory("troll")
     directoriesPane.left.requireCurrentDir(testDir.resolve("troll").toString)
@@ -74,7 +36,7 @@ class DirectoriesPaneITCase {
   }
 
   @Test
-  def testSelection() : Unit = {
+  def testSelection(): Unit = {
     directoriesPane.left.select("folder1")
     directoriesPane.left.requireSelection(Seq("folder1"))
     directoriesPane.left.requireSummary(folders = 1)
@@ -90,7 +52,7 @@ class DirectoriesPaneITCase {
 
 
   @Test
-  def testViewButton() : Unit = {
+  def testViewButton(): Unit = {
 
     directoriesPane.left.select("folder1")
     FESTTest.mainWindow.requireInfoDialog(1, 0, testDir.toString)
@@ -106,6 +68,28 @@ class DirectoriesPaneITCase {
 
     directoriesPane.left.selectRange("more", "here")
     FESTTest.mainWindow.requireInfoDialog(2, 1, testDir.resolve("zombie").toString)
+  }
+
+  @Test
+  def testTabSwitchingActiveness(): Unit = {
+    directoriesPane.left.select("folder1")
+    directoriesPane.left.requireActive()
+    directoriesPane.right.requireInactive()
+
+    directoriesPane.right.select("folder1")
+    directoriesPane.right.requireActive()
+    directoriesPane.left.requireInactive()
+  }
+
+  @Test
+  def testTabSwitchingSelectionCleared(): Unit = {
+    directoriesPane.left.select("folder1")
+    directoriesPane.left.requireSelection(Seq("folder1"))
+    directoriesPane.right.requireSelection(Seq.empty)
+
+    directoriesPane.right.select("folder1")
+    directoriesPane.right.requireSelection(Seq("folder1"))
+    directoriesPane.left.requireSelection(Seq.empty)
   }
 }
 

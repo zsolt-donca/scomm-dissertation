@@ -1,20 +1,23 @@
 package edu.zsd.scomm.adapters
 
-import org.fest.swing.fixture.{JLabelFixture, JListFixture}
+import org.fest.swing.fixture.{JPanelFixture, JLabelFixture, JListFixture}
 import edu.zsd.scomm.FESTTest._
 import org.junit.Assert._
-import edu.zsd.testfw.GUITestBean
+import edu.zsd.testfw.{ExecuteInEDT, GUITestBean}
+import java.awt.Color
+import javax.swing.SwingUtilities._
 
 @GUITestBean
 case class DirectoryListAdapter(componentName: String) {
 
   private[this] val list = new JListFixture(robot, componentName + ".listView")
-  private[this] val currentDir = new JLabelFixture(robot, componentName + ".currentDirLabel")
+  private[this] val currentDirLabel = new JLabelFixture(robot, componentName + ".currentDirLabel")
+  private[this] val currentDirPanel = new JPanelFixture(robot, componentName + ".currentDirPanel")
   private[this] val summary = new JLabelFixture(robot, componentName + ".summaryLabel")
 
-  def getCurrentDir = this.currentDir.text()
+  def currentDir = currentDirLabel.text()
 
-  def requireCurrentDir(currentDir : String) : Unit = this.currentDir.requireText(currentDir)
+  def requireCurrentDir(currentDir: String): Unit = this.currentDirLabel.requireText(currentDir)
 
   def requireContents(list : Seq[String]) : Unit = assertEquals(list, this.list.contents.toSeq)
   
@@ -25,6 +28,12 @@ case class DirectoryListAdapter(componentName: String) {
   def clickListItem(listItem : String) : Unit = this.list.item(listItem).click()
 
   def doubleClickListItem(listItem : String) : Unit = this.list.item(listItem).doubleClick()
+
+  @ExecuteInEDT
+  def requireCurrentDirBackground(color: Color): Unit = {
+    assertTrue(isEventDispatchThread)
+    assertEquals(color, currentDirPanel.component().getBackground)
+  }
 
   override def toString: String = componentName
 }
