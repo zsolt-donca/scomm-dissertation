@@ -1,10 +1,10 @@
 package edu.zsd.scomm
 
-import org.fest.swing.core.{GenericTypeMatcher, BasicRobot, Robot}
+import org.fest.swing.core.{ComponentLookupScope, GenericTypeMatcher, BasicRobot, Robot}
 import org.fest.swing.finder.WindowFinder
 import java.awt.Frame
 import java.io.File
-import edu.zsd.scomm.useractions.{MainWindowUserActions, DirectoryListUserActions}
+import edu.zsd.scomm.useractions.{NewFolderUserActions, MainWindowUserActions, DirectoryListUserActions}
 import java.nio.file.{DirectoryStream, Files, Path}
 import scala.collection.JavaConverters._
 
@@ -15,6 +15,7 @@ object FESTTest {
   edu.zsd.scomm.Main.main(Array(testDir.toString))
 
   val robot: Robot = BasicRobot.robotWithCurrentAwtHierarchy
+  robot.settings().componentLookupScope(ComponentLookupScope.ALL)
 
   val frame = WindowFinder.findFrame(new GenericTypeMatcher[Frame](classOf[Frame], true) {
     def isMatching(frame: Frame): Boolean = {
@@ -29,6 +30,10 @@ object FESTTest {
     val left = new DirectoryListUserActions("directoriesPane.left")
     val right = new DirectoryListUserActions("directoriesPane.right")
     val directoryLists = Seq(left, right)
+  }
+
+  val operations = new {
+    val newFolder = new NewFolderUserActions
   }
 
   private def deleteEmptyDirectoryPlaceholders(dir: Path) {

@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent
 import edu.zsd.testfw.{GUITestAction, GUITestBean}
 import edu.zsd.scomm.adapters.DirectoryListAdapter
 import java.awt.Color
+import java.nio.file.Path
 
 @GUITestBean
 case class DirectoryListUserActions(componentName: String) {
@@ -13,9 +14,11 @@ case class DirectoryListUserActions(componentName: String) {
 
   def currentDir = directoryListAdapter.currentDir
 
-  def requireCurrentDir(currentDir: String) = directoryListAdapter.requireCurrentDir(currentDir)
+  def requireCurrentDir(currentDir: String): Unit = directoryListAdapter.requireCurrentDir(currentDir)
 
-  def requireContents(list: Seq[String]) = directoryListAdapter.requireContents(list)
+  def requireCurrentDir(currentDir: Path): Unit = requireCurrentDir(currentDir.toString)
+
+  def requireContents(list: String*) = directoryListAdapter.requireContents(list)
 
   def requireSelection(list: String*) = directoryListAdapter.requireSelection(list)
 

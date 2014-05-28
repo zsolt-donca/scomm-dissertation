@@ -13,7 +13,7 @@ class DirectoriesPaneITCase extends BaseScommITCase {
   def testSimpleList(): Unit = {
     for (directoryList: DirectoryListUserActions <- directoriesPane.directoryLists) {
       directoryList.requireCurrentDir(testDir.toString)
-      directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+      directoryList.requireContents("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz")
     }
   }
 
@@ -23,11 +23,11 @@ class DirectoriesPaneITCase extends BaseScommITCase {
       directoryList.requireCurrentDir(testDir.toString)
       directoryList.enterDirectory("zombie")
       directoryList.requireCurrentDir(testDir.resolve("zombie").toString)
-      directoryList.requireContents(Seq("..", "more", "zombies", "here"))
+      directoryList.requireContents("..", "more", "zombies", "here")
 
       directoryList.enterParentDirectory()
       directoryList.requireCurrentDir(testDir.toString)
-      directoryList.requireContents(Seq("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz"))
+      directoryList.requireContents("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz")
     }
   }
 
@@ -37,7 +37,7 @@ class DirectoriesPaneITCase extends BaseScommITCase {
       directoryList.requireCurrentDir(testDir.toString)
       directoryList.enterDirectory("troll")
       directoryList.requireCurrentDir(testDir.resolve("troll").toString)
-      directoryList.requireContents(Seq(".."))
+      directoryList.requireContents("..")
       directoryList.enterParentDirectory()
     }
   }

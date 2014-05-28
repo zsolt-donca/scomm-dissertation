@@ -48,6 +48,7 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
     contents += moveButton
 
     val newFolderButton = new EventButton("New folder")
+    newFolderButton.name = "newFolderButton"
     contents += newFolderButton
 
     val deleteButton = new EventButton("Delete")
