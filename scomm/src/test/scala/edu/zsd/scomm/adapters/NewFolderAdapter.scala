@@ -15,23 +15,20 @@ class NewFolderAdapter {
 
   private val newFolderButton = new JButtonFixture(robot, "newFolderButton")
 
-  private lazy val prompt = new JLabelFixture(robot, "newFolder.prompt")
-
-  private lazy val folderName = new JTextComponentFixture(robot, "newFolder.folderName")
-
-  private lazy val okButton = new JButtonFixture(robot, "newFolder.ok")
-
-  private lazy val cancelButton = new JButtonFixture(robot, "newFolder.cancel")
+  private lazy val components = new {
+    val prompt = new JLabelFixture(robot, "newFolder.prompt")
+    val folderName = new JTextComponentFixture(robot, "newFolder.folderName")
+    val okButton = new JButtonFixture(robot, "newFolder.ok")
+    val cancelButton = new JButtonFixture(robot, "newFolder.cancel")
+  }
 
   def requirePanelVisible(): Unit = findPanel.requireVisible()
 
   def requirePanelNotVisible(): Unit = {
     try {
-      val panel = findPanel
-      panel.requireNotVisible()
-    }
-    catch {
-      case e: ComponentLookupException =>
+      findPanel.requireNotVisible()
+    } catch {
+      case e: ComponentLookupException => // not finding the component is okay
     }
   }
 
@@ -39,17 +36,17 @@ class NewFolderAdapter {
   def clickNewFolder(): Unit = newFolderButton.click()
 
   @GUITestAction
-  def clickOkButton(): Unit = okButton.click()
+  def clickOkButton(): Unit = components.okButton.click()
 
   @GUITestAction
-  def clickCancelButton(): Unit = cancelButton.click()
+  def clickCancelButton(): Unit = components.cancelButton.click()
 
-  def requirePrompt(prompt: String): Unit = this.prompt.requireText(prompt)
+  def requirePrompt(prompt: String): Unit = components.prompt.requireText(prompt)
 
-  def requireFolderName(folderName: String): Unit = this.folderName.requireText(folderName)
+  def requireFolderName(folderName: String): Unit = components.folderName.requireText(folderName)
 
   @GUITestAction
-  def enterFolderName(folderName: String): Unit = this.folderName.setText(folderName)
+  def enterFolderName(folderName: String): Unit = components.folderName.setText(folderName)
 
   private def findPanel = new JPanelFixture(robot, robot.finder().find(new ComponentMatcher {
     override def matches(c: Component): Boolean = c.getClass == classOf[NewFolderPanel] && c.getName == "newFolderButton"
