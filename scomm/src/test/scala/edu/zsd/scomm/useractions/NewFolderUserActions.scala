@@ -6,20 +6,13 @@ import edu.zsd.scomm.adapters.NewFolderAdapter
 @GUITestBean
 class NewFolderUserActions {
 
-  private val newFolderAdapter = new NewFolderAdapter
-
   def newFolder(folderName: String) {
+    val newFolderAdapter = new NewFolderAdapter
+    newFolderAdapter.requirePanelNotVisible()
     newFolderAdapter.clickNewFolder()
     newFolderAdapter.requireFolderName("")
     newFolderAdapter.enterFolderName(folderName)
     newFolderAdapter.clickOkButton()
-  }
-
-  // TODO find a way for the below checks to work
-  private def requireNotVisible(action: => Unit) {
-    newFolderAdapter.requirePanelNotVisible()
-    action
     newFolderAdapter.requirePanelNotVisible()
   }
-
 }
