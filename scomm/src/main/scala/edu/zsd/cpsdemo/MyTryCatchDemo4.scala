@@ -5,10 +5,10 @@ import scala.util.continuations._
 
 object MyTryCatchDemo4 extends App {
 
-  def myCatch(cat: PartialFunction[String, Int]): Unit@cpsParam[Either[Int, String], Either[Int, String]] = {
+  def myCatch[R, E](cat: PartialFunction[E, R]): Unit@cpsParam[Either[R, E], Either[R, E]] = {
     shift {
-      k: (Unit => Either[Int, String]) =>
-        val res: Either[Int, String] = k()
+      k: (Unit => Either[R, E]) =>
+        val res: Either[R, E] = k()
         res match {
           case Left(x) => Left(x)
           case Right(e) if cat.isDefinedAt(e) => Left(cat.apply(e))
@@ -17,25 +17,26 @@ object MyTryCatchDemo4 extends App {
     }
   }
 
-  def myThrow(e: String): Int@cpsParam[Int, Either[Int, String]] = {
+  def myThrow[R, E](e: E): R@cpsParam[R, Either[R, E]] = {
     shift {
-      k: (Int => Int) =>
+      k: (R => R) =>
         Right(e)
     }
   }
 
-  def just(i: Int): Int@cpsParam[Int, Either[Int, String]] = {
+  def just[R, E](i: R): R@cpsParam[R, Either[R, E]] = {
     shift {
-      k: (Int => Int) =>
+      k: (R => R) =>
         Left(i)
     }
   }
 
-  def tryParse(str: String): Int@cpsParam[Int, Either[Int, String]] = {
+  def parse(str: String): Int@cpsParam[Int, Either[Int, String]] = {
     if (str.matches("\\s*")) {
       myThrow("Is empty!")
     } else if (str.matches("\\d+")) {
-      just(str.toInt)
+      val int: Int = str.toInt
+      just(int)
     } else {
       myThrow(s"Is not number: $str")
     }
@@ -43,11 +44,11 @@ object MyTryCatchDemo4 extends App {
 
   def tolerantParse(str: String): Either[Int, String] = {
     reset {
-      myCatch {
+      myCatch[Int, String] {
         case s: String if s.contains("empty") => 0
       }
 
-      tryParse(str)
+      parse(str)
     }
   }
 
