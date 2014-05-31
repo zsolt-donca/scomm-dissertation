@@ -31,26 +31,31 @@ object MyTryCatchDemo4 extends App {
     }
   }
 
-  def parse(str: String): Either[Int, String] = {
+  def tryParse(str: String): Int@cpsParam[Int, Either[Int, String]] = {
+    if (str.matches("\\s*")) {
+      myThrow("Is empty!")
+    } else if (str.matches("\\d+")) {
+      just(str.toInt)
+    } else {
+      myThrow(s"Is not number: $str")
+    }
+  }
+
+  def tolerantParse(str: String): Either[Int, String] = {
     reset {
       myCatch {
         case s: String if s.contains("empty") => 0
       }
 
-      if (str.isEmpty) {
-        myThrow("Is empty!")
-      } else if (str.matches("\\d+")) {
-        just(str.toInt)
-      } else {
-        myThrow(s"Is not number: $str")
-      }
+      tryParse(str)
     }
   }
 
-  println(parse("1"))
-  println(parse("x"))
-  println(parse(""))
-  println(parse("1234"))
-  println(parse("001234"))
+  println(tolerantParse("1"))
+  println(tolerantParse("x"))
+  println(tolerantParse(""))
+  println(tolerantParse("1234"))
+  println(tolerantParse("          "))
+  println(tolerantParse("001234"))
 
 }
