@@ -8,7 +8,6 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends Observing with StrictLogging {
 
   // basic events
-  val processPath = EventSource[Path]
   val goToParent = EventSource[Unit]
   val goToIndex = EventSource[Int]
   val selectIndices = EventSource[Set[Int]]
@@ -32,7 +31,6 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
       case e: AccessDeniedException =>
         logger.error(e.toString, e)
         Seq(FileEntry(currentDir.getParent, ".."))
-    } finally {
     }
   }
 
@@ -54,25 +52,16 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
 
   // observers
 
-  observe(processPath) {
-    path =>
-      val previousDir = currentDir.now
-      if (Files.isDirectory(path)) {
-        currentDir() = path
-        selectedPaths() = Set(previousDir)
-      }
-  }
-
   observe(goToParent) {
     _ =>
       val parent = currentDir.now.getParent
       if (parent != null) {
-        processPath << parent
+        processPath(parent)
       }
   }
 
   observe(goToIndex) {
-    index => processPath << currentDirContents.now(index).path
+    index => processPath(currentDirContents.now(index).path)
   }
 
   observe(selectIndices) {
@@ -87,4 +76,12 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
   }
 
   currentDir() = initDir
+
+  private def processPath(path: Path) {
+    val previousDir = currentDir.now
+    if (Files.isDirectory(path)) {
+      currentDir() = path
+      selectedPaths() = Set(previousDir)
+    }
+  }
 }
