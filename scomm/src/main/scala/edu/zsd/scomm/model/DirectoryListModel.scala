@@ -24,7 +24,7 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
     try {
       val list = directoryList(currentDir)
       logger.debug(s"Calculating currentDirContents, currentDir: $currentDir, list: $list")
-      val contents: Seq[FileEntry] = list.map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
+      val contents: Seq[FileEntry] = list.filter(path => !Files.isHidden(path)).map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
       val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
       parentFile ++ contents
     } catch {
