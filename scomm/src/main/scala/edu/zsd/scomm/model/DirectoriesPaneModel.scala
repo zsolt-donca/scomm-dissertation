@@ -14,11 +14,11 @@ class DirectoriesPaneModel @Autowired()(val left: LeftDirectoryListModel,
   val inactiveListModel = Var[DirectoryListModel](right)
 
   val activeCurrentDir: Signal[Path] = Strict {
-    activeListModel().currentDir()
+    activeListModel().currentDirectory()
   }
 
   val inactiveCurrentDir: Signal[Path] = Strict {
-    inactiveListModel().currentDir()
+    inactiveListModel().currentDirectory()
   }
 
   val activeSelection: Signal[SelectionInfo] = Strict {

@@ -13,18 +13,20 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
   val selectIndices = EventSource[Set[Int]]
 
   // basic variables
-  val currentDir = Var[Path](Paths.get(""))
+  val currentDirectory = Var[Path](Paths.get(""))
   val selectedPaths = Var[Set[Path]](Set.empty)
   val active = Var[Boolean](false)
 
   // derived signals
   val currentDirContents: Signal[Seq[FileEntry]] = Strict {
     diskState()
-    val currentDir: Path = DirectoryListModel.this.currentDir()
+    val currentDir: Path = currentDirectory()
     try {
       val list = directoryList(currentDir)
       logger.debug(s"Calculating currentDirContents, currentDir: $currentDir, list: $list")
-      val contents: Seq[FileEntry] = list.filter(path => !Files.isHidden(path)).map(path => FileEntry(path, path.getFileName.toString)).sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
+      val contents: Seq[FileEntry] = list.filter(path => !Files.isHidden(path))
+        .map(path => FileEntry(path, path.getFileName.toString))
+        .sortBy(fileEntry => (Files.isRegularFile(fileEntry.path), fileEntry.name.toLowerCase))
       val parentFile: Seq[FileEntry] = if (currentDir.getParent != null) Seq(FileEntry(currentDir.getParent, "..")) else Seq.empty
       parentFile ++ contents
     } catch {
@@ -36,7 +38,7 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
 
   val selectionInfo: Signal[SelectionInfo] = Strict {
 
-    val currentDir = this.currentDir()
+    val currentDir = this.currentDirectory()
     val selected: Set[Path] = selectedPaths()
 
     val paths = if (currentDir.getParent != null && selected(currentDir.getParent))
@@ -52,35 +54,41 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
 
   // observers
 
-  observe(goToParent) {
-    _ =>
-      val parent = currentDir.now.getParent
+  val goToParentReactor = Reactor.loop {
+    self =>
+      self awaitNext goToParent
+      val parent = currentDirectory.now.getParent
       if (parent != null) {
         processPath(parent)
       }
   }
 
-  observe(goToIndex) {
-    index => processPath(currentDirContents.now(index).path)
+  val goToIndexReactor = Reactor.loop {
+    self =>
+      val index = self awaitNext goToIndex
+      processPath(currentDirContents.now(index).path)
   }
 
-  observe(selectIndices) {
-    indices =>
+  val selectIndicesReactor = Reactor.loop {
+    self =>
+      val indices = self awaitNext selectIndices
       val contents = currentDirContents.now
       val paths: Set[Path] = indices.map(index => contents(index).path)
       selectedPaths() = paths
   }
 
-  observe(active) {
-    active => if (!active) selectedPaths() = Set.empty
+  val activeReactor = Reactor.loop {
+    self =>
+      if (!(self awaitNext active))
+        selectedPaths() = Set.empty
   }
 
-  currentDir() = initDir
+  currentDirectory() = initDir
 
   private def processPath(path: Path) {
-    val previousDir = currentDir.now
+    val previousDir = currentDirectory.now
     if (Files.isDirectory(path)) {
-      currentDir() = path
+      currentDirectory() = path
       selectedPaths() = Set(previousDir)
     }
   }

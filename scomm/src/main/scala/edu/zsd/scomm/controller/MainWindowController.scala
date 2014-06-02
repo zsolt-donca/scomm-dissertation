@@ -23,7 +23,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
       val selectionInfo = activeList.selectionInfo.now
       val directories = selectionInfo.folders
       val files = selectionInfo.files
-      val message = s"There are $directories directories and $files files selected in ${activeList.currentDir.now}"
+      val message = s"There are $directories directories and $files files selected in ${activeList.currentDirectory.now}"
       JOptionPane.showMessageDialog(null, message, "View", JOptionPane.INFORMATION_MESSAGE)
   }
 

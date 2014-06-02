@@ -43,7 +43,7 @@ abstract class DirectoryListView(val componentName: String, model: DirectoryList
 
   // scala.react code related to the components
 
-  observe(model.currentDir) {
+  observe(model.currentDirectory) {
     currentDir =>
       currentDirLabel.text = currentDir.toString
   }
