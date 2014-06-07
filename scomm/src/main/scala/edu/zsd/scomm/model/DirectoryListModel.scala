@@ -45,9 +45,9 @@ abstract class DirectoryListModel(initDir: Path, diskState: DiskState) extends O
       selected - currentDir.getParent
     else selected
 
-    val size = paths.map(path => Files.size(path)).sum
-    val files = paths.count(path => Files.isRegularFile(path))
-    val directories = paths.count(path => Files.isDirectory(path))
+    val size = paths.filter(Files.isRegularFile(_)).map(Files.size).sum
+    val files = paths.count(Files.isRegularFile(_))
+    val directories = paths.count(Files.isDirectory(_))
 
     SelectionInfo(size, files, directories, paths)
   }

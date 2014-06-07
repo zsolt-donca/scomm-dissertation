@@ -28,21 +28,21 @@ abstract class DirectoryListController(val model: DirectoryListModel,
 
   listenTo(view.listView.mouse.clicks, view.listView.selection, view.listView.keys)
   reactions += {
-    case MouseClicked(_, _, _, 2, _) =>
+    case MouseClicked(_, _, _, 2, _) => // triggered by `mouse.clicks'
       val leadIndex = view.listView.selection.leadIndex
       logger.debug(s"Double click, going to $leadIndex")
       model.goToIndex << leadIndex
-    case ListSelectionChanged(_, _, false) =>
+    case ListSelectionChanged(_, _, false) => // triggered by `selection'
       if (!view.listView.updating) {
         val selection = view.listView.selection.indices.toSet
         logger.debug(s"List selection changed, setting model indices to $selection")
         model.selectIndices << selection
       }
-    case KeyPressed(_, Key.Enter, _, _) =>
+    case KeyPressed(_, Key.Enter, _, _) => // triggered by `key'
       val leadIndex = view.listView.selection.leadIndex
       logger.debug(s"Enter pressed, going to $leadIndex")
       model.goToIndex << leadIndex
-    case KeyPressed(_, Key.BackSpace, _, _) =>
+    case KeyPressed(_, Key.BackSpace, _, _) => // triggered by `key'
       logger.debug("Backspace pressed, going to parent")
       model.goToParent << Unit
   }

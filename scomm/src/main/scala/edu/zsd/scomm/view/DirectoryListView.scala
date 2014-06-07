@@ -53,7 +53,7 @@ abstract class DirectoryListView(val componentName: String, model: DirectoryList
       try {
         listView.updating = true
         val selection = listView.selection.indices.toSeq
-        listView.listData = contents
+        listView.listData = contents // this assignment clears the selection - we want to keep it
         listView.selection.indices.clear()
         listView.selection.indices ++= selection
       } finally {
