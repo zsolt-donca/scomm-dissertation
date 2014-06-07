@@ -3,33 +3,44 @@ package edu.zsd.scomm.operations.copymove
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import edu.zsd.scomm.view.MainWindowView
-import edu.zsd.scomm.Domain
 import edu.zsd.scomm.Domain._
 import scala.util.continuations.suspendable
 import java.nio.file.{Files, Paths, Path}
 import edu.zsd.scomm.Utils._
 import java.io.IOException
 import edu.zsd.scomm.model.{DiskState, MainWindowModel}
-import edu.zsd.scomm.operations.{CommandView, SimpleOperationController}
+import edu.zsd.scomm.operations.SimpleOperationController
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
 @Component
 class CopyController @Autowired()(val mainWindowView: MainWindowView,
                                   val mainWindowModel: MainWindowModel,
                                   val diskState: DiskState,
                                   val view: CopyPanel,
-                                  val model: CopyMoveModel) extends SimpleOperationController {
-  override val commandView: CommandView = view
-  override val triggerEvent: Domain.Events[_] = mainWindowView.commandButtons.copyButton()
+                                  val model: CopyMoveModel) extends Observing with StrictLogging {
 
-  override def execute(self: FlowOps): Unit@suspendable = {
+  def reactorLoop(): Reactor = Reactor.loop {
 
-    val sourceDirs: Set[Path] = model.source.now.paths
-    val destinationDir: Path = Paths.get(view.destination)
+    self =>
+      self awaitNext mainWindowView.commandButtons.copyButton()
+      logger.debug("Loop triggered")
 
-    execute(self, sourceDirs, destinationDir)
+      view.reset()
+      mainWindowView.argumentsPanel() = Some(view.panel)
+
+      self.abortOn(view.cancelButton()) {
+        self awaitNext view.okButton()
+        val sourceDirs: Set[Path] = model.source.now.paths
+        val destinationDir: Path = Paths.get(view.destination)
+
+        execute(self, sourceDirs, destinationDir)
+      }
+
+      logger.debug("Loop done, resetting arguments panel")
+      mainWindowView.argumentsPanel() = None
   }
 
-  def execute(self: FlowOps, sourceDirs: Set[Path], destinationDir: Path): Unit@suspendable = {
+  def execute(reactor: FlowOps, sourceDirs: Set[Path], destinationDir: Path): Unit@suspendable = {
 
     val overlapping: Set[Path] = sourceDirs.filter(dir => destinationDir.startsWith(dir))
     if (overlapping.nonEmpty) {
@@ -55,7 +66,7 @@ class CopyController @Autowired()(val mainWindowView: MainWindowView,
                     mainWindowModel.status() = s"Directory already exists '$destinationPath'..."
                   }
                 }
-                self.pause
+                reactor.pause
               } catch {
                 case e: IOException => e.printStackTrace()
               }
