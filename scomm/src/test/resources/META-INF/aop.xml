@@ -4,7 +4,7 @@
     <weaver options="-verbose"/>
 
     <aspects>
-        <aspect name="edu.zsd.testfw.FESTLoggingAspect"/>
+        <aspect name="edu.zsd.festlogging.FESTLoggingAspect"/>
     </aspects>
 
     <weaver options="-XnoInline -verbose">

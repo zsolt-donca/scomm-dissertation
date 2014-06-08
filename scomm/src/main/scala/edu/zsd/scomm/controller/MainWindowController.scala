@@ -19,7 +19,7 @@ class MainWindowController @Autowired()(val model: MainWindowModel,
 
   observe(view.commandButtons.infoButton()) {
     _ =>
-      val activeList: DirectoryListModel = view.directoriesPane.model.activeListModel.now
+      val activeList: DirectoryListModel = view.directoriesPane.model.activeList.now
       val selectionInfo = activeList.selectionInfo.now
       val directories = selectionInfo.folders
       val files = selectionInfo.files

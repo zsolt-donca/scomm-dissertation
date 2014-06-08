@@ -11,5 +11,5 @@ class NewFolderModel @Autowired()(directoriesPaneModel: DirectoriesPaneModel) {
 
   val destinationDir: Signal[Path] = directoriesPaneModel.activeCurrentDir
 
-  val destinationListModel: Signal[DirectoryListModel] = directoriesPaneModel.activeListModel
+  val destinationListModel: Signal[DirectoryListModel] = directoriesPaneModel.activeList
 }

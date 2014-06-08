@@ -2,7 +2,7 @@ package edu.zsd.scomm.useractions
 
 import edu.zsd.scomm.FESTTest._
 import java.awt.event.KeyEvent
-import edu.zsd.testfw.{GUITestAction, GUITestBean}
+import edu.zsd.festlogging.{GUITestAction, GUITestBean}
 import edu.zsd.scomm.adapters.DirectoryListAdapter
 import java.awt.Color
 import java.nio.file.Path

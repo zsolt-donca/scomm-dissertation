@@ -1,6 +1,6 @@
 package edu.zsd.scomm.useractions
 
-import edu.zsd.testfw.GUITestBean
+import edu.zsd.festlogging.GUITestBean
 import edu.zsd.scomm.adapters.NewFolderAdapter
 
 @GUITestBean

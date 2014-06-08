@@ -1,4 +1,4 @@
-package edu.zsd.testfw;
+package edu.zsd.festlogging;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

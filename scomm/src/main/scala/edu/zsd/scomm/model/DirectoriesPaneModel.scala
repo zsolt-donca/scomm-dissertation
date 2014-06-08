@@ -9,24 +9,24 @@ import java.nio.file.Path
 class DirectoriesPaneModel @Autowired()(val left: LeftDirectoryListModel,
                                         val right: RightDirectoryListModel) extends Observing {
 
-  val activeListModel = Var[DirectoryListModel](left)
+  val activeList = Var[DirectoryListModel](left)
 
-  val inactiveListModel = Var[DirectoryListModel](right)
+  val inactiveList = Var[DirectoryListModel](right)
 
   val activeCurrentDir: Signal[Path] = Strict {
-    activeListModel().currentDirectory()
+    activeList().currentDirectory()
   }
 
   val inactiveCurrentDir: Signal[Path] = Strict {
-    inactiveListModel().currentDirectory()
+    inactiveList().currentDirectory()
   }
 
   val activeSelection: Signal[SelectionInfo] = Strict {
-    activeListModel().selectionInfo()
+    activeList().selectionInfo()
   }
 
   val inactiveSelection: Signal[SelectionInfo] = Strict {
-    inactiveListModel().selectionInfo()
+    inactiveList().selectionInfo()
   }
 
   left.active() = true

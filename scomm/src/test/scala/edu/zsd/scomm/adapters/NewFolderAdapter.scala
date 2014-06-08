@@ -1,6 +1,6 @@
 package edu.zsd.scomm.adapters
 
-import edu.zsd.testfw.{GUITestAction, GUITestBean}
+import edu.zsd.festlogging.{GUITestAction, GUITestBean}
 import org.fest.swing.fixture.{JPanelFixture, JButtonFixture, JTextComponentFixture, JLabelFixture}
 import edu.zsd.scomm.FESTTest._
 import org.fest.swing.core.ComponentMatcher

@@ -4,7 +4,7 @@ import org.junit.Before
 import edu.zsd.scomm.FESTTest._
 import org.junit.Assert._
 import org.junit.runner.RunWith
-import edu.zsd.testfw.CacioFESTLoggingRunner
+import edu.zsd.festlogging.CacioFESTLoggingRunner
 import edu.zsd.scomm.useractions.DirectoryListUserActions
 
 @RunWith(classOf[CacioFESTLoggingRunner])

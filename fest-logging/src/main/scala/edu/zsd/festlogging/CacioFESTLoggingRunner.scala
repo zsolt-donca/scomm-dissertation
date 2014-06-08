@@ -1,4 +1,4 @@
-package edu.zsd.testfw
+package edu.zsd.festlogging
 
 import net.java.openjdk.cacio.ctc.{CTCGraphicsEnvironment, CTCToolkit}
 import javax.swing.plaf.metal.MetalLookAndFeel

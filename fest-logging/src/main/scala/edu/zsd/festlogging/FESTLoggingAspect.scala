@@ -1,13 +1,12 @@
-package edu.zsd.testfw
+package edu.zsd.festlogging
 
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.{Around, Aspect, Pointcut}
 import org.fest.swing.image.{ImageFileExtensions, ScreenshotTaker}
 import java.io.File
-import edu.zsd.testfw.FESTLogging._
+import edu.zsd.festlogging.FESTLogging._
 import scala.compat.Platform
-import edu.zsd.testfw.MethodCallStack.RunningTestMethodExecution
-import javax.swing.SwingUtilities._
+import edu.zsd.festlogging.MethodCallStack.RunningTestMethodExecution
 import scala.Some
 import org.fest.swing.edt.{GuiQuery, GuiActionRunner}
 
@@ -23,13 +22,13 @@ class FESTLoggingAspect {
   @Pointcut("execution(@org.junit.After * *.*(..))")
   def afterMethods() {}
 
-  @Pointcut("execution(* (@edu.zsd.testfw.GUITestBean *).*(..))")
+  @Pointcut("execution(* (@edu.zsd.festlogging.GUITestBean *).*(..))")
   def guiTestBeanMethods() {}
 
-  @Pointcut("execution(@edu.zsd.testfw.GUITestAction * *.*(..))")
+  @Pointcut("execution(@edu.zsd.festlogging.GUITestAction * *.*(..))")
   def guiTestActionMethods() {}
 
-  @Pointcut("execution(@edu.zsd.testfw.ExecuteInEDT * *.*(..))")
+  @Pointcut("execution(@edu.zsd.festlogging.ExecuteInEDT * *.*(..))")
   def executeInEDTMethods() {}
 
   @Pointcut("execution(public * org.fest.swing.core.BasicRobot.*(..))")
@@ -69,7 +68,7 @@ class FESTLoggingAspect {
     }
   }
 
-  @Around("guiTestBeanMethods() && guiTestActionMethods()")
+  @Around("guiTestActionMethods()")
   def takeScreenshotsOfTestActions(joinPoint: ProceedingJoinPoint) : AnyRef = {
     val testMethodExecution: RunningTestMethodExecution = MethodCallStack.getCurrentRunningTestMethodExecution(joinPoint)
     testMethodExecution.beforeScreenshot = Some(takeScreenshot("before"))

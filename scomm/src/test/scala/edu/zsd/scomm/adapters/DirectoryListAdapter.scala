@@ -3,7 +3,7 @@ package edu.zsd.scomm.adapters
 import org.fest.swing.fixture.{JPanelFixture, JLabelFixture, JListFixture}
 import edu.zsd.scomm.FESTTest._
 import org.junit.Assert._
-import edu.zsd.testfw.{ExecuteInEDT, GUITestBean}
+import edu.zsd.festlogging.{ExecuteInEDT, GUITestBean}
 import java.awt.Color
 import javax.swing.SwingUtilities._
 
@@ -19,15 +19,15 @@ case class DirectoryListAdapter(componentName: String) {
 
   def requireCurrentDir(currentDir: String): Unit = this.currentDirLabel.requireText(currentDir)
 
-  def requireContents(list : Seq[String]) : Unit = assertEquals(list, this.list.contents.toSeq)
-  
-  def requireSelection(list : Seq[String]) : Unit = assertEquals(list, this.list.selection().toSeq)
+  def requireContents(list: Seq[String]): Unit = assertEquals(list, this.list.contents.toSeq)
 
-  def requireSummary(summary : String) : Unit = this.summary.requireText(summary)
+  def requireSelection(list: Seq[String]): Unit = assertEquals(list, this.list.selection().toSeq)
 
-  def clickListItem(listItem : String) : Unit = this.list.item(listItem).click()
+  def requireSummary(summary: String): Unit = this.summary.requireText(summary)
 
-  def doubleClickListItem(listItem : String) : Unit = this.list.item(listItem).doubleClick()
+  def clickListItem(listItem: String): Unit = this.list.item(listItem).click()
+
+  def doubleClickListItem(listItem: String): Unit = this.list.item(listItem).doubleClick()
 
   @ExecuteInEDT
   def requireCurrentDirBackground(color: Color): Unit = {

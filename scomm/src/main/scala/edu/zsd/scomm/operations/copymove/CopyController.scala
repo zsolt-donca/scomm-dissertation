@@ -9,7 +9,6 @@ import java.nio.file.{Files, Paths, Path}
 import edu.zsd.scomm.Utils._
 import java.io.IOException
 import edu.zsd.scomm.model.{DiskState, MainWindowModel}
-import edu.zsd.scomm.operations.SimpleOperationController
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 @Component
@@ -19,20 +18,22 @@ class CopyController @Autowired()(val mainWindowView: MainWindowView,
                                   val view: CopyPanel,
                                   val model: CopyMoveModel) extends Observing with StrictLogging {
 
-  def reactorLoop(): Reactor = Reactor.loop {
+  val copyLoop = Reactor.loop {
 
     self =>
       self awaitNext mainWindowView.commandButtons.copyButton()
       logger.debug("Loop triggered")
 
+      // display the copy panel
       view.reset()
       mainWindowView.argumentsPanel() = Some(view.panel)
 
       self.abortOn(view.cancelButton()) {
-        self awaitNext view.okButton()
+        // at any point of time, abort on cancel
+        self awaitNext view.okButton() // wait for the user to press he OK button
+
         val sourceDirs: Set[Path] = model.source.now.paths
         val destinationDir: Path = Paths.get(view.destination)
-
         execute(self, sourceDirs, destinationDir)
       }
 
@@ -47,7 +48,7 @@ class CopyController @Autowired()(val mainWindowView: MainWindowView,
       mainWindowModel.status() = "You cannot copy a directory to its own subdirectory!"
     } else {
 
-      cps_foreach(sourceDirs) {
+      sourceDirs.cps foreach {
         sourceDir =>
           val sourceParent = sourceDir.getParent
           walkPathsPreOrder(Seq(sourceDir)) {
@@ -66,21 +67,16 @@ class CopyController @Autowired()(val mainWindowView: MainWindowView,
                     mainWindowModel.status() = s"Directory already exists '$destinationPath'..."
                   }
                 }
-                reactor.pause
               } catch {
-                case e: IOException => e.printStackTrace()
+                case e: IOException => logger.warn(e.toString, e)
               }
+              reactor.pause
           }
       }
 
-      walkPathsPreOrder(sourceDirs) {
-        sourcePath =>
-      }
       diskState.refresh()
 
       mainWindowModel.status() = s"Successfully copied!"
     }
   }
-
-  val copyLoop = reactorLoop()
 }

@@ -1,6 +1,6 @@
 package edu.zsd.scomm.useractions
 
-import edu.zsd.testfw.GUITestBean
+import edu.zsd.festlogging.GUITestBean
 import edu.zsd.scomm.FESTTest._
 import edu.zsd.scomm.adapters.MainWindowAdapter
 import org.fest.swing.finder.JOptionPaneFinder
@@ -15,7 +15,7 @@ class MainWindowUserActions {
     mainWindowAdapter.requireInfoButtonDisabled()
   }
 
-  def requireInfoDialog(directoryCount : Int, fileCount : Int, directory : String) {
+  def requireInfoDialog(directoryCount: Int, fileCount: Int, directory: String) {
 
     if (mainWindowAdapter.isInfoButtonEnabled) {
       mainWindowAdapter.clickInfoButton()

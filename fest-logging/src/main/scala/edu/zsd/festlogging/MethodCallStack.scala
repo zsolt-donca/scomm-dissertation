@@ -1,4 +1,4 @@
-package edu.zsd.testfw
+package edu.zsd.festlogging
 
 import org.aspectj.lang.{Signature, JoinPoint}
 import java.lang.reflect.Method
