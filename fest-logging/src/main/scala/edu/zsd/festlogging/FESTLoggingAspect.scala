@@ -42,7 +42,7 @@ class FESTLoggingAspect {
   }
 
   @Around("testMethods() || beforeMethods() || afterMethods() || guiTestBeanMethods()")
-  def reportTestAndGUITestBeanMethods(joinPoint: ProceedingJoinPoint): AnyRef = {
+  def auditMethods(joinPoint: ProceedingJoinPoint): AnyRef = {
     MethodCallStack.enterTestMethod(joinPoint)
     try {
       val result: AnyRef = joinPoint.proceed()
