@@ -17,11 +17,15 @@ abstract sealed class CopyMovePanel(val model: CopyMoveModel) extends FlowPanel(
   val actionNameCapital: String // u.i. "Copy" or "Move"
 
   private val promptLabel = new Label("")
+  promptLabel.name = "copyMovePanel.prompt"
   private val destinationTextField = new TextField("")
   destinationTextField.preferredSize = new Dimension(200, 20)
   destinationTextField.horizontalAlignment = Alignment.Left
+  destinationTextField.name = "copyMovePanel.destination"
   val okButton = new EventButton("OK")
+  okButton.name = "copyMovePanel.ok"
   val cancelButton = new EventButton("Cancel")
+  cancelButton.name = "copyMovePanel.cancel"
 
   contents ++= Seq(promptLabel, destinationTextField, okButton, cancelButton)
 
@@ -53,10 +57,12 @@ abstract sealed class CopyMovePanel(val model: CopyMoveModel) extends FlowPanel(
 class CopyPanel @Autowired()(model: CopyMoveModel) extends CopyMovePanel(model) {
   override val actionName: String = "copy"
   override val actionNameCapital: String = "Copy"
+  name = "copyPanel"
 }
 
 @Component
 class MovePanel @Autowired()(model: CopyMoveModel) extends CopyMovePanel(model) {
   override val actionName: String = "move"
   override val actionNameCapital: String = "Move"
+  name = "movePanel"
 }

@@ -3,10 +3,6 @@ package edu.zsd.scomm.adapters
 import edu.zsd.festlogging.{GUITestAction, GUITestBean}
 import org.fest.swing.fixture.{JPanelFixture, JButtonFixture, JTextComponentFixture, JLabelFixture}
 import edu.zsd.scomm.FESTTest._
-import org.fest.swing.core.ComponentMatcher
-import java.awt.Component
-import edu.zsd.scomm.operations.newfolder.NewFolderPanel
-import javax.swing.JPanel
 import org.fest.swing.exception.ComponentLookupException
 
 
@@ -48,7 +44,5 @@ class NewFolderAdapter {
   @GUITestAction
   def enterFolderName(folderName: String): Unit = components.folderName.setText(folderName)
 
-  private def findPanel = new JPanelFixture(robot, robot.finder().find(new ComponentMatcher {
-    override def matches(c: Component): Boolean = c.getClass == classOf[NewFolderPanel] && c.getName == "newFolderButton"
-  }).asInstanceOf[JPanel])
+  private def findPanel = new JPanelFixture(robot, "newFolder")
 }

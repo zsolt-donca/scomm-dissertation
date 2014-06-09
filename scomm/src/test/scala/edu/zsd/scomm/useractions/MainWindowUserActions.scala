@@ -30,6 +30,9 @@ class MainWindowUserActions {
     } else {
       fail("View button should be enabled at this point")
     }
+  }
 
+  def refresh() {
+    mainWindowAdapter.clickRefreshButton()
   }
 }

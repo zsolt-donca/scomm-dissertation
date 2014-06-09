@@ -42,6 +42,7 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
     contents += editButton
 
     val copyButton = new EventButton("Copy")
+    copyButton.name = "copyButton"
     contents += copyButton
 
     val moveButton = new EventButton("Move")
@@ -59,6 +60,7 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
     contents += infoButton
 
     val refreshButton = new EventButton("Refresh")
+    refreshButton.name = "refreshButton"
     contents += refreshButton
   }
 

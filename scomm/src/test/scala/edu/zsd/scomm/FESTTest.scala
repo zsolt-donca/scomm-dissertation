@@ -4,7 +4,7 @@ import org.fest.swing.core.{ComponentLookupScope, GenericTypeMatcher, BasicRobot
 import org.fest.swing.finder.WindowFinder
 import java.awt.Frame
 import java.io.File
-import edu.zsd.scomm.useractions.{NewFolderUserActions, MainWindowUserActions, DirectoryListUserActions}
+import edu.zsd.scomm.useractions._
 import java.nio.file.{DirectoryStream, Files, Path}
 import scala.collection.JavaConverters._
 
@@ -26,14 +26,11 @@ object FESTTest {
   val mainWindow = new MainWindowUserActions
 
   // test components
-  val directoriesPane = new {
-    val left = new DirectoryListUserActions("directoriesPane.left")
-    val right = new DirectoryListUserActions("directoriesPane.right")
-    val directoryLists = Seq(left, right)
-  }
+  val directoriesPane = new DirectoriesPaneUserActions
 
   val operations = new {
     val newFolder = new NewFolderUserActions
+    val copy = new CopyUserActions
   }
 
   private def deleteEmptyDirectoryPlaceholders(dir: Path) {

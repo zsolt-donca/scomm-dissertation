@@ -35,5 +35,13 @@ case class DirectoryListAdapter(componentName: String) {
     assertEquals(color, currentDirPanel.component().getBackground)
   }
 
+  def drag(index: Int) {
+    list.drag(index)
+  }
+
+  def drop() {
+    list.drop()
+  }
+
   override def toString: String = componentName
 }

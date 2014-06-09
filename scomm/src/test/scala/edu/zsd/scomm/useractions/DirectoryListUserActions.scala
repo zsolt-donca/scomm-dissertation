@@ -8,9 +8,7 @@ import java.awt.Color
 import java.nio.file.Path
 
 @GUITestBean
-case class DirectoryListUserActions(componentName: String) {
-
-  private[this] val directoryListAdapter = new DirectoryListAdapter(componentName)
+case class DirectoryListUserActions(directoryListAdapter: DirectoryListAdapter) {
 
   def currentDir = directoryListAdapter.currentDir
 
@@ -46,7 +44,4 @@ case class DirectoryListUserActions(componentName: String) {
   def requireActive() = directoryListAdapter.requireCurrentDirBackground(Color.BLUE)
 
   def requireInactive() = directoryListAdapter.requireCurrentDirBackground(Color.LIGHT_GRAY)
-
-
-  override def toString: String = componentName
 }

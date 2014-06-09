@@ -21,8 +21,11 @@ object MethodCallStack {
   } ensuring (current != None)
 
   def enterTestMethod(joinPoint: JoinPoint): Unit = {
-    val currentRunningExecution = current.get
-    current = Some(new RunningTestMethodExecution(joinPoint, currentRunningExecution))
+    current match {
+      case Some(currentRunningExecution) =>
+        current = Some(new RunningTestMethodExecution(joinPoint, currentRunningExecution))
+      case None => // ignore
+    }
   }
 
   def exitTestMethod(joinPoint: JoinPoint, result: AnyRef): Unit = {
@@ -35,15 +38,18 @@ object MethodCallStack {
   }
 
   private[this] def exitTestMethod(joinPoint: JoinPoint, result: Result): Unit = {
-    val currentRunningExecution = current.get
-    currentRunningExecution match {
-      case runningTestMethodExecution: RunningTestMethodExecution =>
-        assert(runningTestMethodExecution.joinPoint == joinPoint)
-        val args: Array[AnyRef] = if (joinPoint.getArgs != null) joinPoint.getArgs else Array.empty
-        val currentExecution = createExecution(runningTestMethodExecution, args, result)
-        val parentRunningExecution: RunningExecution = runningTestMethodExecution.parentRunningExecution
-        parentRunningExecution.invocations :+= currentExecution
-        current = Some(parentRunningExecution)
+    current match {
+      case Some(currentRunningExecution) =>
+        currentRunningExecution match {
+          case runningTestMethodExecution: RunningTestMethodExecution =>
+            assert(runningTestMethodExecution.joinPoint == joinPoint)
+            val args: Array[AnyRef] = if (joinPoint.getArgs != null) joinPoint.getArgs else Array.empty
+            val currentExecution = createExecution(runningTestMethodExecution, args, result)
+            val parentRunningExecution: RunningExecution = runningTestMethodExecution.parentRunningExecution
+            parentRunningExecution.invocations :+= currentExecution
+            current = Some(parentRunningExecution)
+        }
+      case None => // ignore
     }
   }
 
