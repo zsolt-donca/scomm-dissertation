@@ -2,9 +2,6 @@ package edu.zsd.scomm.test.useractions
 
 import edu.zsd.festlogging.GUITestBean
 import edu.zsd.scomm.test.adapters.CopyAdapter
-import edu.zsd.scomm.test.FESTTest
-import FESTTest._
-import java.awt.event.KeyEvent
 
 @GUITestBean
 class CopyUserActions {
@@ -16,16 +13,5 @@ class CopyUserActions {
     copyAdapter.requirePanelVisible()
     copyAdapter.clickOkButton()
     copyAdapter.waitForPanelToDisappear()
-  }
-
-  def copyWithDragAndDrop(source: Int) {
-
-    robot.pressKey(KeyEvent.VK_CONTROL)
-    try {
-      directoriesPane.directoriesPaneAdapter.right.drag(source)
-      directoriesPane.directoriesPaneAdapter.left.drop()
-    } finally {
-      robot.releaseKey(KeyEvent.VK_CONTROL)
-    }
   }
 }

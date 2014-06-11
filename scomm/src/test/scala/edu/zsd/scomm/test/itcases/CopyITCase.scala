@@ -1,7 +1,7 @@
 package edu.zsd.scomm.test.itcases
 
 import org.fest.swing.annotation.GUITest
-import org.junit.{Ignore, Test}
+import org.junit.Test
 import edu.zsd.scomm.test.FESTTest
 import FESTTest._
 import org.junit.Assert._
@@ -33,26 +33,6 @@ class CopyITCase extends BaseScommITCase {
 
     Files.delete(zombiesPath)
     Files.delete(herePath)
-    mainWindow.refresh()
-  }
-
-  @Ignore
-  @Test
-  def dragAndDropSelection() {
-
-    directoriesPane.left.enterDirectory("troll")
-    directoriesPane.right.enterDirectory("zombie")
-
-    val trollPath = testDir.resolve("troll")
-    operations.copy.copyWithDragAndDrop(2)
-
-    directoriesPane.left.requireContents("..", "zombies")
-
-    val zombiesPath: Path = trollPath.resolve("zombies")
-    assertTrue(Files.exists(zombiesPath))
-    assertTrue(Files.isDirectory(zombiesPath))
-
-    Files.delete(zombiesPath)
     mainWindow.refresh()
   }
 
