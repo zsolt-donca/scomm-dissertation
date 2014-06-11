@@ -4,8 +4,6 @@ import edu.zsd.festlogging.{ExecuteInEDT, GUITestAction, GUITestBean}
 import org.fest.swing.fixture.JButtonFixture
 import edu.zsd.scomm.test.FESTTest
 import FESTTest._
-import org.junit.Assert._
-import javax.swing.SwingUtilities.isEventDispatchThread
 
 @GUITestBean
 class MainWindowAdapter {
@@ -16,7 +14,6 @@ class MainWindowAdapter {
 
   @ExecuteInEDT
   def isInfoButtonEnabled: Boolean = {
-    assertTrue(isEventDispatchThread)
     infoButton.component.isEnabled
   }
 

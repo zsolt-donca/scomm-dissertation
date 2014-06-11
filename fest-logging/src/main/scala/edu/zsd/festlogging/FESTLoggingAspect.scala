@@ -54,13 +54,12 @@ class FESTLoggingAspect {
 
   @Around("testMethods() || beforeMethods() || afterMethods()")
   def takeScreenshotOfFailedTest(joinPoint: ProceedingJoinPoint): AnyRef = {
-
     try {
       joinPoint.proceed()
     } catch {
       case e: Throwable =>
         val testMethodExecution: RunningTestMethodExecution = MethodCallStack.getCurrentRunningTestMethodExecution(joinPoint)
-        testMethodExecution.afterScreenshot = Some(takeScreenshot("failed"))
+        testMethodExecution.screenshot = Some(takeScreenshot("failed"))
         throw e
     }
   }
@@ -68,11 +67,10 @@ class FESTLoggingAspect {
   @Around("guiTestActionMethods()")
   def takeScreenshotsOfTestActions(joinPoint: ProceedingJoinPoint): AnyRef = {
     val testMethodExecution: RunningTestMethodExecution = MethodCallStack.getCurrentRunningTestMethodExecution(joinPoint)
-    testMethodExecution.beforeScreenshot = Some(takeScreenshot("before"))
     try {
       joinPoint.proceed()
     } finally {
-      testMethodExecution.afterScreenshot = Some(takeScreenshot("after"))
+      testMethodExecution.screenshot = Some(takeScreenshot("after"))
     }
   }
 

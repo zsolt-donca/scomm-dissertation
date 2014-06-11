@@ -58,15 +58,10 @@ object XmlExecutionPrinter {
       <invocations>
         {execution.invocations.map(invocation => toXml(invocation))}
       </invocations>
-    }}{execution.beforeScreenshot match {
-      case Some(file) => <before-screenshot>
+    }}{execution.screenshot match {
+      case Some(file) => <screenshot>
         {file.getCanonicalFile.toURI}
-      </before-screenshot>
-      case None =>
-    }}{execution.afterScreenshot match {
-      case Some(file) => <after-screenshot>
-        {file.getCanonicalFile.toURI}
-      </after-screenshot>
+      </screenshot>
       case None =>
     }}
     </execution>

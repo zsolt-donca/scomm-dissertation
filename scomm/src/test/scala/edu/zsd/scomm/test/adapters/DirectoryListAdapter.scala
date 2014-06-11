@@ -6,6 +6,8 @@ import FESTTest._
 import org.junit.Assert._
 import edu.zsd.festlogging.{ExecuteInEDT, GUITestBean}
 import java.awt.Color
+import org.fest.swing.timing.Pause
+import java.util.concurrent.TimeUnit
 
 @GUITestBean
 case class DirectoryListAdapter(componentName: String) {
@@ -25,12 +27,18 @@ case class DirectoryListAdapter(componentName: String) {
 
   def requireSummary(summary: String): Unit = this.summary.requireText(summary)
 
-  def clickListItem(listItem: String): Unit = this.list.item(listItem).click()
+  def clickListItem(listItem: String) {
+    this.list.item(listItem).click()
+    Pause.pause(100, TimeUnit.MILLISECONDS)
+  }
 
-  def doubleClickListItem(listItem: String): Unit = this.list.item(listItem).doubleClick()
+  def doubleClickListItem(listItem: String) {
+    this.list.item(listItem).doubleClick()
+    Pause.pause(100, TimeUnit.MILLISECONDS)
+  }
 
   @ExecuteInEDT
-  def requireCurrentDirBackground(color: Color): Unit = {
+  def requireCurrentDirBackground(color: Color) {
     assertEquals(color, currentDirPanel.component().getBackground)
   }
 

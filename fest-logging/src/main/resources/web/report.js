@@ -1,10 +1,9 @@
-
 var nodeIdGenerator = 0;
 function buildExecutions(parentNodeId, execution, pushNode) {
     var data = {
         method: execution.children("method").first().text(),
         args: execution.children("args").first().text(),
-        result: function() {
+        result: function () {
             var result = execution.children("result").first();
             return {
                 returnResult: result.children("return-result").first().text(),
@@ -12,16 +11,15 @@ function buildExecutions(parentNodeId, execution, pushNode) {
                 emptyResult: result.children("empty-result").length > 0
             }
         }(),
-        startTime : new Date(execution.children("start-time").first().text()),
+        startTime: new Date(execution.children("start-time").first().text()),
         endTime: new Date(execution.children("end-time").first().text()),
-        beforeScreenshot: parentNodeId < 0 ? execution.find("before-screenshot").first().text() : execution.children("before-screenshot").first().text(),
-        afterScreenshot: parentNodeId < 0 ? execution.find("after-screenshot").last().text() : execution.children("after-screenshot").last().text()
+        screenshot: parentNodeId < 0 ? execution.find("screenshot").last().text() : execution.children("screenshot").last().text()
     };
 
     var nodeId = nodeIdGenerator++;
     pushNode(parentNodeId, nodeId, data);
     var invocations = execution.children("invocations").first();
-    invocations.children().each(function(index, invocation) {
+    invocations.children().each(function (index, invocation) {
         buildExecutions(nodeId, $(invocation), pushNode);
     });
 }
@@ -29,6 +27,7 @@ function buildExecutions(parentNodeId, execution, pushNode) {
 function addReport(xml) {
 
     var rows = [];
+
     function pushNode(parentNodeId, nodeId, data) {
 
         var row = document.createElement('tr');
@@ -65,8 +64,7 @@ function addReport(xml) {
             return link ? '<a href="' + link + '">shot</a>' : '';
         }
 
-        pushCell(screenshot(data.beforeScreenshot));
-        pushCell(screenshot(data.afterScreenshot));
+        pushCell(screenshot(data.screenshot));
 
         rows.push(row);
     }

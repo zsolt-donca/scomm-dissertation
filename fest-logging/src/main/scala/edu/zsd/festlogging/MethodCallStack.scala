@@ -105,8 +105,7 @@ object MethodCallStack {
 
   private def createExecution(runningExecution: RunningExecution, args: Array[AnyRef], result: Result): Execution = {
     Execution(runningExecution.method, args, runningExecution.startTime, Platform.currentTime,
-      runningExecution.invocations, result,
-      runningExecution.beforeScreenshot, runningExecution.afterScreenshot)
+      runningExecution.invocations, result, runningExecution.screenshot)
   }
 
   abstract sealed class RunningExecution(val method: Method) {
@@ -114,9 +113,7 @@ object MethodCallStack {
 
     val startTime: Long = Platform.currentTime
     var invocations: Seq[Execution] = Seq.empty
-
-    var beforeScreenshot: Option[File] = None
-    var afterScreenshot: Option[File] = None
+    var screenshot: Option[File] = None
   }
 
   class RunningTestExecution(val frameworkMethod: FrameworkMethod) extends RunningExecution(frameworkMethod.getMethod) {
@@ -135,8 +132,7 @@ case class Execution(method: Method,
                      endTime: Long,
                      invocations: Seq[Execution],
                      result: Result,
-                     beforeScreenshot: Option[File],
-                     afterScreenshot: Option[File])
+                     screenshot: Option[File])
 
 sealed abstract class Result()
 

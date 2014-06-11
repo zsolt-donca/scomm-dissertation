@@ -14,11 +14,12 @@
 
     <style>
         table, th, td {
-            border-collapse:collapse;
-            border:1px solid black;
+            border-collapse: collapse;
+            border: 1px solid black;
         }
+
         th, td {
-            padding:5px;
+            padding: 5px;
         }
     </style>
 </head>
@@ -39,8 +40,8 @@
         for (var i = 0, file; file = files[i]; i++) {
 
             var reader = new FileReader();
-            reader.onload = function(e) {
-                var parser=new DOMParser();
+            reader.onload = function (e) {
+                var parser = new DOMParser();
                 var xmlDoc = parser.parseFromString(e.target.result, "text/xml");
                 addReport(xmlDoc);
             };
@@ -74,8 +75,7 @@
         <th>Start Time</th>
         <th>End Time</th>
         <th>Elapsed Time</th>
-        <th>Before</th>
-        <th>After</th>
+        <th>Screenshot</th>
     </tr>
 </table>
 

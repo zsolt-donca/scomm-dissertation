@@ -5,6 +5,8 @@ import edu.zsd.scomm.test.FESTTest
 import FESTTest._
 import org.fest.swing.annotation.GUITest
 import edu.zsd.scomm.test.useractions.DirectoryListUserActions
+import org.fest.swing.timing.Pause
+import java.util.concurrent.TimeUnit
 
 @GUITest
 class DirectoriesPaneITCase extends BaseScommITCase {
@@ -118,6 +120,7 @@ class DirectoriesPaneITCase extends BaseScommITCase {
       directoryList.enterParentDirectory()
       directoryList.requireSelection("zombies")
 
+      Pause.pause(200, TimeUnit.MILLISECONDS)
       directoryList.enterParentDirectory()
       directoryList.requireSelection("zombie")
     }

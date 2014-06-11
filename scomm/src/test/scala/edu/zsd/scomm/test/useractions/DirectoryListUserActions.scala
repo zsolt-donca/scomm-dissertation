@@ -7,6 +7,7 @@ import edu.zsd.festlogging.{GUITestAction, GUITestBean}
 import edu.zsd.scomm.test.adapters.DirectoryListAdapter
 import java.awt.Color
 import java.nio.file.Path
+import org.fest.swing.timing.Pause
 
 @GUITestBean
 case class DirectoryListUserActions(directoryListAdapter: DirectoryListAdapter) {
