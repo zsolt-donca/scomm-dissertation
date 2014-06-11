@@ -1,7 +1,7 @@
-package edu.zsd.scomm.useractions
+package edu.zsd.scomm.test.useractions
 
 import edu.zsd.festlogging.GUITestBean
-import edu.zsd.scomm.adapters.DirectoriesPaneAdapter
+import edu.zsd.scomm.test.adapters.DirectoriesPaneAdapter
 
 @GUITestBean
 class DirectoriesPaneUserActions {

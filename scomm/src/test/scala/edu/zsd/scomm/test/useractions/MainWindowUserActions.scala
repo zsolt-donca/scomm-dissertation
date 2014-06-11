@@ -1,8 +1,9 @@
-package edu.zsd.scomm.useractions
+package edu.zsd.scomm.test.useractions
 
 import edu.zsd.festlogging.GUITestBean
-import edu.zsd.scomm.FESTTest._
-import edu.zsd.scomm.adapters.MainWindowAdapter
+import edu.zsd.scomm.test.FESTTest
+import FESTTest._
+import edu.zsd.scomm.test.adapters.MainWindowAdapter
 import org.fest.swing.finder.JOptionPaneFinder
 import org.junit.Assert._
 

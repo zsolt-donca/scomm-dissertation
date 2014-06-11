@@ -1,8 +1,9 @@
-package edu.zsd.scomm.useractions
+package edu.zsd.scomm.test.useractions
 
 import edu.zsd.festlogging.GUITestBean
-import edu.zsd.scomm.adapters.CopyAdapter
-import edu.zsd.scomm.FESTTest._
+import edu.zsd.scomm.test.adapters.CopyAdapter
+import edu.zsd.scomm.test.FESTTest
+import FESTTest._
 import java.awt.event.KeyEvent
 
 @GUITestBean

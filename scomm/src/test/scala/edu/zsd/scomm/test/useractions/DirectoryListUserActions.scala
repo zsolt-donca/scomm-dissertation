@@ -1,9 +1,10 @@
-package edu.zsd.scomm.useractions
+package edu.zsd.scomm.test.useractions
 
-import edu.zsd.scomm.FESTTest._
+import edu.zsd.scomm.test.FESTTest
+import FESTTest._
 import java.awt.event.KeyEvent
 import edu.zsd.festlogging.{GUITestAction, GUITestBean}
-import edu.zsd.scomm.adapters.DirectoryListAdapter
+import edu.zsd.scomm.test.adapters.DirectoryListAdapter
 import java.awt.Color
 import java.nio.file.Path
 

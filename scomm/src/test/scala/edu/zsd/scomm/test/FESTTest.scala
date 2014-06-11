@@ -1,11 +1,11 @@
-package edu.zsd.scomm
+package edu.zsd.scomm.test
 
-import org.fest.swing.core.{ComponentLookupScope, GenericTypeMatcher, BasicRobot, Robot}
+import java.nio.file.{DirectoryStream, Files, Path}
+import java.io.File
+import org.fest.swing.core.{GenericTypeMatcher, ComponentLookupScope, BasicRobot, Robot}
 import org.fest.swing.finder.WindowFinder
 import java.awt.Frame
-import java.io.File
-import edu.zsd.scomm.useractions._
-import java.nio.file.{DirectoryStream, Files, Path}
+import edu.zsd.scomm.test.useractions.{CopyUserActions, NewFolderUserActions, DirectoriesPaneUserActions, MainWindowUserActions}
 import scala.collection.JavaConverters._
 
 object FESTTest {

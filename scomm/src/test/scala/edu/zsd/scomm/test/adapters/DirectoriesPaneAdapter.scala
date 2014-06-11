@@ -1,4 +1,4 @@
-package edu.zsd.scomm.adapters
+package edu.zsd.scomm.test.adapters
 
 import edu.zsd.festlogging.GUITestBean
 

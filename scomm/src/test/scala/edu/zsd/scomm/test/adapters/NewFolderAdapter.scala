@@ -1,8 +1,9 @@
-package edu.zsd.scomm.adapters
+package edu.zsd.scomm.test.adapters
 
 import edu.zsd.festlogging.{GUITestAction, GUITestBean}
 import org.fest.swing.fixture.{JPanelFixture, JButtonFixture, JTextComponentFixture, JLabelFixture}
-import edu.zsd.scomm.FESTTest._
+import edu.zsd.scomm.test.FESTTest
+import FESTTest._
 import org.fest.swing.exception.ComponentLookupException
 
 

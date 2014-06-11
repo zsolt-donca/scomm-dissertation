@@ -1,8 +1,9 @@
-package edu.zsd.scomm.adapters
+package edu.zsd.scomm.test.adapters
 
 import edu.zsd.festlogging.GUITestBean
 import org.fest.swing.fixture.{JTextComponentFixture, JLabelFixture, JButtonFixture}
-import edu.zsd.scomm.FESTTest._
+import edu.zsd.scomm.test.FESTTest
+import FESTTest._
 
 @GUITestBean
 class CopyMovePanelAdapter {

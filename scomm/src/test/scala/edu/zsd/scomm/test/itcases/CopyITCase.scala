@@ -1,8 +1,9 @@
-package edu.zsd.scomm.itcases
+package edu.zsd.scomm.test.itcases
 
 import org.fest.swing.annotation.GUITest
 import org.junit.{Ignore, Test}
-import edu.zsd.scomm.FESTTest._
+import edu.zsd.scomm.test.FESTTest
+import FESTTest._
 import org.junit.Assert._
 import java.nio.file.{Path, Files}
 

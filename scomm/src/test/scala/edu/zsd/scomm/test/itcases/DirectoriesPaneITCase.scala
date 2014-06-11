@@ -1,10 +1,10 @@
-package edu.zsd.scomm.itcases
+package edu.zsd.scomm.test.itcases
 
 import org.junit.Test
-import edu.zsd.scomm.FESTTest._
+import edu.zsd.scomm.test.FESTTest
+import FESTTest._
 import org.fest.swing.annotation.GUITest
-import edu.zsd.scomm.FESTTest
-import edu.zsd.scomm.useractions.DirectoryListUserActions
+import edu.zsd.scomm.test.useractions.DirectoryListUserActions
 
 @GUITest
 class DirectoriesPaneITCase extends BaseScommITCase {

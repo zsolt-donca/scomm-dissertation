@@ -1,8 +1,9 @@
-package edu.zsd.scomm.adapters
+package edu.zsd.scomm.test.adapters
 
 import edu.zsd.festlogging.{ExecuteInEDT, GUITestAction, GUITestBean}
 import org.fest.swing.fixture.JButtonFixture
-import edu.zsd.scomm.FESTTest._
+import edu.zsd.scomm.test.FESTTest
+import FESTTest._
 import org.junit.Assert._
 import javax.swing.SwingUtilities.isEventDispatchThread
 

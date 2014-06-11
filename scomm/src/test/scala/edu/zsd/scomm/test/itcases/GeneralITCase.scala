@@ -1,4 +1,4 @@
-package edu.zsd.scomm.itcases
+package edu.zsd.scomm.test.itcases
 
 import org.junit.Test
 import org.junit.Assert._

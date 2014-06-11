@@ -8,7 +8,8 @@
     </aspects>
 
     <weaver options="-XnoInline -verbose">
-        <include within="edu.zsd..*"/>
+        <include within="edu.zsd.festlogging..*"/>
+        <include within="edu.zsd.scomm.test..*"/>
     </weaver>
 
 </aspectj>

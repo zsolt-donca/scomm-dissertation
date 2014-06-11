@@ -1,11 +1,11 @@
-package edu.zsd.scomm.adapters
+package edu.zsd.scomm.test.adapters
 
 import org.fest.swing.fixture.{JPanelFixture, JLabelFixture, JListFixture}
-import edu.zsd.scomm.FESTTest._
+import edu.zsd.scomm.test.FESTTest
+import FESTTest._
 import org.junit.Assert._
 import edu.zsd.festlogging.{ExecuteInEDT, GUITestBean}
 import java.awt.Color
-import javax.swing.SwingUtilities._
 
 @GUITestBean
 case class DirectoryListAdapter(componentName: String) {
@@ -31,7 +31,6 @@ case class DirectoryListAdapter(componentName: String) {
 
   @ExecuteInEDT
   def requireCurrentDirBackground(color: Color): Unit = {
-    assertTrue(isEventDispatchThread)
     assertEquals(color, currentDirPanel.component().getBackground)
   }
 
