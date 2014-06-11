@@ -36,4 +36,13 @@ class MainWindowUserActions {
   def refresh() {
     mainWindowAdapter.clickRefreshButton()
   }
+
+  def openCopyPanel() {
+    mainWindowAdapter.clickCopyButton()
+  }
+
+  def openNewFolderPanel() {
+    mainWindowAdapter.clickNewFolderButton()
+  }
+
 }

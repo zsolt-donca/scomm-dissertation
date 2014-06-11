@@ -1,7 +1,7 @@
 package edu.zsd.scomm.test.adapters
 
 import edu.zsd.festlogging.{GUITestAction, GUITestBean}
-import org.fest.swing.fixture.{JPanelFixture, JButtonFixture}
+import org.fest.swing.fixture.JPanelFixture
 import edu.zsd.scomm.test.FESTTest
 import FESTTest._
 import org.fest.swing.exception.ComponentLookupException
@@ -9,8 +9,6 @@ import org.fest.swing.timing.{Condition, Pause}
 
 @GUITestBean
 class CopyAdapter extends CopyMovePanelAdapter {
-
-  private val copyButton = new JButtonFixture(robot, "copyButton")
 
   def requirePanelVisible(): Unit = findPanel.requireVisible()
 
@@ -32,9 +30,6 @@ class CopyAdapter extends CopyMovePanelAdapter {
       }
     })
   }
-
-  @GUITestAction
-  def clickCopy(): Unit = copyButton.click()
 
   @GUITestAction
   def clickOkButton(): Unit = components.okButton.click()

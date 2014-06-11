@@ -2,17 +2,30 @@ package edu.zsd.scomm.test.useractions
 
 import edu.zsd.festlogging.GUITestBean
 import edu.zsd.scomm.test.adapters.NewFolderAdapter
+import edu.zsd.scomm.test.FESTTest.mainWindow
 
 @GUITestBean
 class NewFolderUserActions {
 
-  def newFolder(folderName: String) {
+  def newFolder() = {
     val newFolderAdapter = new NewFolderAdapter
     newFolderAdapter.requirePanelNotVisible()
-    newFolderAdapter.clickNewFolder()
+    mainWindow.openNewFolderPanel()
     newFolderAdapter.requireFolderName("")
-    newFolderAdapter.enterFolderName(folderName)
-    newFolderAdapter.clickOkButton()
-    newFolderAdapter.requirePanelNotVisible()
+    new {
+      def enterFolderName(folderName: String) {
+        newFolderAdapter.enterFolderName(folderName)
+        newFolderAdapter.clickOkButton()
+        newFolderAdapter.requirePanelNotVisible()
+      }
+
+      def enterAndCancel(folderName: String) {
+        if (folderName.nonEmpty) {
+          newFolderAdapter.enterFolderName(folderName)
+        }
+        newFolderAdapter.clickCancelButton()
+        newFolderAdapter.requirePanelNotVisible()
+      }
+    }
   }
 }

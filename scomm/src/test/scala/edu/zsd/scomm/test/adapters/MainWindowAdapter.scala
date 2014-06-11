@@ -8,6 +8,10 @@ import FESTTest._
 @GUITestBean
 class MainWindowAdapter {
 
+  private val copyButton = new JButtonFixture(robot, "copyButton")
+
+  private val newFolderButton = new JButtonFixture(robot, "newFolderButton")
+
   private val infoButton = new JButtonFixture(robot, "infoButton")
 
   private val refreshButton = new JButtonFixture(robot, "refreshButton")
@@ -19,6 +23,16 @@ class MainWindowAdapter {
 
   def requireInfoButtonDisabled() {
     infoButton.requireDisabled()
+  }
+
+  @GUITestAction
+  def clickCopyButton() = {
+    copyButton.click()
+  }
+
+  @GUITestAction
+  def clickNewFolderButton() = {
+    newFolderButton.click()
   }
 
   @GUITestAction

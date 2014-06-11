@@ -7,7 +7,6 @@ import edu.zsd.festlogging.{GUITestAction, GUITestBean}
 import edu.zsd.scomm.test.adapters.DirectoryListAdapter
 import java.awt.Color
 import java.nio.file.Path
-import org.fest.swing.timing.Pause
 
 @GUITestBean
 case class DirectoryListUserActions(directoryListAdapter: DirectoryListAdapter) {
@@ -42,6 +41,10 @@ case class DirectoryListUserActions(directoryListAdapter: DirectoryListAdapter) 
     directoryListAdapter.clickListItem(to)
     robot.releaseKey(KeyEvent.VK_SHIFT)
   }
+
+  def isActive = directoryListAdapter.currentDirBackground() == Color.BLUE
+
+  def isInactive = directoryListAdapter.currentDirBackground() == Color.LIGHT_GRAY
 
   def requireActive() = directoryListAdapter.requireCurrentDirBackground(Color.BLUE)
 

@@ -38,8 +38,13 @@ case class DirectoryListAdapter(componentName: String) {
   }
 
   @ExecuteInEDT
+  def currentDirBackground() = {
+    currentDirPanel.component().getBackground
+  }
+
+  @ExecuteInEDT
   def requireCurrentDirBackground(color: Color) {
-    assertEquals(color, currentDirPanel.component().getBackground)
+    assertEquals(color, currentDirBackground)
   }
 
   override def toString: String = componentName

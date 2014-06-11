@@ -10,8 +10,6 @@ import org.fest.swing.exception.ComponentLookupException
 @GUITestBean
 class NewFolderAdapter {
 
-  private val newFolderButton = new JButtonFixture(robot, "newFolderButton")
-
   private lazy val components = new {
     val prompt = new JLabelFixture(robot, "newFolder.prompt")
     val folderName = new JTextComponentFixture(robot, "newFolder.folderName")
@@ -28,9 +26,6 @@ class NewFolderAdapter {
       case e: ComponentLookupException => // not finding the component is okay
     }
   }
-
-  @GUITestAction
-  def clickNewFolder(): Unit = newFolderButton.click()
 
   @GUITestAction
   def clickOkButton(): Unit = components.okButton.click()
