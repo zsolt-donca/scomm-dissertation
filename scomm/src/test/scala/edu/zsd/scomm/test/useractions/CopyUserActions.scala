@@ -7,12 +7,41 @@ import edu.zsd.scomm.test.FESTTest._
 @GUITestBean
 class CopyUserActions {
 
-  def copySelection(expectedDestination: String) {
+  def openCopyPanel() = {
     val copyAdapter = new CopyAdapter
     copyAdapter.requirePanelNotVisible()
     mainWindow.openCopyPanel()
     copyAdapter.requirePanelVisible()
-    copyAdapter.clickOkButton()
-    copyAdapter.waitForPanelToDisappear()
+    new {
+      def ok() {
+        copyAdapter.clickOkButton()
+        copyAdapter.waitForPanelToDisappear()
+      }
+
+      def cancel() {
+        copyAdapter.clickCancelButton()
+        copyAdapter.waitForPanelToDisappear()
+      }
+
+      def enterDestination(folderName: String) {
+        copyAdapter.enterDestination(folderName)
+      }
+
+      def requireDestination(directory: String) {
+        copyAdapter.requireDestination(directory)
+      }
+
+      def requirePrompt(prompt: String) {
+        copyAdapter.requirePrompt(prompt)
+      }
+
+      def requireOneFilePrompt(file: String) {
+        requirePrompt(s"Copy the file '$file' to:")
+      }
+
+      def requireOneFolderPrompt(folder: String) {
+        requirePrompt(s"Copy the folder '$folder' and its contents to:")
+      }
+    }
   }
 }

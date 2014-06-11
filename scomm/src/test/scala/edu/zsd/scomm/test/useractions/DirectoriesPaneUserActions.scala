@@ -15,7 +15,7 @@ class DirectoriesPaneUserActions {
   val right = new DirectoryListUserActions(directoriesPaneAdapter.right)
   val directoryLists = Seq(left, right)
 
-  def ensureSelectLeft() {
+  def ensureLeftIsSelected() {
     if (left.isInactive) {
       directoriesPane.right.select("..")
       directoriesPane.left.select("..")

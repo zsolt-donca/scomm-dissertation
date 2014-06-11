@@ -14,7 +14,7 @@ class NewFolderITCase extends BaseScommITCase {
   @Before
   override def setup() {
     super.setup()
-    directoriesPane.ensureSelectLeft()
+    directoriesPane.ensureLeftIsSelected()
   }
 
   @Test
