@@ -63,28 +63,6 @@ class DirectoriesPaneITCase extends BaseScommITCase {
 
 
   @Test
-  def testViewButton(): Unit = {
-
-    // TODO fix this focus bug so it would works for both directory lists
-    for (directoryList: DirectoryListUserActions <- Some(directoriesPane.left)) {
-      directoryList.select("folder1")
-      FESTTest.mainWindow.requireInfoDialog(1, 0, testDir.toString)
-
-      directoryList.select("a.txt")
-      FESTTest.mainWindow.requireInfoDialog(0, 1, testDir.toString)
-
-      directoryList.selectRange("..", "xyz")
-      FESTTest.mainWindow.requireInfoDialog(3, 3, testDir.toString)
-
-      directoryList.enterDirectory("zombie")
-      FESTTest.mainWindow.requireInfoDialog(0, 0, testDir.resolve("zombie").toString)
-
-      directoryList.selectRange("more", "here")
-      FESTTest.mainWindow.requireInfoDialog(2, 1, testDir.resolve("zombie").toString)
-    }
-  }
-
-  @Test
   def testTabSwitchingActiveness(): Unit = {
     directoriesPane.left.select("folder1")
     directoriesPane.left.requireActive()
