@@ -55,8 +55,6 @@ function addReport(xml) {
             pushCell("");
         }
 
-        pushCell(moment(data.startTime).format("HH:mm:ss.SSS"));
-        pushCell(moment(data.endTime).format("HH:mm:ss.SSS"));
         var elapsed = moment.duration(moment(data.endTime).diff(data.startTime)).as('seconds');
         pushCell(elapsed);
 
