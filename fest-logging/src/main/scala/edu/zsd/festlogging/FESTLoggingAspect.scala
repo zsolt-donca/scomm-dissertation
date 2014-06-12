@@ -6,9 +6,10 @@ import org.fest.swing.image.{ImageFileExtensions, ScreenshotTaker}
 import java.io.File
 import edu.zsd.festlogging.FESTLogging._
 import scala.compat.Platform
-import edu.zsd.festlogging.MethodCallStack.RunningTestMethodExecution
+import edu.zsd.festlogging.MethodCallStack.{RunningExecution, RunningTestMethodExecution}
 import scala.Some
 import org.fest.swing.edt.{GuiQuery, GuiActionRunner}
+import javax.swing.SwingWorker
 
 @Aspect
 class FESTLoggingAspect {
@@ -59,7 +60,7 @@ class FESTLoggingAspect {
     } catch {
       case e: Throwable =>
         val testMethodExecution: RunningTestMethodExecution = MethodCallStack.getCurrentRunningTestMethodExecution(joinPoint)
-        testMethodExecution.screenshot = Some(takeScreenshot("failed"))
+        takeScreenshot("failed", testMethodExecution)
         throw e
     }
   }
@@ -70,16 +71,22 @@ class FESTLoggingAspect {
     try {
       joinPoint.proceed()
     } finally {
-      testMethodExecution.screenshot = Some(takeScreenshot("after"))
+      takeScreenshot("after", testMethodExecution)
     }
   }
 
   private val screenshotTaker: ScreenshotTaker = new ScreenshotTaker()
 
-  private def takeScreenshot(kind: String): File = {
+  private def takeScreenshot(kind: String, runningExecution: RunningExecution) {
     val filename: String = f"$currentTestIndex%04d_${Platform.currentTime}_$kind.${ImageFileExtensions.PNG}"
-    val beforeScreenshot: File = new File(screenshotsDir, filename)
-    screenshotTaker.saveDesktopAsPng(beforeScreenshot.getPath)
-    beforeScreenshot
+    val screenshot = screenshotTaker.takeDesktopScreenshot()
+    val screenshotFile: File = new File(screenshotsDir, filename)
+    val worker = new SwingWorker[Unit, Unit] {
+      override def doInBackground(): Unit = {
+        screenshotTaker.saveImage(screenshot, screenshotFile.toString)
+      }
+    }
+    worker.execute()
+    runningExecution.screenshot = Some(screenshotFile)
   }
 }
