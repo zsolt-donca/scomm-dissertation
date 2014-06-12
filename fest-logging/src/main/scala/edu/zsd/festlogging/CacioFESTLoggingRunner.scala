@@ -15,6 +15,9 @@ class CacioFESTLoggingRunner(clazz: Class[_]) extends BlockJUnit4ClassRunner(cla
     System.setProperty("swing.defaultlaf", classOf[MetalLookAndFeel].getName)
     System.setProperty("swing.systemlaf", classOf[MetalLookAndFeel].getName)
     System.setProperty("java.awt.headless", "false")
+    if (System.getProperty("cacio.managed.screensize") == null) {
+      System.setProperty("cacio.managed.screensize", "850x600")
+    }
   }
 
   override def methodBlock(frameworkMethod: FrameworkMethod): Statement = {

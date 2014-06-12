@@ -74,10 +74,12 @@ class FESTLoggingAspect {
     }
   }
 
+  private val screenshotTaker: ScreenshotTaker = new ScreenshotTaker()
+
   private def takeScreenshot(kind: String): File = {
     val filename: String = f"$currentTestIndex%04d_${Platform.currentTime}_$kind.${ImageFileExtensions.PNG}"
     val beforeScreenshot: File = new File(screenshotsDir, filename)
-    new ScreenshotTaker().saveDesktopAsPng(beforeScreenshot.getPath)
+    screenshotTaker.saveDesktopAsPng(beforeScreenshot.getPath)
     beforeScreenshot
   }
 }

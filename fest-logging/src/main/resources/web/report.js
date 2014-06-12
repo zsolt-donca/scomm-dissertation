@@ -11,8 +11,8 @@ function buildExecutions(parentNodeId, execution, pushNode) {
                 emptyResult: result.children("empty-result").length > 0
             }
         }(),
-        startTime: new Date(execution.children("start-time").first().text()),
-        endTime: new Date(execution.children("end-time").first().text()),
+        startTime: new Date(execution.children("start-time").first().text().trim()),
+        endTime: new Date(execution.children("end-time").first().text().trim()),
         screenshot: parentNodeId < 0 ? execution.find("screenshot").last().text() : execution.children("screenshot").last().text()
     };
 
