@@ -35,6 +35,9 @@ case class DirectoryListUserActions(directoryListAdapter: DirectoryListAdapter) 
   def select(item: String) = directoryListAdapter.clickListItem(item)
 
   @GUITestAction
+  def deselectAll() = directoryListAdapter.clearSelection()
+
+  @GUITestAction
   def selectRange(from: String, to: String): Unit = {
     directoryListAdapter.clickListItem(from)
     robot.pressKey(KeyEvent.VK_SHIFT)

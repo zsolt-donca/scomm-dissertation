@@ -45,7 +45,8 @@ object XmlExecutionPrinter {
           {result}
         </return-result>
         case ExceptionResult(exception) => <exception-result>
-          {exception}
+          {val exStr = exception.toString
+          if (exStr.length > 90) exStr.substring(0, 90) + "..." else exStr}
         </exception-result>
       }}
       </result>

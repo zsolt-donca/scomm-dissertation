@@ -25,7 +25,7 @@ class NewFolderITCase extends BaseScommITCase {
     directoriesPane.left.requireCurrentDir(directory)
     directoriesPane.left.requireContents("..")
 
-    operations.newFolder.newFolder().enterFolderName("abx")
+    operations.newFolder.openNewFolderPanel().enterFolderName("abx")
 
     val abx: Path = directory.resolve("abx")
     assertTrue("Folder wasn't created?", Files.exists(abx))
@@ -39,15 +39,15 @@ class NewFolderITCase extends BaseScommITCase {
 
   @Test
   def testCancel() {
-    val newFolder = operations.newFolder.newFolder()
+    val newFolder = operations.newFolder.openNewFolderPanel()
     newFolder.enterAndCancel("")
     directoriesPane.left.requireContents("..", "folder1", "troll", "zombie", "a.txt", "b", "xyz")
   }
 
   @Test
   def testFolderNameCleared() {
-    operations.newFolder.newFolder().enterAndCancel("xx1")
-    operations.newFolder.newFolder().enterAndCancel("")
+    operations.newFolder.openNewFolderPanel().enterAndCancel("xx1")
+    operations.newFolder.openNewFolderPanel().enterAndCancel("")
   }
 
 }

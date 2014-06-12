@@ -7,7 +7,7 @@ import edu.zsd.scomm.test.FESTTest.mainWindow
 @GUITestBean
 class NewFolderUserActions {
 
-  def newFolder() = {
+  def openNewFolderPanel() = {
     val newFolderAdapter = new NewFolderAdapter
     newFolderAdapter.requirePanelNotVisible()
     mainWindow.openNewFolderPanel()

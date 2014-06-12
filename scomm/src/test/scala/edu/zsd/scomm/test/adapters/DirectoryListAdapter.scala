@@ -6,11 +6,9 @@ import FESTTest._
 import org.junit.Assert._
 import edu.zsd.festlogging.{ExecuteInEDT, GUITestBean}
 import java.awt.Color
-import org.fest.swing.timing.Pause
-import java.util.concurrent.TimeUnit
 
 @GUITestBean
-case class DirectoryListAdapter(componentName: String) {
+case class DirectoryListAdapter(componentName: String) extends BaseAdapter {
 
   private[this] val list = new JListFixture(robot, componentName + ".listView")
   private[this] val currentDirLabel = new JLabelFixture(robot, componentName + ".currentDirLabel")
@@ -27,14 +25,19 @@ case class DirectoryListAdapter(componentName: String) {
 
   def requireSummary(summary: String): Unit = this.summary.requireText(summary)
 
+  def clearSelection() {
+    this.list.clearSelection()
+    smallPause()
+  }
+
   def clickListItem(listItem: String) {
     this.list.item(listItem).click()
-    Pause.pause(100, TimeUnit.MILLISECONDS)
+    smallPause()
   }
 
   def doubleClickListItem(listItem: String) {
     this.list.item(listItem).doubleClick()
-    Pause.pause(100, TimeUnit.MILLISECONDS)
+    smallPause()
   }
 
   @ExecuteInEDT
@@ -42,9 +45,8 @@ case class DirectoryListAdapter(componentName: String) {
     currentDirPanel.component().getBackground
   }
 
-  @ExecuteInEDT
   def requireCurrentDirBackground(color: Color) {
-    assertEquals(color, currentDirBackground)
+    assertEquals(color, currentDirBackground())
   }
 
   override def toString: String = componentName

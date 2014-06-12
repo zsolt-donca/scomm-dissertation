@@ -4,9 +4,11 @@ import edu.zsd.festlogging.{ExecuteInEDT, GUITestAction, GUITestBean}
 import org.fest.swing.fixture.JButtonFixture
 import edu.zsd.scomm.test.FESTTest
 import FESTTest._
+import org.fest.swing.timing.Pause
+import java.util.concurrent.TimeUnit
 
 @GUITestBean
-class MainWindowAdapter {
+class MainWindowAdapter extends BaseAdapter {
 
   private val copyButton = new JButtonFixture(robot, "copyButton")
 
@@ -28,11 +30,13 @@ class MainWindowAdapter {
   @GUITestAction
   def clickCopyButton() = {
     copyButton.click()
+    Pause.pause(500, TimeUnit.MILLISECONDS)
   }
 
   @GUITestAction
   def clickNewFolderButton() = {
     newFolderButton.click()
+    smallPause()
   }
 
   @GUITestAction

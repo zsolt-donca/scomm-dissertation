@@ -35,12 +35,28 @@ class CopyUserActions {
         copyAdapter.requirePrompt(prompt)
       }
 
-      def requireOneFilePrompt(file: String) {
+      def requireSingleFilePrompt(file: String) {
         requirePrompt(s"Copy the file '$file' to:")
       }
 
-      def requireOneFolderPrompt(folder: String) {
+      def requireSingleFolderPrompt(folder: String) {
         requirePrompt(s"Copy the folder '$folder' and its contents to:")
+      }
+
+      def requireFilesAndFoldersPrompt(files: Int, folders: Int) {
+        requirePrompt(s"Copy the selected $files file(s) and $folders folder(s) and all their contents to:")
+      }
+
+      def requireFilesPrompt(files: Int) {
+        requirePrompt(s"Copy the selected $files files to:")
+      }
+
+      def requireFoldersPrompt(folders: Int) {
+        requirePrompt(s"Copy the selected $folders folders and all their contents to:")
+      }
+
+      def requireNothingToCopyPrompt() {
+        requirePrompt("Nothing to copy!")
       }
     }
   }
