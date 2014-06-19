@@ -1,7 +1,6 @@
 package edu.zsd.cpsdemo
 
 import scala.util.continuations._
-import com.typesafe.scalalogging.slf4j.StrictLogging
 
 object ComplexCpsExample extends App with StrictLogging {
 

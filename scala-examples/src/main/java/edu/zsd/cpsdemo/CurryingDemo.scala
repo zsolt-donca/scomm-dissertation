@@ -18,7 +18,7 @@ object CurryingDemo extends App {
   class Circle(val center: Point, val radius: Double)
 
   def isInside(c: Circle): (Point => Boolean) = {
-    import Math.pow
+    import java.lang.Math.pow
     val radiusSquare = pow(c.radius, 2)
 
     (p: Point) => {

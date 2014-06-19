@@ -1,7 +1,7 @@
 package edu.zsd.cpsdemo
 
-import scala.util.continuations._
 import scala.annotation.tailrec
+import scala.util.continuations._
 
 object SimpleCpsExample extends App {
 

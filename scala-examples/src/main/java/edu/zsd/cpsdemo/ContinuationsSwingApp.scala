@@ -1,7 +1,7 @@
 package edu.zsd.cpsdemo
 
-import scala.util.continuations._
 import scala.swing._
+import scala.util.continuations._
 
 object ContinuationsSwingApp extends SimpleSwingApplication {
 
