@@ -1,15 +1,17 @@
 package edu.zsd.scomm.operations.copymove
 
-import org.springframework.stereotype.Component
-import org.springframework.beans.factory.annotation.Autowired
-import edu.zsd.scomm.view.MainWindowView
-import edu.zsd.scomm.Domain._
-import scala.util.continuations.suspendable
-import java.nio.file.{Files, Paths, Path}
-import edu.zsd.scomm.Utils._
 import java.io.IOException
-import edu.zsd.scomm.model.{DiskState, MainWindowModel}
+import java.nio.file.{Files, Path, Paths}
+
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import edu.zsd.scomm.Domain._
+import edu.zsd.scomm.Utils._
+import edu.zsd.scomm.model.{DiskState, MainWindowModel}
+import edu.zsd.scomm.view.MainWindowView
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+import scala.util.continuations.suspendable
 
 @Component
 class CopyController @Autowired()(val mainWindowView: MainWindowView,
@@ -28,7 +30,8 @@ class CopyController @Autowired()(val mainWindowView: MainWindowView,
       view.reset()
       mainWindowView.argumentsPanel() = Some(view.panel)
 
-      self.abortOn(view.cancelButton()) {
+      self.pause
+      self.abortOn(view.cancelButton() merge mainWindowView.commandButtons.anyEvent) {
         // at any point of time, abort on cancel
         self awaitNext view.okButton() // wait for the user to press he OK button
 

@@ -1,12 +1,15 @@
 package edu.zsd.scomm.view
 
-import scala.swing.BorderPanel.Position
+import javax.swing.border.BevelBorder
+import javax.swing.{JFrame, JOptionPane}
+
 import edu.zsd.scomm.Domain._
 import edu.zsd.scomm.model.MainWindowModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+
+import scala.swing.BorderPanel.Position
 import scala.swing._
-import javax.swing.border.BevelBorder
 
 /**
  * Controller.
@@ -17,15 +20,17 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
 
   menuBar = new MenuBar() {
     contents += new Menu("Files") {
-      contents += new MenuItem("Quit")
+      contents += new MenuItem(new Action("Quit") {
+        override def apply(): Unit = System.exit(0)
+      })
     }
     contents += new Menu("Selection") {
-      contents += new MenuItem("Select All")
-      contents += new MenuItem("Unselect All")
-      contents += new MenuItem("Invert Selection")
+      contents += new MenuItem(new NotImplemented("Select All"))
+      contents += new MenuItem(new NotImplemented("Unselect All"))
+      contents += new MenuItem(new NotImplemented("Invert Selection"))
     }
     contents += new Menu("Help") {
-      contents += new MenuItem("About")
+      contents += new MenuItem(new NotImplemented("About"))
     }
     contents += new Menu("System") {
       contents += new MenuItem(new Action("gc()") {
@@ -35,17 +40,16 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
   }
 
   val commandButtons = new FlowPanel(FlowPanel.Alignment.Left)() {
-    val viewButton = new EventButton("View")
-    contents += viewButton
+    contents += new Button(new NotImplemented("View"))
 
-    val editButton = new EventButton("Edit")
-    contents += editButton
+    contents += new Button(new NotImplemented("Edit"))
 
     val copyButton = new EventButton("Copy")
     copyButton.name = "copyButton"
     contents += copyButton
 
     val moveButton = new EventButton("Move")
+    moveButton.name = "moveButton"
     contents += moveButton
 
     val newFolderButton = new EventButton("New folder")
@@ -62,6 +66,14 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
     val refreshButton = new EventButton("Refresh")
     refreshButton.name = "refreshButton"
     contents += refreshButton
+
+    val anyEvent: Events[Any] = {
+      val events = Set(copyButton(), moveButton(), newFolderButton(), deleteButton())
+      events.toList match {
+        case head :: tail => tail.foldLeft(head)(_ merge _)
+        case Nil => Events.never
+      }
+    }
   }
 
   val statusPanel = new BorderPanel() {
@@ -80,6 +92,7 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
         case None =>
       }
       revalidate()
+      repaint()
     }
 
     def apply: Option[Panel] = {
@@ -102,6 +115,13 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
 
   observe(model.status) {
     status => statusPanel.statusLabel.text = status
+  }
+
+  class NotImplemented(title: String) extends Action(title) {
+    override def apply(): Unit = {
+      val window: JFrame = MainWindowView.this.peer
+      JOptionPane.showMessageDialog(window, "Not implemented!", "Error", JOptionPane.ERROR_MESSAGE)
+    }
   }
 
 }

@@ -1,9 +1,10 @@
 package edu.zsd.scomm.operations
 
-import edu.zsd.scomm.view.MainWindowView
-import edu.zsd.scomm.Domain._
-import scala.util.continuations.suspendable
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import edu.zsd.scomm.Domain._
+import edu.zsd.scomm.view.MainWindowView
+
+import scala.util.continuations.suspendable
 
 trait SimpleOperationController extends Observing with StrictLogging {
 
@@ -15,7 +16,7 @@ trait SimpleOperationController extends Observing with StrictLogging {
 
   def continueEvent: Events[_] = commandView.okButton()
 
-  def abortEvent: Events[_] = commandView.cancelButton()
+  def abortEvent: Events[_] = commandView.cancelButton() merge mainWindowView.commandButtons.anyEvent
 
   def reactorLoop(): Reactor = Reactor.loop {
 
@@ -26,6 +27,7 @@ trait SimpleOperationController extends Observing with StrictLogging {
       commandView.reset()
       mainWindowView.argumentsPanel() = Some(commandView.panel)
 
+      self.pause
       self.abortOn(abortEvent) {
         self awaitNext continueEvent
         execute(self)
