@@ -68,11 +68,7 @@ class MainWindowView @Autowired()(val model: MainWindowModel,
     contents += refreshButton
 
     val anyEvent: Events[Any] = {
-      val events = Set(copyButton(), moveButton(), newFolderButton(), deleteButton())
-      events.toList match {
-        case head :: tail => tail.foldLeft(head)(_ merge _)
-        case Nil => Events.never
-      }
+      copyButton() merge moveButton() merge newFolderButton() merge deleteButton()
     }
   }
 
