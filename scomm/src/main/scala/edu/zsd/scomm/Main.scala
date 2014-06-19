@@ -1,12 +1,13 @@
 
 package edu.zsd.scomm
 
-import edu.zsd.scomm.Domain._
-import java.nio.file.Paths
-import org.springframework.scala.context.function.FunctionalConfigApplicationContext
-import edu.zsd.scomm.view.MainWindowView
+import java.nio.file.{Files, Paths}
 import javax.swing.UIManager
+
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import edu.zsd.scomm.Domain._
+import edu.zsd.scomm.view.MainWindowView
+import org.springframework.scala.context.function.FunctionalConfigApplicationContext
 
 object Main extends ReactiveSimpleSwingApplication with StrictLogging {
 
@@ -25,7 +26,9 @@ object Main extends ReactiveSimpleSwingApplication with StrictLogging {
       val initDir = Paths.get(args(0))
       AppParams(initDir, initDir)
     } else {
-      AppParams(Paths.get("C:\\scomm-test"), Paths.get("C:\\scomm-test"))
+      val path = Paths.get("C:\\")
+      val dir = if (Files.exists(path)) path else Paths.get(".")
+      AppParams(dir, dir)
     }
 
     applicationContext = FunctionalConfigApplicationContext[MainConfiguration]

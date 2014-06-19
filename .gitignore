@@ -4,5 +4,7 @@ fest-logging/fest-logging.iml
 fest-logging/target/
 scala-react/scala-react.iml
 scala-react/target/
+scala-examples/scala-examples.iml
+scala-examples/target/
 .idea/
 workspace.iml
