@@ -2,11 +2,14 @@ package edu.zsd.cpsdemo
 
 import java.util.concurrent.Executors
 
+import scala.react.Domain
+
 object MyDomain extends Domain {
   val scheduler = new ThreadPoolScheduler(Executors.newSingleThreadExecutor())
   val engine = new Engine
 }
 
+import edu.zsd.cpsdemo.MyDomain._
 
 object ConsistencyExample extends App {
 
