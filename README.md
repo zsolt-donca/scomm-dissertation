@@ -1,4 +1,6 @@
-This is my master's thesis (disseration) work. Development was done using maven 3.0.5 and Java 1.7.0_55. 
+This is my master's thesis (disseration) work. Development was done using maven 3.0.5 and Java 1.7.0_55.
+
+Because of a third-party incompatibility with newer versions of Java, this projecct absolutely requires Oracle Java 7!
 
 You can build it with standard maven commands:
 

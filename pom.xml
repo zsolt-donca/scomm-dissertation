@@ -7,32 +7,37 @@
     <modules>
         <module>fest-logging</module>
         <module>scomm</module>
-        <module>scala-react</module>
         <module>scala-examples</module>
     </modules>
     <packaging>pom</packaging>
 
     <repositories>
         <repository>
+            <id>project.local</id>
+            <name>project</name>
+            <url>file:${project.basedir}/repo</url>
+        </repository>
+
+        <repository>
             <id>scala-tools.org</id>
             <name>Scala-tools Maven2 Repository</name>
             <url>http://scala-tools.org/repo-releases</url>
         </repository>
         <repository>
-            <id>milestone.repo.springsource.org</id>
-            <name>repo.springsource.org-milestone</name>
-            <url>https://repo.springsource.org/libs-milestone</url>
+            <id>milestone.repo.spring.io</id>
+            <name>repo.spring.io-milestone</name>
+            <url>https://repo.spring.io/libs-milestone</url>
         </repository>
         <repository>
             <id>repository.springsource.milestone</id>
             <name>SpringSource Milestone Repository</name>
-            <url>http://repo.springsource.org/milestone</url>
+            <url>http://repo.spring.io/milestone</url>
         </repository>
 
         <repository>
             <id>repository.springsource.snapshot</id>
             <name>SpringSource Snapshot Repository</name>
-            <url>http://repo.springsource.org/snapshot</url>
+            <url>http://repo.spring.io/snapshot</url>
         </repository>
     </repositories>
     <pluginRepositories>
@@ -91,6 +96,13 @@
             <artifactId>spring-scala_2.10</artifactId>
             <version>1.0.0.RC1</version>
         </dependency>
+
+        <dependency>
+            <groupId>scala-react</groupId>
+            <artifactId>scala-react_2.10</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
 
 

@@ -8,3 +8,4 @@ scala-examples/scala-examples.iml
 scala-examples/target/
 .idea/
 workspace.iml
+reports/

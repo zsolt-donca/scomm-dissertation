@@ -13,8 +13,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>edu.zsd</groupId>
-            <artifactId>scala-react</artifactId>
+            <groupId>scala-react</groupId>
+            <artifactId>scala-react_2.10</artifactId>
             <version>1.0</version>
         </dependency>
 
@@ -116,7 +116,7 @@
                             <goal>integration-test</goal>
                         </goals>
                         <configuration>
-                            <argLine>-ea -javaagent:${project.build.directory}\aspectjweaver-1.7.4.jar</argLine>
+                            <argLine>-ea -javaagent:${project.build.directory}/aspectjweaver-1.7.4.jar</argLine>
                             <workingDirectory>${project.build.directory}</workingDirectory>
                         </configuration>
                     </execution>

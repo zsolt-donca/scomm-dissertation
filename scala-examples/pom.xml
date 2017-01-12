@@ -7,17 +7,11 @@
         <groupId>edu.zsd</groupId>
         <version>1.0</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
+        <modelVersion>4.0.0</modelVersion>
 
     <artifactId>scala-examples</artifactId>
-
+    
     <dependencies>
-        <dependency>
-            <groupId>edu.zsd</groupId>
-            <artifactId>scala-react</artifactId>
-            <version>1.0</version>
-        </dependency>
-
         <dependency>
             <groupId>com.typesafe.scala-logging</groupId>
             <artifactId>scala-logging-slf4j_2.10</artifactId>
